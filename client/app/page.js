@@ -26,12 +26,12 @@ export default function Home() {
 
   const handleFetchProductData = async () => {
     try {
-      setError(""); // Clear previous error
+      setError("");
       const data = await fetchProductData(url);
       setProduct(data);
     } catch (error) {
       console.error("Error fetching product data:", error);
-      setError("Error fetching product data. Please try again!");
+      setError(error);
     }
   };
 
