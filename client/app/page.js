@@ -25,8 +25,6 @@ export default function Home() {
   }, []);
 
   const handleFetchProductData = async () => {
-    alert("hi");
-    setDebug(await fetchProductData(url));
     try {
       setError("");
       setDebug(url);
@@ -34,6 +32,7 @@ export default function Home() {
       setProduct(data);
       setError(data);
     } catch (error) {
+      alert(error);
       console.error("Error fetching product data:", error);
       setError("Error fe");
     }
@@ -66,7 +65,6 @@ export default function Home() {
 
       {error && <p className={styles.error}>{error}</p>}
       {url && <p className={styles.error}>Url:{url}</p>}
-      {debug && <p className={styles.error}>Debug:{debug}</p>}
 
       {product && (
         <div className={styles.product}>
