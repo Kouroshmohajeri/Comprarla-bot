@@ -25,6 +25,7 @@ export default function Home() {
   }, []);
 
   const handleFetchProductData = async () => {
+    alert("hi");
     setDebug(await fetchProductData(url));
     try {
       setError("");
