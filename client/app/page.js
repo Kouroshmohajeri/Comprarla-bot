@@ -65,7 +65,7 @@ export default function Home() {
 
       {error && <p className={styles.error}>{error}</p>}
       {url && <p className={styles.error}>Url:{url}</p>}
-      <p className={styles.error}>Debug:{debug}</p>
+      {debug && <p className={styles.error}>Debug:{debug}</p>}
 
       {product && (
         <div className={styles.product}>
