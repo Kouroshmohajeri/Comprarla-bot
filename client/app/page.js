@@ -31,7 +31,7 @@ export default function Home() {
       setProduct(data);
     } catch (error) {
       console.error("Error fetching product data:", error);
-      setError("Error fetching product data. Please try again.");
+      setError("Error fetching product data. Please try again!");
     }
   };
 
