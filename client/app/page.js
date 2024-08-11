@@ -8,7 +8,7 @@ export default function Home() {
   const [url, setUrl] = useState("");
   const [product, setProduct] = useState(null);
   const [error, setError] = useState("");
-
+  const [debug, setDebug] = useState("");
   useEffect(() => {
     // Check if Telegram Web App is loaded and accessible
     if (
@@ -25,15 +25,16 @@ export default function Home() {
   }, []);
 
   const handleFetchProductData = async () => {
+    setDebug(await fetchProductData(url));
     try {
       setError("");
-      setError(url);
+      setDebug(url);
       const data = await fetchProductData(url);
       setProduct(data);
-      setProduct(data);
+      setError(data);
     } catch (error) {
       console.error("Error fetching product data:", error);
-      setError("");
+      setError("Error fe");
     }
   };
 
@@ -63,6 +64,8 @@ export default function Home() {
       </button>
 
       {error && <p className={styles.error}>{error}</p>}
+      {url && <p className={styles.error}>Url:{url}</p>}
+      <p className={styles.error}>Debug:{debug}</p>
 
       {product && (
         <div className={styles.product}>
