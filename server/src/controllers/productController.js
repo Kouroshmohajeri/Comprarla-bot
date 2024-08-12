@@ -6,13 +6,14 @@ const getProductData = async (req, res) => {
   const { url } = req.body;
   console.log(url);
   try {
-    const executablePath =
-      (await chromium.executablePath) || "/usr/bin/google-chrome";
+    let executablePath = await chromium.executablePath;
+    if (!executablePath) {
+      executablePath = "/usr/bin/google-chrome"; // Fallback to a known path
+    }
     console.log("Chromium executable path:", executablePath);
 
     const browser = await puppeteer.launch({
-      args: [
-        ...chromium.args,
+      args: chromium.args || [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--single-process",
