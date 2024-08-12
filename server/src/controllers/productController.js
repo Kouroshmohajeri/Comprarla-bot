@@ -7,7 +7,7 @@ const getProductData = async (req, res) => {
   console.log(url);
   try {
     const executablePath =
-      (await chromium.executablePath) || "/usr/bin/google-chrome";
+      (await chromium.executablePath) || "/usr/bin/chromium-browser";
     console.log("Chromium executable path:", executablePath);
 
     const browser = await puppeteer.launch({
