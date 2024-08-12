@@ -13,7 +13,7 @@ const getProductData = async (req, res) => {
     const browser = await puppeteer.launch({
       args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox"],
       defaultViewport: chromium.defaultViewport,
-      executablePath: executablePath || "/usr/local/bin/google-chrome", // Adjust the path if needed
+      executablePath: executablePath || "/usr/bin/google-chrome",
       headless: chromium.headless,
     });
 
