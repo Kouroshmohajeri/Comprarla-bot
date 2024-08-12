@@ -5,14 +5,14 @@ const getProductData = async (req, res) => {
   const { url } = req.body;
   console.log(url);
   try {
-    const browser = await puppeteer.launch({
+    const browser = await puppeteerCore.launch({
       headless: true,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
       ],
-      executablePath: "/usr/bin/google-chrome-stable",
+      executablePath: "/usr/bin/google-chrome-stable", // Ensure this path is correct
     });
     const page = await browser.newPage();
 
