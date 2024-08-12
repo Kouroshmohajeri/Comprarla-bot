@@ -1,21 +1,21 @@
-import puppeteer from "puppeteer";
+import puppeteerCore from "puppeteer-core";
 import { fetchEuroToToman } from "../services/currencyService.js";
 
 const getProductData = async (req, res) => {
   const { url } = req.body;
   console.log(url);
   try {
-    const browser = await puppeteer.launch({
+    const browser = await puppeteerCore.launch({
       headless: true,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
       ],
+      executablePath: "/usr/bin/google-chrome-stable",
     });
     const page = await browser.newPage();
 
-    // Set a common User-Agent to mimic a real browser
     await page.setUserAgent(
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     );

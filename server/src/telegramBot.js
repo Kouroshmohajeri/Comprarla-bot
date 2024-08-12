@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import { Telegraf } from "telegraf";
 import TelegramBot from "node-telegram-bot-api";
 import { fetchEuroToToman } from "./services/currencyService.js";
 import dotenv from "dotenv";
@@ -18,7 +19,7 @@ if (!token) {
 
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, { polling: true });
-
+const teleBot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 // Function to format numbers with thousands separators
 const formatNumber = (number) => {
   return new Intl.NumberFormat().format(number);
@@ -115,86 +116,121 @@ const getProductData = async (url) => {
 };
 
 // Handle /start command
-bot.onText(/\/start/, (msg) => {
-  const chatId = msg.chat.id;
-  const welcomeMessage = `
-به ربات قیمت محصول خوش آمدید!
-لینک محصول را برای من ارسال کنید تا قیمت آن را به یورو بدست آورده و به تومان تبدیل کنم.
-  `;
-  bot.sendMessage(chatId, welcomeMessage);
-});
+// bot.onText(/\/start/, (msg) => {
+//   const chatId = msg.chat.id;
+//   const welcomeMessage = `
+// به ربات قیمت محصول خوش آمدید!
+// لینک محصول را برای من ارسال کنید تا قیمت آن را به یورو بدست آورده و به تومان تبدیل کنم.
+//   `;
+//   bot.sendMessage(chatId, welcomeMessage, {
+//     reply_markup: {
+//       inline_keyboard: [
+//         [
+//           {
+//             text: "Store",
+//             url: "https://master--comprarlabot.netlify.app/", // Open the front-end mini-app
+//           },
+//         ],
+//       ],
+//     },
+//   });
+// });
+teleBot.start((ctx) =>
+  ctx.reply("Welcome to ComprarLa", {
+    reply_markup: {
+      keyboard: [
+        [
+          {
+            text: "web app",
+            web_app: { url: "https://master--comprarlabot.netlify.app/" },
+          },
+        ],
+      ],
+    },
+  })
+);
+teleBot.launch();
+// // Handle callback queries
+// bot.on("callback_query", async (callbackQuery) => {
+//   const chatId = callbackQuery.message.chat.id;
+
+//   if (callbackQuery.data === "store_action") {
+//     await bot.sendMessage(chatId, "You pressed the store button!");
+//     // Here you can implement further actions, such as displaying a menu, product list, etc.
+//   }
+// });
 
 // Handle incoming messages
-bot.on("message", async (msg) => {
-  const chatId = msg.chat.id;
-  const url = msg.text;
+// bot.on("message", async (msg) => {
+//   const chatId = msg.chat.id;
+//   const url = msg.text;
 
-  // Skip the /start command as it is handled separately
-  if (url.startsWith("/start")) {
-    return;
-  }
+//   // Skip the /start command as it is handled separately
+//   if (url.startsWith("/start")) {
+//     return;
+//   }
 
-  try {
-    const waitingMessage = await bot.sendMessage(
-      chatId,
-      "لینک شما دریافت شد..."
-    );
+//   try {
+//     const waitingMessage = await bot.sendMessage(
+//       chatId,
+//       "لینک شما دریافت شد..."
+//     );
 
-    await bot.editMessageText("در حال پردازش محصول...", {
-      chat_id: chatId,
-      message_id: waitingMessage.message_id,
-    });
+//     await bot.editMessageText("در حال پردازش محصول...", {
+//       chat_id: chatId,
+//       message_id: waitingMessage.message_id,
+//     });
 
-    const productData = await getProductData(url);
+//     const productData = await getProductData(url);
 
-    await bot.editMessageText("محصول یافت شد...", {
-      chat_id: chatId,
-      message_id: waitingMessage.message_id,
-    });
+//     await bot.editMessageText("محصول یافت شد...", {
+//       chat_id: chatId,
+//       message_id: waitingMessage.message_id,
+//     });
 
-    await bot.editMessageText("در حال تبدیل قیمت...", {
-      chat_id: chatId,
-      message_id: waitingMessage.message_id,
-    });
+//     await bot.editMessageText("در حال تبدیل قیمت...", {
+//       chat_id: chatId,
+//       message_id: waitingMessage.message_id,
+//     });
 
-    const responseMessage = `
-*نام محصول:* ${productData.name}
+//     const responseMessage = `
+// *نام محصول:* ${productData.name}
 
-*قیمت کل (تومان):* ${formatNumber(productData.convertedPrice.toFixed(0))}
-ـــــــــــــــــــــــــــــــ
-آنلاین شاپ ComprarLa
-ـــــــــــــــــــــــــــــــ
-قیمت ارائه شده تا ساعت {} اعتبار دارد.
-قبل از سفارش قیمت نهایی با شما چک میشود 
-و خرید در اسپانیا انجام میشود.
-ـــــــــــــــــــــــــــــــ
-*باربری:*
-زمان و نحوه ارسال به شما در زمان ثبت سفارش اطلاع داده می شود.
-باربری های ComprarLa به طور معمول۲ هفته تا ۱ ماه طول می کشد.
+// *قیمت کل (تومان):* ${formatNumber(productData.convertedPrice.toFixed(0))}
+// ـــــــــــــــــــــــــــــــ
+// آنلاین شاپ ComprarLa
+// ـــــــــــــــــــــــــــــــ
+// قیمت ارائه شده تا ساعت {} اعتبار دارد.
+// قبل از سفارش قیمت نهایی با شما چک میشود
+// و خرید در اسپانیا انجام میشود.
+// ـــــــــــــــــــــــــــــــ
+// *باربری:*
+// زمان و نحوه ارسال به شما در زمان ثبت سفارش اطلاع داده می شود.
+// باربری های ComprarLa به طور معمول۲ هفته تا ۱ ماه طول می کشد.
 
-🇪🇸
+// 🇪🇸
 
-    `;
+//     `;
 
-    if (productData.imageUrl) {
-      await bot.sendPhoto(chatId, productData.imageUrl, {
-        caption: responseMessage,
-        parse_mode: "Markdown",
-      });
-    } else {
-      await bot.sendMessage(chatId, responseMessage, {
-        parse_mode: "Markdown",
-      });
-    }
+//     if (productData.imageUrl) {
+//       await bot.sendPhoto(chatId, productData.imageUrl, {
+//         caption: responseMessage,
+//         parse_mode: "Markdown",
+//       });
+//     } else {
+//       await bot.sendMessage(chatId, responseMessage, {
+//         parse_mode: "Markdown",
+//       });
+//     }
 
-    // Delete the waiting message after sending the final response
-    await bot.deleteMessage(chatId, waitingMessage.message_id);
-  } catch (error) {
-    await bot.sendMessage(
-      chatId,
-      "دریافت اطلاعات محصول شکست خورد. لطفاً اطمینان حاصل کنید که لینک صحیح است و دوباره تلاش کنید."
-    );
-  }
-});
+//     // Delete the waiting message after sending the final response
+//     await bot.deleteMessage(chatId, waitingMessage.message_id);
+//   } catch (error) {
+//     await bot.sendMessage(
+//       chatId,
+//       "دریافت اطلاعات محصول شکست خورد. لطفاً اطمینان حاصل کنید که لینک صحیح است و دوباره تلاش کنید."
+//     );
+//   }
+// });
 
 console.log("Comprarla bot is running...");
