@@ -6,14 +6,19 @@ const getProductData = async (req, res) => {
   const { url } = req.body;
   console.log(url);
   try {
+    // Use chromium.executablePath for AWS Lambda environments
     const executablePath =
-      (await chromium.executablePath) || "/usr/bin/chromium-browser";
+      (await chromium.executablePath) || (await puppeteer.executablePath());
     console.log("Chromium executable path:", executablePath);
 
     const browser = await puppeteer.launch({
-      args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox"],
+      args: [
+        ...(await chromium.args),
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+      ],
       defaultViewport: chromium.defaultViewport,
-      executablePath: executablePath || "/usr/bin/chromium-browser",
+      executablePath: executablePath,
       headless: chromium.headless,
     });
 
