@@ -13,9 +13,14 @@ export const fetchEuroToToman = async () => {
       ],
     });
     const page = await browser.newPage();
+
+    // Set a common User-Agent to mimic a real browser
+    await page.setUserAgent(
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    );
+
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
 
-    // Extract the conversion rate
     const rateText = await page.evaluate(() => {
       const rateElement = document.querySelector(
         'span[data-col="info.last_trade.PDrCotVal"]'
@@ -31,7 +36,6 @@ export const fetchEuroToToman = async () => {
       throw new Error("Conversion rate extraction failed");
     }
 
-    // Convert the rate to Toman by eliminating the last digit
     const rateInRial = parseInt(rateText, 10);
     const rateInToman = rateInRial / 10;
 

@@ -1,20 +1,23 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import connectDB from "./config/db.js";
+// import connectDB from "./config/db.js";
+import productRoutes from "./routes/productRoutes.js";
+import telegramRoutes from "./routes/telegramRoutes.js";
 
 dotenv.config();
 
 const app = express();
-connectDB();
+// connectDB();
 
-app.use(cors());
+const corsOptions = {
+  origin: "https://master--comprarlabot.netlify.app",
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Import routes
-import productRoutes from "./routes/productRoutes.js";
-import telegramRoutes from "./routes/telegramRoutes.js";
-
 app.use("/api/products", productRoutes);
 app.use("/api/telegram", telegramRoutes);
 
