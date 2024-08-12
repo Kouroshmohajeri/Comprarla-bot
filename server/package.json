@@ -5,9 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "preinstall": "apt-get update && apt-get install -y wget gnupg && wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | tee /etc/apt/sources.list.d/google-chrome.list && apt-get update && apt-get install -y google-chrome-stable && apt-get clean && rm -rf /var/lib/apt/lists/*",
-    "install": "npm install",
-    "start": "node src/index.js"
+    "start": "nodemon src/index.js"
   },
   "keywords": [],
   "author": "",
@@ -21,7 +19,7 @@
     "mongoose": "^8.5.2",
     "node-fetch": "^3.3.2",
     "node-telegram-bot-api": "^0.66.0",
-    "puppeteer-core": "^23.0.2",
+    "puppeteer": "^23.0.2",
     "telegraf": "^4.16.3"
   },
   "devDependencies": {
