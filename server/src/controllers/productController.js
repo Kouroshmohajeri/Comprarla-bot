@@ -1,11 +1,11 @@
-import puppeteer from "puppeteer-core";
+import puppeteer from "puppeteer-core"; // Ensure this is the correct import
 import { fetchEuroToToman } from "../services/currencyService.js";
 
 const getProductData = async (req, res) => {
   const { url } = req.body;
   console.log(url);
   try {
-    const browser = await puppeteerCore.launch({
+    const browser = await puppeteer.launch({
       headless: true,
       args: [
         "--no-sandbox",
