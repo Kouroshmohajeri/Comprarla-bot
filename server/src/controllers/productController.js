@@ -7,6 +7,7 @@ const getProductData = async (req, res) => {
   console.log(url);
 
   let browser = null; // Define browser outside the try block
+  let page = null; // Define page outside the try block
 
   try {
     browser = await puppeteer.launch({
@@ -17,7 +18,7 @@ const getProductData = async (req, res) => {
       ignoreHTTPSErrors: true,
     });
 
-    const page = await browser.newPage();
+    page = await browser.newPage();
 
     await page.setUserAgent(
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -35,13 +36,13 @@ const getProductData = async (req, res) => {
     let retries = 3;
     while (retries > 0) {
       try {
-        await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
+        await page.goto(url, { waitUntil: "networkidle2", timeout: 30000 }); // Reduced timeout
         break; // Break if successful
       } catch (err) {
-        console.error(`Navigation failed, retries left: ${--retries}`);
+        console.error(`Navigation failed, retries left: ${--retries}`, err);
         if (retries === 0) throw err;
         // Wait before retrying
-        await new Promise((resolve) => setTimeout(resolve, 5000));
+        await new Promise((resolve) => setTimeout(resolve, 10000)); // Longer wait
       }
     }
 
@@ -72,6 +73,7 @@ const getProductData = async (req, res) => {
 
         return { name, price, images };
       } catch (error) {
+        console.error("Error extracting data from page:", error);
         return { error: "Element not found or frame was detached" };
       }
     });
