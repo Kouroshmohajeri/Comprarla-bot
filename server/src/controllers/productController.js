@@ -10,7 +10,6 @@ const getAdditionalPrice = (price) => {
   return 0;
 };
 
-// Function to scrape product data
 const scrapeProductData = async (url) => {
   let browser = null;
   try {
@@ -21,7 +20,7 @@ const scrapeProductData = async (url) => {
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
-        "--disable-gpu", // Adding this option can help with stability
+        "--disable-gpu",
       ],
     });
 
@@ -64,6 +63,13 @@ const scrapeProductData = async (url) => {
         document.querySelector("#landingImage")?.src ||
         document.querySelector(".product-image img")?.src ||
         null;
+
+      console.log("Extracted Product Data:", {
+        name,
+        discountedPrice,
+        originalPrice,
+        imageUrl,
+      });
 
       return { name, discountedPrice, originalPrice, imageUrl };
     });
