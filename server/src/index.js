@@ -11,7 +11,7 @@ const app = express();
 // connectDB();
 
 const corsOptions = {
-  origin: "https://master--comprarlabot.netlify.app",
+  origin: "https://http://23.227.167.112:3000/",
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
