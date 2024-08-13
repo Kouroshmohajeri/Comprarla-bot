@@ -10,7 +10,7 @@ bot.start((ctx) =>
         [
           {
             text: "web app",
-            web_app: { url: "https://master--comprarlabot.netlify.app/" },
+            web_app: { url: "https://http://23.227.167.112:3000//" },
           },
         ],
       ],
