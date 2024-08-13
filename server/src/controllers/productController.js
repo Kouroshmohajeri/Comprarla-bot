@@ -1,4 +1,4 @@
-import puppeteer from "puppeteer";
+import puppeteer from "puppeteer-core"; // Use puppeteer-core to specify the executablePath
 import { fetchEuroToToman } from "../services/currencyService.js";
 
 // Function to determine the additional price based on ranges
@@ -12,13 +12,16 @@ const getAdditionalPrice = (price) => {
 
 // Function to scrape product data
 const scrapeProductData = async (url) => {
+  let browser = null;
   try {
-    const browser = await puppeteer.launch({
+    browser = await puppeteer.launch({
+      executablePath: "/snap/bin/chromium", // Path to Chromium Snap package
       headless: true,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
+        "--disable-gpu", // Adding this option can help with stability
       ],
     });
 
@@ -68,6 +71,13 @@ const scrapeProductData = async (url) => {
     return product;
   } catch (error) {
     console.error("Error fetching product data:", error);
+    if (browser) {
+      try {
+        await browser.close();
+      } catch (closeError) {
+        console.error("Error closing browser:", closeError);
+      }
+    }
     throw new Error("Error fetching product data");
   }
 };
