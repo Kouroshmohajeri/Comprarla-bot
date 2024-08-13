@@ -36,7 +36,8 @@ const getProductData = async (req, res) => {
     let retries = 3;
     while (retries > 0) {
       try {
-        await page.goto(url, { waitUntil: "networkidle2", timeout: 30000 }); // Reduced timeout
+        // Navigate to the page
+        await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
         break; // Break if successful
       } catch (err) {
         console.error(`Navigation failed, retries left: ${--retries}`, err);
@@ -46,11 +47,14 @@ const getProductData = async (req, res) => {
       }
     }
 
+    // Extract product data
     const product = await page.evaluate(() => {
       try {
+        // Extract product name
         const nameElement = document.querySelector("#productTitle");
         const name = nameElement ? nameElement.textContent.trim() : "No Name";
 
+        // Extract price
         let priceText =
           document.querySelector("#priceblock_dealprice")?.textContent.trim() ||
           document.querySelector("#priceblock_saleprice")?.textContent.trim() ||
@@ -67,6 +71,7 @@ const getProductData = async (req, res) => {
         const cleanedPriceText = priceText.replace(/[^0-9.]/g, "");
         const price = parseFloat(cleanedPriceText);
 
+        // Extract image URLs
         const images = Array.from(
           document.querySelectorAll("#altImages img")
         ).map((img) => img.src);
@@ -82,9 +87,11 @@ const getProductData = async (req, res) => {
       throw new Error(product.error);
     }
 
+    // Fetch currency conversion rate
     const euroToTomanRate = await fetchEuroToToman();
     const convertedPrice = product.price * euroToTomanRate;
 
+    // Return the result
     const result = {
       "Product Name": product.name,
       "Price (USD)": product.price,
