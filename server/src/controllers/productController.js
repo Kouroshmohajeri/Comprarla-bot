@@ -11,7 +11,7 @@ const getProductData = async (req, res) => {
 
   try {
     browser = await puppeteer.launch({
-      args: chromium.args,
+      args: [...chromium.args, "--disable-web-security"],
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath(),
       headless: chromium.headless,
@@ -36,9 +36,12 @@ const getProductData = async (req, res) => {
     let retries = 3;
     while (retries > 0) {
       try {
-        // Increase the timeout and change waitUntil to 'load'
-        await page.goto(url, { waitUntil: "load", timeout: 120000 });
-        break; // Break if successful
+        await page.goto(url, {
+          waitUntil: "domcontentloaded",
+          timeout: 120000,
+        });
+        await page.waitForSelector("#productTitle", { timeout: 60000 });
+        break;
       } catch (err) {
         console.error(`Navigation failed, retries left: ${--retries}`, err);
         if (retries === 0) throw err;
