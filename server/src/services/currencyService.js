@@ -1,13 +1,12 @@
 import puppeteer from "puppeteer-core"; // Use puppeteer-core to specify the executablePath
-import { getBrowserExecutablePath } from "../config/puppeteerConfig.js"; // Helper function for path
 
 // Function to fetch conversion rate from Euro to Toman
 export const fetchEuroToToman = async () => {
   try {
     const url = "https://www.tgju.org/profile/price_eur";
     const browser = await puppeteer.launch({
+      executablePath: "/usr/bin/chromium-browser", // Add the correct executable path
       headless: true,
-      executablePath: getBrowserExecutablePath(), // Specify the path to the Chrome executable
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
