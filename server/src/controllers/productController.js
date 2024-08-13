@@ -31,6 +31,10 @@ const scrapeProductData = async (url) => {
     // Take a screenshot for debugging
     await page.screenshot({ path: "product_debug_screenshot.png" });
 
+    // Log page content for debugging
+    const pageContent = await page.content();
+    console.log("Page content:", pageContent);
+
     const product = await page.evaluate(() => {
       const getTextContent = (selector) => {
         const element = document.querySelector(selector);
