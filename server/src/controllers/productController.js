@@ -1,115 +1,107 @@
-import puppeteer from "puppeteer-core";
-import chromium from "@sparticuz/chromium";
+import puppeteer from "puppeteer";
 import { fetchEuroToToman } from "../services/currencyService.js";
 
-const getProductData = async (req, res) => {
-  const { url } = req.body;
-  console.log(url);
+// Function to determine the additional price based on ranges
+const getAdditionalPrice = (price) => {
+  if (price > 0 && price <= 100) return 25;
+  if (price >= 101 && price <= 200) return 35;
+  if (price >= 201 && price <= 500) return 45;
+  if (price >= 510) return 50;
+  return 0;
+};
 
-  let browser = null;
-  let page = null;
-
+// Function to scrape product data
+const scrapeProductData = async (url) => {
   try {
-    browser = await puppeteer.launch({
-      args: [...chromium.args, "--disable-web-security"],
-      defaultViewport: chromium.defaultViewport,
-      executablePath: await chromium.executablePath(),
-      headless: chromium.headless,
-      ignoreHTTPSErrors: true,
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+      ],
     });
 
-    page = await browser.newPage();
-
-    await page.setUserAgent(
-      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-    );
-
-    await page.setRequestInterception(true);
-    page.on("request", (req) => {
-      if (["image", "stylesheet", "font"].includes(req.resourceType())) {
-        req.abort();
-      } else {
-        req.continue();
-      }
-    });
-
-    let retries = 3;
-    while (retries > 0) {
-      try {
-        await page.goto(url, {
-          waitUntil: "domcontentloaded",
-          timeout: 120000,
-        });
-        await page.waitForSelector("#productTitle", { timeout: 60000 });
-        break;
-      } catch (err) {
-        console.error(`Navigation failed, retries left: ${--retries}`, err);
-        if (retries === 0) throw err;
-        await new Promise((resolve) => setTimeout(resolve, 10000));
-      }
-    }
+    const page = await browser.newPage();
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
 
     const product = await page.evaluate(() => {
-      try {
-        const nameElement = document.querySelector("#productTitle");
-        const name = nameElement ? nameElement.textContent.trim() : "No Name";
+      const getTextContent = (selector) => {
+        const element = document.querySelector(selector);
+        return element ? element.textContent.trim() : null;
+      };
 
-        let priceText =
-          document.querySelector("#priceblock_dealprice")?.textContent.trim() ||
-          document.querySelector("#priceblock_saleprice")?.textContent.trim() ||
-          document.querySelector("#priceblock_ourprice")?.textContent.trim() ||
-          "";
+      const getPrice = (selector) => {
+        const priceText = getTextContent(selector);
+        return priceText ? parseFloat(priceText.replace(/[^0-9.]/g, "")) : null;
+      };
 
-        if (!priceText) {
-          const priceElement = document.querySelector(".a-price .a-offscreen");
-          if (priceElement) {
-            priceText = priceElement.textContent.trim();
-          }
-        }
+      const name =
+        getTextContent("#productTitle") ||
+        getTextContent(".product-title") ||
+        "نامشخص";
 
-        const cleanedPriceText = priceText.replace(/[^0-9.]/g, "");
-        const price = parseFloat(cleanedPriceText);
+      // Extracting both original and discounted prices
+      const originalPrice =
+        getPrice(".priceBlockStrikePriceString") ||
+        getPrice("#priceblock_ourprice");
+      const discountedPrice =
+        getPrice("#priceblock_dealprice") ||
+        getPrice("#priceblock_saleprice") ||
+        getPrice(".a-price .a-offscreen");
 
-        const images = Array.from(
-          document.querySelectorAll("#altImages img")
-        ).map((img) => img.src);
+      const imageUrl =
+        document.querySelector("#landingImage")?.src ||
+        document.querySelector(".product-image img")?.src ||
+        null;
 
-        return { name, price, images };
-      } catch (error) {
-        console.error("Error extracting data from page:", error);
-        return { error: "Element not found or frame was detached" };
-      }
+      return { name, discountedPrice, originalPrice, imageUrl };
     });
 
-    if (product.error) {
-      throw new Error(product.error);
+    await browser.close();
+
+    // Ensure at least one price is available
+    if (isNaN(product.discountedPrice) && isNaN(product.originalPrice)) {
+      throw new Error("استخراج قیمت شکست خورد");
     }
 
-    const euroToTomanRate = await fetchEuroToToman();
-    const convertedPrice = product.price * euroToTomanRate;
-
-    const result = {
-      "Product Name": product.name,
-      "Price (USD)": product.price,
-      "Converted Price (Toman)": convertedPrice,
-      images: product.images,
-    };
-
-    res.json(result);
+    return product;
   } catch (error) {
-    console.error("Error fetching product data or currency rates:", error);
-    res
-      .status(500)
-      .json({ message: "Error fetching product data or currency rates" });
-  } finally {
-    if (browser) {
-      try {
-        await browser.close();
-      } catch (closeError) {
-        console.error("Error closing browser:", closeError);
-      }
-    }
+    console.error("Error fetching product data:", error);
+    throw new Error("Error fetching product data");
   }
 };
 
-export { getProductData };
+export const getProductData = async (req, res) => {
+  const { url } = req.body;
+
+  try {
+    const product = await scrapeProductData(url);
+    const euroToTomanRate = await fetchEuroToToman();
+
+    // Determine the price to use for conversion and additional price
+    const priceToUse = product.discountedPrice || product.originalPrice;
+
+    const additionalPrice = getAdditionalPrice(priceToUse);
+    const totalPrice = priceToUse + additionalPrice;
+    const convertedPrice = priceToUse * euroToTomanRate;
+    const convertedAdditionalPrice = additionalPrice * euroToTomanRate;
+
+    const result = {
+      name: product.name,
+      price: priceToUse,
+      additionalPrice,
+      totalPrice,
+      imageUrl: product.imageUrl,
+      convertedPrice,
+      convertedAdditionalPrice,
+    };
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error in getProductData:", error);
+    res
+      .status(500)
+      .json({ message: "Error fetching product data or currency rates" });
+  }
+};
