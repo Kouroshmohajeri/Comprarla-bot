@@ -15,7 +15,7 @@ const scrapeProductData = async (url) => {
   try {
     browser = await puppeteer.launch({
       executablePath: "/usr/bin/chromium-browser", // Path to Chromium binary
-      headless: true,
+      headless: false,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
@@ -25,10 +25,13 @@ const scrapeProductData = async (url) => {
     });
 
     const page = await browser.newPage();
+    await page.setUserAgent(
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    );
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
 
     // Take a screenshot for debugging
-    await page.screenshot({ path: "product_debug_screenshot.png" });
+    await page.screenshot({ path: "debug_screenshot.png" });
 
     // Log page content for debugging
     const pageContent = await page.content();
