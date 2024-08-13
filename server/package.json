@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@sparticuz/chromium": "^126.0.0",
     "axios": "^1.7.3",
     "chrome-aws-lambda": "^10.1.0",
     "cors": "^2.8.5",
@@ -20,7 +21,7 @@
     "mongoose": "^8.5.2",
     "node-fetch": "^3.3.2",
     "node-telegram-bot-api": "^0.66.0",
-    "puppeteer": "^23.0.2",
+    "puppeteer": "^22.11.0",
     "puppeteer-core": "^10.4.0",
     "telegraf": "^4.16.3"
   },
