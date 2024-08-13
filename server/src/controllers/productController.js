@@ -28,6 +28,9 @@ const scrapeProductData = async (url) => {
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
 
+    // Take a screenshot for debugging
+    await page.screenshot({ path: "product_debug_screenshot.png" });
+
     const product = await page.evaluate(() => {
       const getTextContent = (selector) => {
         const element = document.querySelector(selector);
@@ -63,9 +66,8 @@ const scrapeProductData = async (url) => {
 
     await browser.close();
 
-    // Ensure at least one price is available
     if (isNaN(product.discountedPrice) && isNaN(product.originalPrice)) {
-      throw new Error("استخراج قیمت شکست خورد");
+      throw new Error("Price extraction failed");
     }
 
     return product;
