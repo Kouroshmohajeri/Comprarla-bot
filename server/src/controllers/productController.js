@@ -14,13 +14,13 @@ const scrapeProductData = async (url) => {
   let browser = null;
   try {
     browser = await puppeteer.launch({
-      executablePath: "/usr/bin/chromium-browser", // Path to Chromium binary
-      headless: false,
+      headless: true, // Ensure headless mode is enabled
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
         "--disable-gpu",
+        "--window-size=1280,1024",
       ],
     });
 
@@ -30,10 +30,7 @@ const scrapeProductData = async (url) => {
     );
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
 
-    // Take a screenshot for debugging
     await page.screenshot({ path: "debug_screenshot.png" });
-
-    // Log page content for debugging
     const pageContent = await page.content();
     console.log("Page content:", pageContent);
 
@@ -53,7 +50,6 @@ const scrapeProductData = async (url) => {
         getTextContent(".product-title") ||
         "نامشخص";
 
-      // Extracting both original and discounted prices
       const originalPrice =
         getPrice(".priceBlockStrikePriceString") ||
         getPrice("#priceblock_ourprice");
