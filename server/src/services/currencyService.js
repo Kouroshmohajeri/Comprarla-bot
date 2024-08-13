@@ -1,5 +1,5 @@
 import puppeteer from "puppeteer-core"; // Use puppeteer-core for specifying executable path
-import { getBrowserExecutablePath } from "./puppeteerConfig"; // Helper function for path
+import { getBrowserExecutablePath } from "../config/puppeteerConfig.js"; // Helper function for path
 
 // Function to fetch conversion rate from Euro to Toman
 export const fetchEuroToToman = async () => {
