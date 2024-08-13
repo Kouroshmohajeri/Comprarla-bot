@@ -6,21 +6,6 @@ const getProductData = async (req, res) => {
   const { url } = req.body;
   console.log(url);
   try {
-    // Use chromium.executablePath for AWS Lambda environments
-    // const executablePath =
-    //   (await chromium.executablePath) || (await puppeteer.executablePath());
-    // console.log("Chromium executable path:", executablePath);
-
-    // const browser = await puppeteer.launch({
-    //   args: [
-    //     ...(await chromium.args),
-    //     "--no-sandbox",
-    //     "--disable-setuid-sandbox",
-    //   ],
-    //   defaultViewport: chromium.defaultViewport,
-    //   executablePath: executablePath,
-    //   headless: chromium.headless,
-    // });
     const browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
@@ -28,13 +13,23 @@ const getProductData = async (req, res) => {
       headless: chromium.headless,
       ignoreHTTPSErrors: true,
     });
+
     const page = await browser.newPage();
 
     await page.setUserAgent(
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     );
 
-    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
+    await page.setRequestInterception(true);
+    page.on("request", (req) => {
+      if (["image", "stylesheet", "font"].includes(req.resourceType())) {
+        req.abort();
+      } else {
+        req.continue();
+      }
+    });
+
+    await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
 
     const product = await page.evaluate(() => {
       const nameElement = document.querySelector("#productTitle");
