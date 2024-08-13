@@ -1,5 +1,5 @@
 import puppeteer from "puppeteer-core";
-import chromium from "chrome-aws-lambda";
+import chromium from "@sparticuz/chromium";
 import { fetchEuroToToman } from "../services/currencyService.js";
 
 const getProductData = async (req, res) => {
@@ -11,17 +11,23 @@ const getProductData = async (req, res) => {
       (await chromium.executablePath) || (await puppeteer.executablePath());
     console.log("Chromium executable path:", executablePath);
 
+    // const browser = await puppeteer.launch({
+    //   args: [
+    //     ...(await chromium.args),
+    //     "--no-sandbox",
+    //     "--disable-setuid-sandbox",
+    //   ],
+    //   defaultViewport: chromium.defaultViewport,
+    //   executablePath: executablePath,
+    //   headless: chromium.headless,
+    // });
     const browser = await puppeteer.launch({
-      args: [
-        ...(await chromium.args),
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-      ],
+      args: chromium.args,
       defaultViewport: chromium.defaultViewport,
-      executablePath: executablePath,
+      executablePath: await chromium.executablePath(),
       headless: chromium.headless,
+      ignoreHTTPSErrors: true,
     });
-
     const page = await browser.newPage();
 
     await page.setUserAgent(
