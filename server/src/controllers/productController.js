@@ -15,7 +15,7 @@ const scrapeProductData = async (url) => {
   let browser = null;
   try {
     browser = await puppeteer.launch({
-      executablePath: "/snap/bin/chromium", // Path to Chromium Snap package
+      executablePath: "/usr/bin/chromium-browser", // Path to Chromium binary
       headless: true,
       args: [
         "--no-sandbox",
