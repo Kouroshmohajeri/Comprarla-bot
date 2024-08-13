@@ -5,8 +5,11 @@ import { fetchEuroToToman } from "../services/currencyService.js";
 const getProductData = async (req, res) => {
   const { url } = req.body;
   console.log(url);
+
+  let browser = null; // Define browser outside the try block
+
   try {
-    const browser = await puppeteer.launch({
+    browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
       executablePath: await chromium.executablePath(),
@@ -37,6 +40,8 @@ const getProductData = async (req, res) => {
       } catch (err) {
         console.error(`Navigation failed, retries left: ${--retries}`);
         if (retries === 0) throw err;
+        // Wait before retrying
+        await new Promise((resolve) => setTimeout(resolve, 5000));
       }
     }
 
@@ -92,7 +97,13 @@ const getProductData = async (req, res) => {
       .status(500)
       .json({ message: "Error fetching product data or currency rates" });
   } finally {
-    await browser.close(); // Ensure browser closes even if there's an error
+    if (browser) {
+      try {
+        await browser.close();
+      } catch (closeError) {
+        console.error("Error closing browser:", closeError);
+      }
+    }
   }
 };
 
