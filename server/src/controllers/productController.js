@@ -7,9 +7,9 @@ const getProductData = async (req, res) => {
   console.log(url);
   try {
     // Use chromium.executablePath for AWS Lambda environments
-    const executablePath =
-      (await chromium.executablePath) || (await puppeteer.executablePath());
-    console.log("Chromium executable path:", executablePath);
+    // const executablePath =
+    //   (await chromium.executablePath) || (await puppeteer.executablePath());
+    // console.log("Chromium executable path:", executablePath);
 
     // const browser = await puppeteer.launch({
     //   args: [
