@@ -29,39 +29,50 @@ const getProductData = async (req, res) => {
       }
     });
 
-    await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
+    let retries = 3;
+    while (retries > 0) {
+      try {
+        await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
+        break; // Break if successful
+      } catch (err) {
+        console.error(`Navigation failed, retries left: ${--retries}`);
+        if (retries === 0) throw err;
+      }
+    }
 
     const product = await page.evaluate(() => {
-      const nameElement = document.querySelector("#productTitle");
-      const name = nameElement ? nameElement.textContent.trim() : "No Name";
+      try {
+        const nameElement = document.querySelector("#productTitle");
+        const name = nameElement ? nameElement.textContent.trim() : "No Name";
 
-      let priceText =
-        document.querySelector("#priceblock_dealprice")?.textContent.trim() ||
-        document.querySelector("#priceblock_saleprice")?.textContent.trim() ||
-        document.querySelector("#priceblock_ourprice")?.textContent.trim() ||
-        "";
+        let priceText =
+          document.querySelector("#priceblock_dealprice")?.textContent.trim() ||
+          document.querySelector("#priceblock_saleprice")?.textContent.trim() ||
+          document.querySelector("#priceblock_ourprice")?.textContent.trim() ||
+          "";
 
-      if (!priceText) {
-        const priceElement = document.querySelector(".a-price .a-offscreen");
-        if (priceElement) {
-          priceText = priceElement.textContent.trim();
+        if (!priceText) {
+          const priceElement = document.querySelector(".a-price .a-offscreen");
+          if (priceElement) {
+            priceText = priceElement.textContent.trim();
+          }
         }
+
+        const cleanedPriceText = priceText.replace(/[^0-9.]/g, "");
+        const price = parseFloat(cleanedPriceText);
+
+        const images = Array.from(
+          document.querySelectorAll("#altImages img")
+        ).map((img) => img.src);
+
+        return { name, price, images };
+      } catch (error) {
+        return { error: "Element not found or frame was detached" };
       }
-
-      const cleanedPriceText = priceText.replace(/[^0-9.]/g, "");
-      const price = parseFloat(cleanedPriceText);
-
-      const images = Array.from(
-        document.querySelectorAll("#altImages img")
-      ).map((img) => img.src);
-
-      return { name, price, images };
     });
 
-    await browser.close();
-
-    if (isNaN(product.price) || product.price <= 0) {
-      throw new Error("Price extraction failed");
+    if (product.error) {
+      throw new Error(product.error);
     }
 
     const euroToTomanRate = await fetchEuroToToman();
@@ -80,6 +91,8 @@ const getProductData = async (req, res) => {
     res
       .status(500)
       .json({ message: "Error fetching product data or currency rates" });
+  } finally {
+    await browser.close(); // Ensure browser closes even if there's an error
   }
 };
 
