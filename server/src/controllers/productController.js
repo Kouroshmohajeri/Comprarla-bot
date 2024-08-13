@@ -6,8 +6,8 @@ const getProductData = async (req, res) => {
   const { url } = req.body;
   console.log(url);
 
-  let browser = null; // Define browser outside the try block
-  let page = null; // Define page outside the try block
+  let browser = null;
+  let page = null;
 
   try {
     browser = await puppeteer.launch({
@@ -36,25 +36,21 @@ const getProductData = async (req, res) => {
     let retries = 3;
     while (retries > 0) {
       try {
-        // Navigate to the page
-        await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 });
+        // Increase the timeout and change waitUntil to 'load'
+        await page.goto(url, { waitUntil: "load", timeout: 120000 });
         break; // Break if successful
       } catch (err) {
         console.error(`Navigation failed, retries left: ${--retries}`, err);
         if (retries === 0) throw err;
-        // Wait before retrying
-        await new Promise((resolve) => setTimeout(resolve, 10000)); // Longer wait
+        await new Promise((resolve) => setTimeout(resolve, 10000));
       }
     }
 
-    // Extract product data
     const product = await page.evaluate(() => {
       try {
-        // Extract product name
         const nameElement = document.querySelector("#productTitle");
         const name = nameElement ? nameElement.textContent.trim() : "No Name";
 
-        // Extract price
         let priceText =
           document.querySelector("#priceblock_dealprice")?.textContent.trim() ||
           document.querySelector("#priceblock_saleprice")?.textContent.trim() ||
@@ -71,7 +67,6 @@ const getProductData = async (req, res) => {
         const cleanedPriceText = priceText.replace(/[^0-9.]/g, "");
         const price = parseFloat(cleanedPriceText);
 
-        // Extract image URLs
         const images = Array.from(
           document.querySelectorAll("#altImages img")
         ).map((img) => img.src);
@@ -87,11 +82,9 @@ const getProductData = async (req, res) => {
       throw new Error(product.error);
     }
 
-    // Fetch currency conversion rate
     const euroToTomanRate = await fetchEuroToToman();
     const convertedPrice = product.price * euroToTomanRate;
 
-    // Return the result
     const result = {
       "Product Name": product.name,
       "Price (USD)": product.price,
