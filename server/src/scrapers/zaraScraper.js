@@ -5,7 +5,11 @@ const createZaraCrawler = () => {
     launchContext: {
       launchOptions: {
         headless: true,
-        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        args: [
+          "--no-sandbox",
+          "--disable-setuid-sandbox",
+          "--proxy-server=your_proxy_here", // Use a proxy server to avoid IP bans
+        ],
       },
     },
     requestHandler: async ({ page, request }) => {
