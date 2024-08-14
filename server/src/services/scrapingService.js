@@ -1,11 +1,14 @@
 import { getScraperByDomain } from "../scrapers/scraperRegistry.js";
 
+const normalizeDomain = (hostname) => {
+  // Strip 'www.' and any country-specific suffixes
+  return hostname.replace(/^www\./, "").replace(/\..+$/, ""); // Remove anything after the first dot
+};
+
 export const scrapeProduct = async (url) => {
   try {
     const parsedUrl = new URL(url);
-    const domain = parsedUrl.hostname.replace(/^www\./, ""); // Normalize domain
-    console.log(`Extracted Domain: ${domain}`); // Debugging output
-
+    const domain = normalizeDomain(parsedUrl.hostname);
     const scraper = getScraperByDomain(domain);
 
     if (!scraper) {

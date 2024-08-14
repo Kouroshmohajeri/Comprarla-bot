@@ -1,8 +1,8 @@
 import fetchZaraProduct from "./zaraScraper.js";
 
+// Available domains
 const scrapers = {
-  "zara.com": fetchZaraProduct,
-  // Add more scrapers here as needed, e.g., 'amazon.com': fetchAmazonProduct,
+  zara: fetchZaraProduct,
 };
 
 export const getScraperByDomain = (domain) => {

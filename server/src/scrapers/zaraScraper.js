@@ -1,8 +1,9 @@
 import axios from "axios";
-import cheerio from "cheerio";
+import * as cheerio from "cheerio";
 
 const fetchZaraProduct = async (url) => {
   try {
+    // Perform a GET request to fetch the webpage
     const response = await axios.get(url, {
       headers: {
         "User-Agent":
@@ -13,14 +14,32 @@ const fetchZaraProduct = async (url) => {
       },
     });
 
+    // Check if the response status is 200 (OK)
+    if (response.status !== 200) {
+      throw new Error(`Failed to fetch page, status code: ${response.status}`);
+    }
+
+    // Load the response data into cheerio for parsing
     const $ = cheerio.load(response.data);
 
-    const name = $("h1.product-detail-title").text().trim();
-    const price = $(".product-detail-price span").text().trim();
-    const image = $(".product-detail-image img").attr("src");
+    // Extract product information using the provided selectors
+    const name = $(
+      "#main > article > div.product-detail-view__content > div.product-detail-view__main > div.product-detail-view__side-bar > div > div.product-detail-info__info > div.product-detail-info__header > div.product-detail-info__header-content > h1"
+    )
+      .text()
+      .trim();
+    const price = $(
+      "#main > article > div.product-detail-view__content > div.product-detail-view__main > div.product-detail-view__side-bar > div > div.product-detail-info__info > div.product-detail-info__price > div > span > span > span > div > span"
+    )
+      .text()
+      .trim();
+    const image = $(
+      "#main > article > div.product-detail-view__content > div.product-detail-view__main > div.product-detail-view__main-content > section > div.product-detail-images__frame > ul > li:nth-child(1) > button > div > div > picture > img"
+    ).attr("src");
 
+    // Check if all fields were extracted successfully
     if (!name || !price || !image) {
-      throw new Error("Failed to extract product information");
+      throw new Error("Failed to extract complete product information");
     }
 
     return { name, price, image };
