@@ -1,6 +1,6 @@
-import { URL } from "url";
 import { PuppeteerCrawler } from "crawlee";
 
+// Function to clean URL (if needed)
 const cleanAmazonUrl = (url) => {
   const parsedUrl = new URL(url);
 
@@ -65,7 +65,7 @@ export const getProductData = async (req, res) => {
           });
 
           const name = await page.evaluate(() => {
-            const nameElement = document.getElementById("#productTitle");
+            const nameElement = document.getElementById("productTitle");
             return nameElement ? nameElement.innerText.trim() : null;
           });
 
@@ -77,7 +77,7 @@ export const getProductData = async (req, res) => {
           });
 
           const image = await page.evaluate(() => {
-            const imageElement = document.getElementById("#landingImage");
+            const imageElement = document.getElementById("landingImage");
             return imageElement ? imageElement.src : null;
           });
 
