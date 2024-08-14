@@ -21,19 +21,24 @@ export const getProductData = async (req, res) => {
     });
     const page = await browser.newPage();
 
-    // Navigate to the Amazon product page
-    await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 }); // Increase timeout to 60 seconds
+    // Disable CSS loading
+    await page.setRequestInterception(true);
+    page.on("request", (request) => {
+      if (["stylesheet", "font", "image"].includes(request.resourceType())) {
+        request.abort();
+      } else {
+        request.continue();
+      }
+    });
 
-    // Wait for the product title to be visible with an increased timeout
+    // Navigate to the Amazon product page
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 }); // Change waitUntil to "domcontentloaded"
+
+    // Wait for the product title to be visible
     await page.waitForSelector("#productTitle", {
       visible: true,
       timeout: 60000,
     });
-
-    // Wait for the product title and price to be loaded
-    await page.waitForFunction(
-      'document.querySelector("#productTitle") && document.querySelector(".a-price .a-offscreen")'
-    );
 
     // Take a screenshot for debugging
     await page.screenshot({ path: "amazon_product_page.png", fullPage: true });
