@@ -1,10 +1,4 @@
-import createZaraCrawler from "../scrapers/zaraScraper.js";
-
-// Domains to scrape
-const scrapers = {
-  "zara.com": createZaraCrawler,
-  // Add more scrapers here as needed
-};
+import { getScraperByDomain } from "../scrapers/scraperRegistry.js";
 
 export const scrapeProduct = async (url) => {
   try {
@@ -12,15 +6,14 @@ export const scrapeProduct = async (url) => {
     const domain = parsedUrl.hostname.replace(/^www\./, ""); // Normalize domain
     console.log(`Extracted Domain: ${domain}`); // Debugging output
 
-    const scraper = scrapers[domain];
+    const scraper = getScraperByDomain(domain);
 
     if (!scraper) {
-      throw new Error("No scraper available for this domain");
+      throw new Error(`No scraper available for domain: ${domain}`);
     }
 
-    const crawler = scraper();
-    const result = await crawler.run([{ url }]);
-    return result;
+    const productData = await scraper(url);
+    return productData;
   } catch (error) {
     console.error(`Scraping Error: ${error.message}`);
     throw error;
