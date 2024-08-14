@@ -10,9 +10,22 @@ const createZaraCrawler = () => {
     },
     requestHandler: async ({ page, request }) => {
       try {
+        // Set a realistic user agent and additional headers
         await page.setUserAgent(
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36"
         );
+        await page.setViewport({ width: 1366, height: 768 }); // Mimic a real device
+
+        // Additional headers to mimic real browser behavior
+        await page.setExtraHTTPHeaders({
+          "Accept-Language": "en-US,en;q=0.9",
+          "Accept-Encoding": "gzip, deflate, br",
+          Connection: "keep-alive",
+        });
+
+        // Set delay to avoid rate limiting
+        await page.waitForTimeout(Math.random() * 2000 + 1000); // Random delay between 1s and 3s
+
         await page.goto(request.url, { waitUntil: "domcontentloaded" });
 
         // Adjust selectors as needed based on Zara's page structure
