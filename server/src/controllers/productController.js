@@ -24,10 +24,12 @@ export const getProductData = async (req, res) => {
       },
       preNavigationHooks: [
         async ({ page }) => {
+          // Disable JavaScript and CSS
+          await page.setJavaScriptEnabled(false);
           await page.setRequestInterception(true);
           page.on("request", (interceptedRequest) => {
             if (
-              ["stylesheet", "font", "image", "media", "websocket"].includes(
+              ["stylesheet", "font", "image", "media", "script"].includes(
                 interceptedRequest.resourceType()
               )
             ) {
@@ -41,13 +43,8 @@ export const getProductData = async (req, res) => {
       async requestHandler({ page, request }) {
         try {
           await page.goto(request.url, {
-            waitUntil: "networkidle0",
+            waitUntil: "domcontentloaded", // Page load optimization
             timeout: 20000, // Reduced timeout for faster failover
-          });
-
-          await page.waitForSelector("#productTitle", {
-            visible: true,
-            timeout: 10000, // Reduced timeout for the selector
           });
 
           const name = await page.evaluate(() => {
