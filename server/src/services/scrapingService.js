@@ -1,4 +1,4 @@
-import createZaraCrawler from "../scrapers/zaraScraper";
+import createZaraCrawler from "../scrapers/zaraScraper.js";
 
 // Domains to scrape
 const scrapers = {
