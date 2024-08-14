@@ -1,18 +1,13 @@
 import { PuppeteerCrawler } from "crawlee";
 
-// Function to clean URL (if needed)
 const cleanAmazonUrl = (url) => {
   const parsedUrl = new URL(url);
-
-  // Remove unnecessary query parameters
   const allowedParams = ["dp", "qid", "sr", "keywords"];
   for (let param of parsedUrl.searchParams.keys()) {
     if (!allowedParams.includes(param)) {
       parsedUrl.searchParams.delete(param);
     }
   }
-
-  // Rebuild the URL
   return parsedUrl.origin + parsedUrl.pathname + parsedUrl.search;
 };
 
@@ -24,7 +19,6 @@ export const getProductData = async (req, res) => {
     return res.status(400).json({ error: "Invalid Amazon URL" });
   }
 
-  // Clean the URL
   url = cleanAmazonUrl(url);
   console.log("Cleaned URL:", url);
 
@@ -59,14 +53,20 @@ export const getProductData = async (req, res) => {
       async requestHandler({ page, request }) {
         try {
           console.log(`Navigating to URL: ${request.url}`);
+
+          // Set realistic user agent
+          await page.setUserAgent(
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36"
+          );
+
           await page.goto(request.url, {
-            waitUntil: "domcontentloaded", // Adjusted waiting strategy
-            timeout: 60000, // Increased timeout for slower pages
+            waitUntil: "domcontentloaded",
+            timeout: 60000,
           });
 
           // Debugging: Check page content
           const pageContent = await page.content();
-          console.log("Page Content:", pageContent.slice(0, 1000)); // Log first 1000 chars of content
+          console.log("Page Content:", pageContent.slice(0, 1000));
 
           // Debugging: Check if the elements exist
           const titleExists = await page.evaluate(
