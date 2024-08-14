@@ -22,10 +22,13 @@ export const getProductData = async (req, res) => {
     const page = await browser.newPage();
 
     // Navigate to the Amazon product page
-    await page.goto(url, { waitUntil: "networkidle2" });
+    await page.goto(url, { waitUntil: "networkidle2", timeout: 60000 }); // Increase timeout to 60 seconds
 
-    // Wait for the product title to be visible
-    await page.waitForSelector("#productTitle", { visible: true });
+    // Wait for the product title to be visible with an increased timeout
+    await page.waitForSelector("#productTitle", {
+      visible: true,
+      timeout: 60000,
+    });
 
     // Wait for the product title and price to be loaded
     await page.waitForFunction(
