@@ -1,4 +1,4 @@
-import { scrapeProduct } from "../services/scrapingService";
+import { scrapeProduct } from "../services/scrapingService.js";
 
 export const getProductData = async (req, res) => {
   const { url } = req.body;
@@ -8,10 +8,8 @@ export const getProductData = async (req, res) => {
     res.json(productData);
   } catch (error) {
     console.error(`Controller Error: ${error.message}`);
-    res
-      .status(500)
-      .json({
-        error: "An error occurred while extracting product information",
-      });
+    res.status(500).json({
+      error: "An error occurred while extracting product information",
+    });
   }
 };
