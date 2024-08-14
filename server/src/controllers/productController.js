@@ -5,7 +5,7 @@ const cleanAmazonUrl = (url) => {
   const parsedUrl = new URL(url);
 
   // Remove unnecessary query parameters
-  const allowedParams = ["dp", "qid", "sr", "keywords"]; // List the essential query params
+  const allowedParams = ["dp", "qid", "sr", "keywords"];
   for (let param of parsedUrl.searchParams.keys()) {
     if (!allowedParams.includes(param)) {
       parsedUrl.searchParams.delete(param);
@@ -63,9 +63,16 @@ export const getProductData = async (req, res) => {
         try {
           console.log(`Navigating to URL: ${request.url}`);
           await page.goto(request.url, {
-            waitUntil: "domcontentloaded",
-            timeout: 30000,
+            waitUntil: "networkidle0", // Ensures the page is fully loaded
+            timeout: 60000, // Extended timeout
           });
+
+          // Wait for selectors to appear
+          await page.waitForSelector("#productTitle", { timeout: 10000 });
+          await page.waitForSelector(".a-price .a-offscreen", {
+            timeout: 10000,
+          });
+          await page.waitForSelector("#landingImage", { timeout: 10000 });
 
           const name = await page.evaluate(() => {
             const nameElement = document.getElementById("productTitle");
