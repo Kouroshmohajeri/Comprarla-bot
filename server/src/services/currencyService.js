@@ -1,11 +1,10 @@
-import puppeteer from "puppeteer-core"; // Use puppeteer-core to specify the executablePath
+import puppeteer from "puppeteer"; // Import full puppeteer package
 
 // Function to fetch conversion rate from Euro to Toman
 export const fetchEuroToToman = async () => {
   try {
     const url = "https://www.tgju.org/profile/price_eur";
     const browser = await puppeteer.launch({
-      executablePath: "/usr/bin/chromium-browser", // Add the correct executable path
       headless: true,
       args: [
         "--no-sandbox",
@@ -22,7 +21,7 @@ export const fetchEuroToToman = async () => {
 
     await page.goto(url, { waitUntil: "domcontentloaded", timeout: 30000 });
 
-    // Take a screenshot for debugging
+    // Take a screenshot for debugging (optional)
     await page.screenshot({ path: "currency_debug_screenshot.png" });
 
     const rateText = await page.evaluate(() => {
