@@ -1,4 +1,4 @@
-import fetchMassimoDuttiProduct from "./massimoduttiScraper";
+import fetchMassimoDuttiProduct from "./massimoduttiScraper.js";
 
 // Available domains
 const scrapers = {
