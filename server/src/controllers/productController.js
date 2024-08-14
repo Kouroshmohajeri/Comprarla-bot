@@ -11,8 +11,13 @@ export const getProductData = async (req, res) => {
   try {
     // Launch Puppeteer
     const browser = await puppeteer.launch({
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      headless: false, // Change to false for debugging
+      headless: true,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--remote-debugging-port=9222", // Optional: for debugging
+      ],
     });
     const page = await browser.newPage();
 
