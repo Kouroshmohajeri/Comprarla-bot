@@ -1,4 +1,4 @@
-import { PuppeteerCrawler, Dataset } from "crawlee";
+import { PuppeteerCrawler } from "crawlee";
 
 export const getProductData = async (req, res) => {
   const { url } = req.body;
@@ -17,8 +17,8 @@ export const getProductData = async (req, res) => {
             "--no-sandbox",
             "--disable-setuid-sandbox",
             "--disable-dev-shm-usage",
-            "--disable-gpu", // New: Disable GPU
-            "--single-process", // New: Single process to reduce memory overhead
+            "--disable-gpu",
+            "--single-process",
           ],
         },
       },
@@ -39,36 +39,49 @@ export const getProductData = async (req, res) => {
         },
       ],
       async requestHandler({ page, request }) {
-        await page.goto(request.url, {
-          waitUntil: "networkidle2", // New: Faster page load trigger
-          timeout: 30000, // New: Reduced timeout
-        });
+        try {
+          await page.goto(request.url, {
+            waitUntil: "networkidle0",
+            timeout: 20000, // Reduced timeout for faster failover
+          });
 
-        await page.waitForSelector("#productTitle", {
-          visible: true,
-          timeout: 30000,
-        });
+          await page.waitForSelector("#productTitle", {
+            visible: true,
+            timeout: 10000, // Reduced timeout for the selector
+          });
 
-        const name = await page.evaluate(() => {
-          const nameElement = document.getElementById("productTitle");
-          return nameElement ? nameElement.innerText.trim() : null;
-        });
+          const name = await page.evaluate(() => {
+            const nameElement = document.getElementById("productTitle");
+            return nameElement ? nameElement.innerText.trim() : null;
+          });
 
-        const price = await page.evaluate(() => {
-          const priceElement = document.querySelector(".a-price .a-offscreen");
-          return priceElement ? priceElement.innerText.trim() : null;
-        });
+          const price = await page.evaluate(() => {
+            const priceElement = document.querySelector(
+              ".a-price .a-offscreen"
+            );
+            return priceElement ? priceElement.innerText.trim() : null;
+          });
 
-        const image = await page.evaluate(() => {
-          const imageElement = document.getElementById("landingImage");
-          return imageElement ? imageElement.src : null;
-        });
+          const image = await page.evaluate(() => {
+            const imageElement = document.getElementById("landingImage");
+            return imageElement ? imageElement.src : null;
+          });
 
-        if (!name || !price || !image) {
-          throw new Error("Failed to extract product information");
+          if (!name || !price || !image) {
+            throw new Error("Failed to extract product information");
+          }
+
+          res.json({ name, price, image });
+        } catch (error) {
+          console.error(
+            `Error extracting product information: ${error.message}`
+          );
+          res
+            .status(500)
+            .json({
+              error: "An error occurred while extracting product information",
+            });
         }
-
-        res.json({ name, price, image });
       },
       failedRequestHandler({ request, error }) {
         console.error(`Request failed: ${request.url} - ${error.message}`);
@@ -80,7 +93,7 @@ export const getProductData = async (req, res) => {
 
     await crawler.run([{ url }]);
   } catch (error) {
-    console.error(error);
+    console.error(`Crawler error: ${error.message}`);
     res.status(500).json({
       error: "An error occurred while extracting product information",
     });
