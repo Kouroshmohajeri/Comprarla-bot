@@ -3,7 +3,7 @@ import puppeteer from "puppeteer";
 // Controller function to handle product data extraction
 export const getProductData = async (req, res) => {
   const { url } = req.body;
-  console.log(url);
+  console.log("url is:", url);
   if (!url || !url.includes("amazon")) {
     return res.status(400).json({ error: "Invalid Amazon URL" });
   }
