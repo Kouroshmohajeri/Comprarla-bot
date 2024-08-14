@@ -24,7 +24,7 @@ export const getProductData = async (req, res) => {
       },
       preNavigationHooks: [
         async ({ page }) => {
-          await page.setJavaScriptEnabled(true); // Re-enable JavaScript
+          await page.setJavaScriptEnabled(true);
           await page.setRequestInterception(true);
           page.on("request", (interceptedRequest) => {
             if (
@@ -41,9 +41,10 @@ export const getProductData = async (req, res) => {
       ],
       async requestHandler({ page, request }) {
         try {
+          console.log(`Navigating to URL: ${request.url}`);
           await page.goto(request.url, {
-            waitUntil: "domcontentloaded", // Wait for DOM content to load
-            timeout: 30000, // Increase timeout
+            waitUntil: "domcontentloaded",
+            timeout: 30000,
           });
 
           const name = await page.evaluate(() => {
@@ -85,7 +86,9 @@ export const getProductData = async (req, res) => {
       },
     });
 
+    console.log(`Starting crawler for URL: ${url}`);
     await crawler.run([{ url }]);
+    console.log("Crawler run completed");
   } catch (error) {
     console.error(`Crawler error: ${error.message}`);
     res.status(500).json({
