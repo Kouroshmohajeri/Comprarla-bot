@@ -2,9 +2,9 @@ import puppeteer from "puppeteer";
 
 // Controller function to handle product data extraction
 export const getProductData = async (req, res) => {
-  const { amazonUrl } = req.body;
-  console.log(amazonUrl);
-  if (!amazonUrl || !amazonUrl.includes("amazon")) {
+  const { url } = req.body;
+  console.log(url);
+  if (!url || !url.includes("amazon")) {
     return res.status(400).json({ error: "Invalid Amazon URL" });
   }
 
@@ -17,7 +17,7 @@ export const getProductData = async (req, res) => {
     const page = await browser.newPage();
 
     // Navigate to the Amazon product page
-    await page.goto(amazonUrl, { waitUntil: "networkidle2" });
+    await page.goto(url, { waitUntil: "networkidle2" });
 
     // Extract the product name
     const name = await page.evaluate(() => {
