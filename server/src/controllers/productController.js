@@ -54,29 +54,24 @@ export const getProductData = async (req, res) => {
         try {
           console.log(`Navigating to URL: ${request.url}`);
 
-          // Set realistic user agent
           await page.setUserAgent(
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36"
           );
+          await page.setViewport({ width: 1366, height: 768 });
+          await page.setExtraHTTPHeaders({
+            "Accept-Language": "en-US,en;q=0.9",
+            "Accept-Encoding": "gzip, deflate, br",
+            Connection: "keep-alive",
+            "Upgrade-Insecure-Requests": "1",
+          });
 
           await page.goto(request.url, {
             waitUntil: "domcontentloaded",
             timeout: 60000,
           });
 
-          // Debugging: Check page content
-          const pageContent = await page.content();
-          console.log("Page Content:", pageContent.slice(0, 1000));
-
-          // Debugging: Check if the elements exist
-          const titleExists = await page.evaluate(
-            () => !!document.querySelector("#productTitle")
-          );
-          const imageExists = await page.evaluate(
-            () => !!document.querySelector("#landingImage")
-          );
-          console.log("Title Exists:", titleExists);
-          console.log("Image Exists:", imageExists);
+          // Wait for essential elements
+          await page.waitForSelector("#productTitle");
 
           const name = await page.evaluate(() => {
             const nameElement = document.querySelector("#productTitle");
