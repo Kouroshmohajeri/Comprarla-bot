@@ -13,9 +13,6 @@ export const getProductData = async (req, res) => {
     // Create a new instance of PuppeteerCrawler with limited concurrency
     const crawler = new PuppeteerCrawler({
       maxConcurrency: 1, // Limit to one request at a time to reduce memory usage
-      autoscaledPoolOptions: {
-        maxMemoryMbytes: 3000, // Limit memory usage
-      },
       launchContext: {
         launchOptions: {
           headless: true,
