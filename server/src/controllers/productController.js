@@ -1,17 +1,15 @@
 import { PuppeteerCrawler, Dataset } from "crawlee";
 
-// Controller function to handle product data extraction
 export const getProductData = async (req, res) => {
   const { url } = req.body;
   console.log("url is:", url);
+
   if (!url || !url.includes("amazon")) {
     return res.status(400).json({ error: "Invalid Amazon URL" });
   }
 
   try {
-    // Create a new instance of PuppeteerCrawler
     const crawler = new PuppeteerCrawler({
-      // Configure Puppeteer launch options
       launchContext: {
         launchOptions: {
           headless: true,
@@ -19,16 +17,17 @@ export const getProductData = async (req, res) => {
             "--no-sandbox",
             "--disable-setuid-sandbox",
             "--disable-dev-shm-usage",
+            "--disable-gpu", // New: Disable GPU
+            "--single-process", // New: Single process to reduce memory overhead
           ],
         },
       },
-      // Request interception to block CSS, fonts, and images
       preNavigationHooks: [
-        async ({ page, request }) => {
+        async ({ page }) => {
           await page.setRequestInterception(true);
           page.on("request", (interceptedRequest) => {
             if (
-              ["stylesheet", "font", "image"].includes(
+              ["stylesheet", "font", "image", "media", "websocket"].includes(
                 interceptedRequest.resourceType()
               )
             ) {
@@ -39,39 +38,27 @@ export const getProductData = async (req, res) => {
           });
         },
       ],
-      // Handle the request
       async requestHandler({ page, request }) {
-        // Navigate to the Amazon product page
         await page.goto(request.url, {
-          waitUntil: "domcontentloaded",
-          timeout: 60000,
+          waitUntil: "networkidle2", // New: Faster page load trigger
+          timeout: 30000, // New: Reduced timeout
         });
 
-        // Wait for the product title to be visible
         await page.waitForSelector("#productTitle", {
           visible: true,
-          timeout: 60000,
+          timeout: 30000,
         });
 
-        // Take a screenshot for debugging (optional)
-        await page.screenshot({
-          path: "amazon_product_page.png",
-          fullPage: true,
-        });
-
-        // Extract the product name
         const name = await page.evaluate(() => {
           const nameElement = document.getElementById("productTitle");
           return nameElement ? nameElement.innerText.trim() : null;
         });
 
-        // Extract the product price
         const price = await page.evaluate(() => {
           const priceElement = document.querySelector(".a-price .a-offscreen");
           return priceElement ? priceElement.innerText.trim() : null;
         });
 
-        // Extract the first product image
         const image = await page.evaluate(() => {
           const imageElement = document.getElementById("landingImage");
           return imageElement ? imageElement.src : null;
@@ -81,13 +68,8 @@ export const getProductData = async (req, res) => {
           throw new Error("Failed to extract product information");
         }
 
-        // Store the extracted data
-        await Dataset.pushData({ name, price, image });
-
-        // Send the extracted information as JSON
         res.json({ name, price, image });
       },
-      // Handle any errors
       failedRequestHandler({ request, error }) {
         console.error(`Request failed: ${request.url} - ${error.message}`);
         res.status(500).json({
@@ -96,7 +78,6 @@ export const getProductData = async (req, res) => {
       },
     });
 
-    // Run the crawler with the provided URL
     await crawler.run([{ url }]);
   } catch (error) {
     console.error(error);
