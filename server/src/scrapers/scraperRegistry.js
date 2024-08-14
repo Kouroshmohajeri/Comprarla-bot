@@ -1,8 +1,8 @@
-import fetchZaraProduct from "./zaraScraper.js";
+import fetchMassimoDuttiProduct from "./massimoduttiScraper";
 
 // Available domains
 const scrapers = {
-  zara: fetchZaraProduct,
+  "massimodutti.com": fetchMassimoDuttiProduct,
 };
 
 export const getScraperByDomain = (domain) => {
