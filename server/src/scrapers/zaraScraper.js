@@ -15,7 +15,7 @@ const createZaraCrawler = () => {
         );
         await page.goto(request.url, { waitUntil: "domcontentloaded" });
 
-        // Zara's product pages have different structures, you may need to inspect the page for accurate selectors.
+        // Adjust selectors as needed based on Zara's page structure
         const name = await page.evaluate(() => {
           const nameElement = document.querySelector("h1.product-detail-title");
           return nameElement ? nameElement.innerText.trim() : null;
