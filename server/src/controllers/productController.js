@@ -60,12 +60,26 @@ export const getProductData = async (req, res) => {
         try {
           console.log(`Navigating to URL: ${request.url}`);
           await page.goto(request.url, {
-            waitUntil: "networkidle2", // Wait for the page to be fully loaded
+            waitUntil: "domcontentloaded", // Adjusted waiting strategy
             timeout: 60000, // Increased timeout for slower pages
           });
 
+          // Debugging: Check page content
+          const pageContent = await page.content();
+          console.log("Page Content:", pageContent.slice(0, 1000)); // Log first 1000 chars of content
+
+          // Debugging: Check if the elements exist
+          const titleExists = await page.evaluate(
+            () => !!document.querySelector("#productTitle")
+          );
+          const imageExists = await page.evaluate(
+            () => !!document.querySelector("#landingImage")
+          );
+          console.log("Title Exists:", titleExists);
+          console.log("Image Exists:", imageExists);
+
           const name = await page.evaluate(() => {
-            const nameElement = document.getElementById("productTitle");
+            const nameElement = document.querySelector("#productTitle");
             return nameElement ? nameElement.innerText.trim() : null;
           });
 
@@ -77,7 +91,7 @@ export const getProductData = async (req, res) => {
           });
 
           const image = await page.evaluate(() => {
-            const imageElement = document.getElementById("landingImage");
+            const imageElement = document.querySelector("#landingImage");
             return imageElement ? imageElement.src : null;
           });
 
