@@ -24,12 +24,11 @@ export const getProductData = async (req, res) => {
       },
       preNavigationHooks: [
         async ({ page }) => {
-          // Disable JavaScript and CSS
-          await page.setJavaScriptEnabled(false);
+          await page.setJavaScriptEnabled(true); // Re-enable JavaScript
           await page.setRequestInterception(true);
           page.on("request", (interceptedRequest) => {
             if (
-              ["stylesheet", "font", "image", "media", "script"].includes(
+              ["stylesheet", "font", "image", "media"].includes(
                 interceptedRequest.resourceType()
               )
             ) {
@@ -43,8 +42,8 @@ export const getProductData = async (req, res) => {
       async requestHandler({ page, request }) {
         try {
           await page.goto(request.url, {
-            waitUntil: "domcontentloaded", // Page load optimization
-            timeout: 20000, // Reduced timeout for faster failover
+            waitUntil: "domcontentloaded", // Wait for DOM content to load
+            timeout: 30000, // Increase timeout
           });
 
           const name = await page.evaluate(() => {
@@ -73,11 +72,9 @@ export const getProductData = async (req, res) => {
           console.error(
             `Error extracting product information: ${error.message}`
           );
-          res
-            .status(500)
-            .json({
-              error: "An error occurred while extracting product information",
-            });
+          res.status(500).json({
+            error: "An error occurred while extracting product information",
+          });
         }
       },
       failedRequestHandler({ request, error }) {
