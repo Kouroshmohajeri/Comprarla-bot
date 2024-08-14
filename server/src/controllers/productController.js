@@ -1,84 +1,53 @@
-import puppeteer from "puppeteer";
+import { PuppeteerCrawler, Dataset } from "crawlee";
+import { launchPuppeteer } from "crawlee";
 
-// Controller function to handle product data extraction
-export const getProductData = async (req, res) => {
-  const { url } = req.body;
-  console.log("url is:", url);
-  if (!url || !url.includes("amazon")) {
-    return res.status(400).json({ error: "Invalid Amazon URL" });
-  }
-
-  try {
-    // Launch Puppeteer
-    const browser = await puppeteer.launch({
+// Create a new instance of PuppeteerCrawler
+const crawler = new PuppeteerCrawler({
+  // Launch Puppeteer with custom settings
+  launchContext: {
+    launchOptions: {
       headless: true,
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
         "--disable-dev-shm-usage",
-        "--remote-debugging-port=9222", // Optional: for debugging
       ],
-    });
-    const page = await browser.newPage();
+    },
+  },
+  // Handle the pages that are being crawled
+  async requestHandler({ page, request, enqueueLinks, log }) {
+    log.info(`Processing: ${request.url}`);
 
-    // Disable CSS loading
-    await page.setRequestInterception(true);
-    page.on("request", (request) => {
-      if (["stylesheet", "font", "image"].includes(request.resourceType())) {
-        request.abort();
-      } else {
-        request.continue();
-      }
-    });
+    // Wait for the product title to appear
+    await page.waitForSelector("#productTitle", { timeout: 60000 });
 
-    // Navigate to the Amazon product page
-    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 }); // Change waitUntil to "domcontentloaded"
-
-    // Wait for the product title to be visible
-    await page.waitForSelector("#productTitle", {
-      visible: true,
-      timeout: 60000,
-    });
-
-    // Take a screenshot for debugging
-    await page.screenshot({ path: "amazon_product_page.png", fullPage: true });
-
-    // Save the HTML content to inspect it
-    const content = await page.content();
-    console.log(content);
-
-    // Extract the product name
+    // Extract the data you need
     const name = await page.evaluate(() => {
       const nameElement = document.getElementById("productTitle");
       return nameElement ? nameElement.innerText.trim() : null;
     });
 
-    // Extract the product price
     const price = await page.evaluate(() => {
       const priceElement = document.querySelector(".a-price .a-offscreen");
       return priceElement ? priceElement.innerText.trim() : null;
     });
 
-    // Extract the first product image
     const image = await page.evaluate(() => {
       const imageElement = document.getElementById("landingImage");
       return imageElement ? imageElement.src : null;
     });
 
-    await browser.close();
+    // Store the extracted data
+    await Dataset.pushData({ name, price, image });
+  },
 
-    if (!name || !price || !image) {
-      return res
-        .status(500)
-        .json({ error: "Failed to extract product information" });
-    }
+  // Handle any errors
+  failedRequestHandler({ request }) {
+    log.error(`Request ${request.url} failed too many times.`);
+  },
+});
 
-    // Send the extracted information as JSON
-    res.json({ name, price, image });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: "An error occurred while extracting product information",
-    });
-  }
-};
+// Add the initial URL to the queue
+await crawler.run([
+  "https://www.amazon.com/LEVOIT-Purifier-Home-Allergies-Pets/dp/B07VVK39F7?ref=dlx_deals_dg_dcl_B07VVK39F7_dt_sl14_d5&th=1",
+]);
