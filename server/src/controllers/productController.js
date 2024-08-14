@@ -47,11 +47,8 @@ export const getProductData = async (req, res) => {
           await page.setJavaScriptEnabled(true);
           await page.setRequestInterception(true);
           page.on("request", (interceptedRequest) => {
-            if (
-              ["stylesheet", "font", "image", "media"].includes(
-                interceptedRequest.resourceType()
-              )
-            ) {
+            const type = interceptedRequest.resourceType();
+            if (["stylesheet", "font", "image", "media"].includes(type)) {
               interceptedRequest.abort();
             } else {
               interceptedRequest.continue();
@@ -63,16 +60,9 @@ export const getProductData = async (req, res) => {
         try {
           console.log(`Navigating to URL: ${request.url}`);
           await page.goto(request.url, {
-            waitUntil: "networkidle0", // Ensures the page is fully loaded
-            timeout: 60000, // Extended timeout
+            waitUntil: "networkidle2", // Wait for the page to be fully loaded
+            timeout: 60000, // Increased timeout for slower pages
           });
-
-          // Wait for selectors to appear
-          await page.waitForSelector("#productTitle", { timeout: 10000 });
-          await page.waitForSelector(".a-price .a-offscreen", {
-            timeout: 10000,
-          });
-          await page.waitForSelector("#landingImage", { timeout: 10000 });
 
           const name = await page.evaluate(() => {
             const nameElement = document.getElementById("productTitle");
