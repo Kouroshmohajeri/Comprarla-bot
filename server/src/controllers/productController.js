@@ -12,12 +12,27 @@ export const getProductData = async (req, res) => {
     // Launch Puppeteer
     const browser = await puppeteer.launch({
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      headless: true,
+      headless: false, // Change to false for debugging
     });
     const page = await browser.newPage();
 
     // Navigate to the Amazon product page
     await page.goto(url, { waitUntil: "networkidle2" });
+
+    // Wait for the product title to be visible
+    await page.waitForSelector("#productTitle", { visible: true });
+
+    // Wait for the product title and price to be loaded
+    await page.waitForFunction(
+      'document.querySelector("#productTitle") && document.querySelector(".a-price .a-offscreen")'
+    );
+
+    // Take a screenshot for debugging
+    await page.screenshot({ path: "amazon_product_page.png", fullPage: true });
+
+    // Save the HTML content to inspect it
+    const content = await page.content();
+    console.log(content);
 
     // Extract the product name
     const name = await page.evaluate(() => {
@@ -48,7 +63,7 @@ export const getProductData = async (req, res) => {
     // Send the extracted information as JSON
     res.json({ name, price, image });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({
       error: "An error occurred while extracting product information",
     });
