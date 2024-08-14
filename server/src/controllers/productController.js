@@ -48,7 +48,7 @@ export const getProductData = async (req, res) => {
     // Send the extracted information as JSON
     res.json({ name, price, image });
   } catch (error) {
-    console.error(error);
+    console.log(error);
     res.status(500).json({
       error: "An error occurred while extracting product information",
     });
