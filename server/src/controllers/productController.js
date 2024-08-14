@@ -1,4 +1,5 @@
 import { URL } from "url";
+import { PuppeteerCrawler } from "crawlee";
 
 const cleanAmazonUrl = (url) => {
   const parsedUrl = new URL(url);
