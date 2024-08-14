@@ -1,12 +1,31 @@
-import { PuppeteerCrawler } from "crawlee";
+import { URL } from "url";
+
+const cleanAmazonUrl = (url) => {
+  const parsedUrl = new URL(url);
+
+  // Remove unnecessary query parameters
+  const allowedParams = ["dp", "qid", "sr", "keywords"]; // List the essential query params
+  for (let param of parsedUrl.searchParams.keys()) {
+    if (!allowedParams.includes(param)) {
+      parsedUrl.searchParams.delete(param);
+    }
+  }
+
+  // Rebuild the URL
+  return parsedUrl.origin + parsedUrl.pathname + parsedUrl.search;
+};
 
 export const getProductData = async (req, res) => {
-  const { url } = req.body;
-  console.log("url is:", url);
+  let { url } = req.body;
+  console.log("Original URL:", url);
 
   if (!url || !url.includes("amazon")) {
     return res.status(400).json({ error: "Invalid Amazon URL" });
   }
+
+  // Clean the URL
+  url = cleanAmazonUrl(url);
+  console.log("Cleaned URL:", url);
 
   try {
     const crawler = new PuppeteerCrawler({
