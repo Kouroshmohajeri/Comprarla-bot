@@ -6,7 +6,7 @@
     display: flex;
     flex-direction: column; /* Stack items vertically */
     align-items: center;
-    width: 90%; /* Adjust width as needed */
+    width: 100%; /* Adjust width as needed */
     padding: 0.5rem;
     background: rgba(255, 255, 255, 0.1); /* Transparent white background */
     backdrop-filter: blur(10px); /* Blurry background */
