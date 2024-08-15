@@ -1,26 +1,23 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { fetchProductData } from "../api/products/actions.js";
 import styles from "./page.module.css";
+import Header from "@/components/header/header.js"; // Use PascalCase for the import
 
 export default function Home() {
   const [url, setUrl] = useState("");
   const [product, setProduct] = useState(null);
   const [error, setError] = useState("");
-  const [debug, setDebug] = useState("");
+
   useEffect(() => {
-    // Check if Telegram Web App is loaded and accessible
     if (
       typeof window !== "undefined" &&
       window.Telegram &&
       window.Telegram.WebApp
     ) {
       const webApp = window.Telegram.WebApp;
-
-      // Example usage: set the background color of the header
       webApp.ready();
-      document.body.style.backgroundColor = "#f0f0f0"; // Example modification
+      document.body.style.backgroundColor = "#f0f0f0";
     }
   }, []);
 
@@ -31,7 +28,7 @@ export default function Home() {
       setProduct(data);
     } catch (error) {
       console.error("Error fetching product data:", error);
-      setError("Error fe");
+      setError("Error fetching product data");
     }
   };
 
@@ -49,6 +46,7 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
+      <Header /> {/* Render the Header component here */}
       <input
         type="text"
         value={url}
@@ -59,7 +57,6 @@ export default function Home() {
       <button onClick={handleFetchProductData} className={styles.button}>
         Fetch Product Data
       </button>
-
       {error && <p className={styles.error}>{error}</p>}
       {url && !product ? <p>Loading...</p> : null}
       {product && (
