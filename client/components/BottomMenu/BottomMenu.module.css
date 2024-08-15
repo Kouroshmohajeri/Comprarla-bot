@@ -1,16 +1,17 @@
 .bottomMenu {
     position: fixed;
-    bottom: 0; /* Stick to the bottom of the page */
-    left: 0; /* Align to the left edge */
-    width: 100%; /* Full width */
+    bottom: 0; /* Fixed to the bottom with no space */
+    left: 50%;
+    transform: translateX(-50%); /* Center horizontally */
     display: flex;
     flex-direction: column; /* Stack items vertically */
     align-items: center;
+    width: 100%; /* Full width */
     padding: 0.5rem;
     background: rgba(255, 255, 255, 0.1); /* Transparent white background */
     backdrop-filter: blur(10px); /* Blurry background */
-    border-radius: 15px; /* Rounded borders */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Shadow for visibility */
+    border-radius: 1rem; /* Rounded borders */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Optional shadow */
     z-index: 1000; /* Ensure it is above other content */
   }
   
@@ -18,20 +19,31 @@
     display: flex;
     justify-content: space-around;
     width: 100%;
-    padding: 0 1rem; /* Add padding on the sides */
   }
   
   .menuItem {
     color: #fff; /* Icon color */
     text-decoration: none; /* Remove underline from links */
+    position: relative; /* Position relative to use the indicator */
   }
   
   .icon {
-    font-size: 2rem; /* Adjust the size of the icons */
+    font-size: 2rem; /* Icon size */
+  }
+  
+  .indicator {
+    position: absolute;
+    bottom: -5px; /* Distance from the bottom of the menu item */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%; /* Adjust width as needed */
+    height: 2px; /* Height of the line */
+    background-color: #fff; /* Color of the line */
+    border-radius: 2px; /* Rounded ends */
   }
   
   .divider {
-    width: 80%; /* Width of the divider */
+    width: 50%;
     border: 0;
     border-top: 1px solid rgba(255, 255, 255, 0.3); /* Light white divider */
     margin: 0.5rem 0; /* Space above and below the divider */
@@ -41,6 +53,5 @@
     color: #fff; /* Text color */
     font-size: 0.75rem; /* Font size for the credit text */
     text-align: center;
-    margin-top: 0.5rem; /* Space between divider and footer text */
   }
   
