@@ -1,0 +1,43 @@
+.container {
+    display: flex;
+    flex-wrap: wrap; /* Allows items to wrap into rows */
+    gap: 20px; /* Spacing between items */
+    justify-content: center; /* Center the items horizontally */
+    padding: 20px;
+    padding-bottom: 30%;
+  }
+  
+  .brandItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 150px; /* Adjust the width of the square */
+    text-decoration: none;
+    color: #000; /* Text color */
+    background: rgba(255, 255, 255, 0.2); /* Glassmorphism effect */
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    padding: 10px;
+  }
+  
+  .logoWrapper {
+    width: 100px; /* Adjust size of logo container */
+    height: 100px; /* Adjust size of logo container */
+    overflow: hidden; /* Hide any overflow of the image */
+    border-radius: 10px; /* Rounded corners for the logo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px; /* Space between logo and name */
+  }
+  
+  .logo {
+    object-fit:contain; /* Ensure the image covers the container without distortion */
+  }
+  
+  .brandName {
+    font-size: 14px; /* Adjust font size */
+    text-align: center; /* Center the text */
+    color: #fff; /* Text color */
+  }
+  

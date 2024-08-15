@@ -3,59 +3,69 @@ import styles from "./BottomMenu.module.css";
 import EuroIcon from "@mui/icons-material/Euro";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
-import ShowChartIcon from "@mui/icons-material/ShowChart";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 
 const BottomMenu = ({ onPageChange }) => {
-  const [selected, setSelected] = useState("converter");
+  const [selected, setSelected] = useState(0); // Start with index 0 (converter)
 
-  const handleClick = (page) => {
-    setSelected(page);
-    onPageChange(page);
+  const handleClick = (index) => {
+    setSelected(index);
+    onPageChange(index);
   };
 
   return (
     <div className={styles.bottomMenu}>
       <div className={styles.menuItems}>
         <a
-          href="#euro"
-          className={styles.menuItem}
-          onClick={() => handleClick("converter")}
+          href="#converter"
+          className={`${styles.menuItem} ${
+            selected === 0 ? styles.active : ""
+          }`}
+          onClick={() => handleClick(0)}
         >
           <EuroIcon className={styles.icon} />
-          {selected === "converter" && <div className={styles.indicator} />}
+          {selected === 0 && <div className={styles.indicator} />}
         </a>
         <a
-          href="#store"
-          className={styles.menuItem}
-          onClick={() => handleClick("store")}
+          href="#brands"
+          className={`${styles.menuItem} ${
+            selected === 1 ? styles.active : ""
+          }`}
+          onClick={() => handleClick(1)}
         >
           <StorefrontIcon className={styles.icon} />
-          {selected === "store" && <div className={styles.indicator} />}
+          {selected === 1 && <div className={styles.indicator} />}
         </a>
         <a
-          href="#list"
-          className={styles.menuItem}
-          onClick={() => handleClick("list")}
+          href="#profile"
+          className={`${styles.menuItem} ${
+            selected === 2 ? styles.active : ""
+          }`}
+          onClick={() => handleClick(3)}
+        >
+          <PermIdentityIcon className={styles.icon} />
+          {selected === 2 && <div className={styles.indicator} />}
+        </a>
+        <a
+          href="#tasks"
+          className={`${styles.menuItem} ${
+            selected === 3 ? styles.active : ""
+          }`}
+          onClick={() => handleClick(2)}
         >
           <FormatListBulletedIcon className={styles.icon} />
-          {selected === "list" && <div className={styles.indicator} />}
+          {selected === 3 && <div className={styles.indicator} />}
         </a>
         <a
-          href="#chart"
-          className={styles.menuItem}
-          onClick={() => handleClick("chart")}
-        >
-          <ShowChartIcon className={styles.icon} />
-          {selected === "chart" && <div className={styles.indicator} />}
-        </a>
-        <a
-          href="#offer"
-          className={styles.menuItem}
-          onClick={() => handleClick("offer")}
+          href="#suggested"
+          className={`${styles.menuItem} ${
+            selected === 4 ? styles.active : ""
+          }`}
+          onClick={() => handleClick(4)}
         >
           <LocalOfferIcon className={styles.icon} />
-          {selected === "offer" && <div className={styles.indicator} />}
+          {selected === 4 && <div className={styles.indicator} />}
         </a>
       </div>
       <hr className={styles.divider} />
