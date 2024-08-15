@@ -2,7 +2,8 @@
 import { useEffect, useState } from "react";
 import { fetchProductData } from "../api/products/actions.js";
 import styles from "./page.module.css";
-import Header from "@/components/header/header.js"; // Use PascalCase for the import
+import Header from "@/components/header/header.js";
+import BottomMenu from "@/components/BottomMenu/BottomMenu.js"; // Import the BottomMenu component
 
 export default function Home() {
   const [url, setUrl] = useState("");
@@ -79,6 +80,7 @@ export default function Home() {
           </p>
         </div>
       )}
+      <BottomMenu /> {/* Render the BottomMenu component here */}
     </div>
   );
 }

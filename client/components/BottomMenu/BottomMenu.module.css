@@ -1,0 +1,45 @@
+.bottomMenu {
+    position: fixed;
+    bottom: 0%; /* Distance from the bottom of the page */
+    left: 50%;
+    transform: translateX(-50%); /* Center horizontally */
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center;
+    width: 90%; /* Adjust width as needed */
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.1); /* Transparent white background */
+    backdrop-filter: blur(10px); /* Blurry background */
+    border-radius: 1rem; /* Rounded borders */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Optional: shadow for better visibility */
+    z-index: 1000; /* Ensure it is above other content */
+  }
+  
+  .menuItems {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+  }
+  
+  .menuItem {
+    color: #fff; /* Icon color */
+    text-decoration: none; /* Remove underline from links */
+  }
+  
+  .icon {
+    font-size: 2rem; /* Adjust the size of the icons */
+  }
+  
+  .divider {
+    width: 50%;
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.3); /* Light white divider */
+    margin: 0.5rem 0; /* Space above and below the divider */
+  }
+  
+  .credit {
+    color: #fff; /* Text color */
+    font-size: 0.75rem; /* Font size for the credit text */
+    text-align: center;
+  }
+  
