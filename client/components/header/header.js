@@ -1,13 +1,15 @@
 import React from "react";
 import styles from "./header.module.css";
+import Image from "next/image";
 
 const Header = () => {
   return (
     <div className={styles.header}>
-      <img
-        src="/logo/comprarlaLogo.svg" // Path to the SVG file
+      <Image
+        src="/logo/comprarlaLogo.svg"
         alt="Comprarla Logo"
-        className={styles.logo}
+        width={300}
+        height={100}
       />
     </div>
   );
