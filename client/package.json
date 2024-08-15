@@ -12,12 +12,15 @@
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^5.16.7",
+    "@tsparticles/all": "^3.5.0",
+    "@tsparticles/react": "^3.0.0",
     "axios": "^1.7.3",
     "dotenv": "^16.4.5",
     "mui": "^0.0.1",
     "next": "14.2.5",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-tsparticles": "^2.12.2"
   },
   "devDependencies": {
     "eslint": "^8",
