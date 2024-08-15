@@ -1,17 +1,16 @@
 .bottomMenu {
     position: fixed;
-    bottom: 0%; /* Distance from the bottom of the page */
-    left: 50%;
-    transform: translateX(-50%); /* Center horizontally */
+    bottom: 0; /* Stick to the bottom of the page */
+    left: 0; /* Align to the left edge */
+    width: 100%; /* Full width */
     display: flex;
     flex-direction: column; /* Stack items vertically */
     align-items: center;
-    width: 100%; /* Adjust width as needed */
     padding: 0.5rem;
     background: rgba(255, 255, 255, 0.1); /* Transparent white background */
     backdrop-filter: blur(10px); /* Blurry background */
-    border-radius: 1rem; /* Rounded borders */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Optional: shadow for better visibility */
+    border-radius: 15px; /* Rounded borders */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Shadow for visibility */
     z-index: 1000; /* Ensure it is above other content */
   }
   
@@ -19,6 +18,7 @@
     display: flex;
     justify-content: space-around;
     width: 100%;
+    padding: 0 1rem; /* Add padding on the sides */
   }
   
   .menuItem {
@@ -31,15 +31,16 @@
   }
   
   .divider {
-    width: 50%;
+    width: 80%; /* Width of the divider */
     border: 0;
     border-top: 1px solid rgba(255, 255, 255, 0.3); /* Light white divider */
     margin: 0.5rem 0; /* Space above and below the divider */
   }
   
-  .credit {
+  .footer {
     color: #fff; /* Text color */
     font-size: 0.75rem; /* Font size for the credit text */
     text-align: center;
+    margin-top: 0.5rem; /* Space between divider and footer text */
   }
   

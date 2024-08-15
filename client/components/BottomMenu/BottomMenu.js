@@ -6,28 +6,48 @@ import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 
-const BottomMenu = () => {
+const BottomMenu = ({ onPageChange }) => {
   return (
     <div className={styles.bottomMenu}>
       <div className={styles.menuItems}>
-        <a href="#euro" className={styles.menuItem}>
+        <a
+          href="#euro"
+          className={styles.menuItem}
+          onClick={() => onPageChange("converter")}
+        >
           <EuroIcon className={styles.icon} />
         </a>
-        <a href="#store" className={styles.menuItem}>
+        <a
+          href="#store"
+          className={styles.menuItem}
+          onClick={() => onPageChange("store")}
+        >
           <StorefrontIcon className={styles.icon} />
         </a>
-        <a href="#list" className={styles.menuItem}>
+        <a
+          href="#list"
+          className={styles.menuItem}
+          onClick={() => onPageChange("list")}
+        >
           <FormatListBulletedIcon className={styles.icon} />
         </a>
-        <a href="#chart" className={styles.menuItem}>
+        <a
+          href="#chart"
+          className={styles.menuItem}
+          onClick={() => onPageChange("chart")}
+        >
           <ShowChartIcon className={styles.icon} />
         </a>
-        <a href="#offer" className={styles.menuItem}>
+        <a
+          href="#offer"
+          className={styles.menuItem}
+          onClick={() => onPageChange("offer")}
+        >
           <LocalOfferIcon className={styles.icon} />
         </a>
       </div>
       <hr className={styles.divider} />
-      <div className={styles.credit}>Designed by Web Gallery</div>
+      <p className={styles.footer}>Designed by Kourosh Mohajeri</p>
     </div>
   );
 };
