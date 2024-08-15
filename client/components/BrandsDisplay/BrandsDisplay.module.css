@@ -7,6 +7,18 @@
     padding-bottom: 30%;
   }
   
+  /* Grid Layout for larger screens */
+  .brandsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Create a flexible grid with a minimum width */
+    gap: 20px; /* Spacing between items */
+    justify-content: center; /* Center the items horizontally */
+    padding: 20px;
+    max-height: 80vh; /* Limit height of the grid */
+    overflow-y: auto; /* Enable vertical scrolling */
+  }
+  
+  /* Styles for each brand item */
   .brandItem {
     display: flex;
     flex-direction: column;
@@ -20,6 +32,7 @@
     padding: 10px;
   }
   
+  /* Styles for the logo wrapper */
   .logoWrapper {
     width: 100px; /* Adjust size of logo container */
     height: 100px; /* Adjust size of logo container */
@@ -31,13 +44,22 @@
     margin-bottom: 10px; /* Space between logo and name */
   }
   
+  /* Styles for the logo image */
   .logo {
-    object-fit:contain; /* Ensure the image covers the container without distortion */
+    object-fit: contain; /* Ensure the image covers the container without distortion */
   }
   
+  /* Styles for the brand name */
   .brandName {
     font-size: 14px; /* Adjust font size */
     text-align: center; /* Center the text */
     color: #fff; /* Text color */
+  }
+  
+  /* Media Query for Mobile Devices */
+  @media (max-width: 600px) {
+    .brandsGrid {
+      grid-template-columns: repeat(2, 1fr); /* 2 items per row on small screens */
+    }
   }
   
