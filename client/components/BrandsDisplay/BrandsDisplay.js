@@ -3,9 +3,10 @@ import Image from "next/image";
 import styles from "./BrandsDisplay.module.css";
 
 const brands = [
+  // Brand objects
   {
     name: "Zara",
-    logo: "/brands/Zara_Logo.svg", // Replace with the actual path to the logo image
+    logo: "/brands/Zara_Logo.svg",
     url: "https://www.zara.com/es/en/",
   },
   {
@@ -34,17 +35,12 @@ const brands = [
     url: "https://www.pullandbear.com/es/",
   },
   {
-    name: "Pull&Bear",
-    logo: "/brands/Pull&Bear_logo.svg",
-    url: "https://www.pullandbear.com/es/",
-  },
-  {
     name: "Crocs",
     logo: "/brands/Crocs_wordmark.svg",
     url: "https://crocs.es/es/",
   },
   {
-    name: "Calvin klien",
+    name: "Calvin Klein",
     logo: "/brands/CK_Calvin_Klein_logo.svg",
     url: "https://www.calvinklein.es/",
   },
@@ -101,9 +97,12 @@ const brands = [
 ];
 
 const BrandsDisplay = () => {
+  // Shuffle brands array for random display
+  const shuffledBrands = [...brands].sort(() => Math.random() - 0.5);
+
   return (
-    <div className={styles.container}>
-      {brands.map((brand, index) => (
+    <div className={styles.brandsGrid}>
+      {shuffledBrands.map((brand, index) => (
         <a
           href={brand.url}
           target="_blank"
@@ -115,8 +114,8 @@ const BrandsDisplay = () => {
             <Image
               src={brand.logo}
               alt={`${brand.name} logo`}
-              width={100} // Set the width of the logo
-              height={100} // Set the height of the logo
+              width={80} // Set the width of the logo
+              height={80} // Set the height of the logo
               className={styles.logo}
             />
           </div>

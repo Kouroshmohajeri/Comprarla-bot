@@ -10,12 +10,14 @@
   /* Grid Layout for larger screens */
   .brandsGrid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Create a flexible grid with a minimum width */
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Adjust minimum width for better fit */
     gap: 20px; /* Spacing between items */
     justify-content: center; /* Center the items horizontally */
     padding: 20px;
     max-height: 80vh; /* Limit height of the grid */
     overflow-y: auto; /* Enable vertical scrolling */
+    padding-bottom: 35%;
+
   }
   
   /* Styles for each brand item */
@@ -23,7 +25,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 150px; /* Adjust the width of the square */
+    width: 120px; /* Adjust width for better fit */
     text-decoration: none;
     color: #000; /* Text color */
     background: rgba(255, 255, 255, 0.2); /* Glassmorphism effect */
@@ -34,8 +36,8 @@
   
   /* Styles for the logo wrapper */
   .logoWrapper {
-    width: 100px; /* Adjust size of logo container */
-    height: 100px; /* Adjust size of logo container */
+    width: 80px; /* Adjust size of logo container */
+    height: 80px; /* Adjust size of logo container */
     overflow: hidden; /* Hide any overflow of the image */
     border-radius: 10px; /* Rounded corners for the logo */
     display: flex;
@@ -51,7 +53,7 @@
   
   /* Styles for the brand name */
   .brandName {
-    font-size: 14px; /* Adjust font size */
+    font-size: 12px; /* Adjust font size */
     text-align: center; /* Center the text */
     color: #fff; /* Text color */
   }
