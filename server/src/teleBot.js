@@ -35,7 +35,7 @@ bot.start(async (ctx) => {
             {
               text: "Open Mini App",
               web_app: {
-                url: `${process.env.FRONTEND_URL}?userId=${userId}`, // Pass userId as a query parameter
+                url: `${process.env.FRONTEND_URL}`, // Pass userId as a query parameter
               },
             },
           ],
