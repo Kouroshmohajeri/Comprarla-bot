@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getUserDetails } from "@/api/users/actions";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import styles from "./UserProfile.module.css";
 
 const UserProfile = () => {
