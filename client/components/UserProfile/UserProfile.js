@@ -28,7 +28,7 @@ const UserProfile = () => {
 
   if (loading) return <p>Loading...</p>;
 
-  if (!user) return <p>User not found.</p>;
+  if (!user) return <p>User not found.{userId}</p>;
 
   return (
     <div className={styles.profileBox}>
