@@ -7,6 +7,7 @@ import styles from "./page.module.css";
 import Converter from "@/components/Converter/Converter.js";
 import BrandsDisplay from "@/components/BrandsDisplay/BrandsDisplay.js";
 import LoadingScreen from "@/components/LoadingScreen/LoadingScreen.js"; // Import the LoadingScreen component
+import UserProfile from "@/components/UserProfile/UserProfile";
 
 export default function Home() {
   const [selectedPage, setSelectedPage] = useState(0); // Use index 0 as the default page
@@ -48,6 +49,7 @@ export default function Home() {
           <Header />
           {selectedPage === 0 && <Converter />} {/* Index 0: Converter */}
           {selectedPage === 1 && <BrandsDisplay />} {/* Index 1: Brands */}
+          {selectedPage === 2 && <UserProfile />} {/* Index 1: Brands */}
           {/* You can add more conditions here for other pages */}
           <BottomMenu onPageChange={handlePageChange} />
         </div>
