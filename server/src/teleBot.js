@@ -32,7 +32,7 @@ bot.start(async (ctx) => {
           [
             {
               text: "Open Mini App",
-              web_app: { url: `${web_link}/userId=${userId}` },
+              web_app: { url: `${web_link}?userId=${userId}` },
             },
           ],
         ],
