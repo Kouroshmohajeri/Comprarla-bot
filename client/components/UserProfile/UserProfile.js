@@ -1,24 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { getUserDetails } from "@/api/users/actions";
+import { useRouter } from "next/router";
 import styles from "./UserProfile.module.css";
 
-const UserProfile = ({ userId }) => {
+const UserProfile = () => {
+  const router = useRouter();
+  const { userId } = router.query; // Extract userId from query parameter
+
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUserDetails = async () => {
-      try {
-        const userData = await getUserDetails(userId);
-        setUser(userData);
-      } catch (error) {
-        console.error("Failed to fetch user details:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (userId) {
+      const fetchUserDetails = async () => {
+        try {
+          const userData = await getUserDetails(userId);
+          setUser(userData);
+        } catch (error) {
+          console.error("Failed to fetch user details:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    fetchUserDetails();
+      fetchUserDetails();
+    }
   }, [userId]);
 
   if (loading) return <p>Loading...</p>;

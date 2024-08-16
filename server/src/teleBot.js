@@ -27,13 +27,16 @@ bot.start(async (ctx) => {
       isOG: false, // Initial status
     });
 
+    // Reply with a welcome message and a link to open the app
     ctx.reply("Welcome to ComprarLa.", {
       reply_markup: {
-        keyboard: [
+        inline_keyboard: [
           [
             {
               text: "Open Mini App",
-              web_app: { url: `${process.env.FRONTEND_URL}` }, // Replace with your web app URL
+              web_app: {
+                url: `${process.env.FRONTEND_URL}?userId=${userId}`, // Pass userId as a query parameter
+              },
             },
           ],
         ],
