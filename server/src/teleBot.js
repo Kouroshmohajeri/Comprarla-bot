@@ -14,7 +14,7 @@ bot.start(async (ctx) => {
   const userId = ctx.from.id;
   const username = ctx.from.username;
   const dateJoined = new Date(); // Current date for demonstration
-  console.log("user Id :", userId);
+
   try {
     // Send user data to your backend to be saved in MongoDB
     await axios.post(`${backendAPIUrl}`, {
@@ -27,14 +27,13 @@ bot.start(async (ctx) => {
       isOG: false, // Initial status
     });
 
-    // Reply with a welcome message and a link to open the app
     ctx.reply("Welcome to ComprarLa.", {
       reply_markup: {
         keyboard: [
           [
             {
               text: "Open Mini App",
-              web_app: { url: `${process.env.FRONTEND_URL}` }, // Replace with your web app URL
+              web_app: { url: "https://23.227.167.112:3000/" }, // Replace with your web app URL
             },
           ],
         ],
