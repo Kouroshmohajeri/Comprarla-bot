@@ -17,8 +17,7 @@ const BottomMenu = ({ onPageChange }) => {
   return (
     <div className={styles.bottomMenu}>
       <div className={styles.menuItems}>
-        <a
-          href="#converter"
+        <div
           className={`${styles.menuItem} ${
             selected === 0 ? styles.active : ""
           }`}
@@ -26,9 +25,8 @@ const BottomMenu = ({ onPageChange }) => {
         >
           <EuroIcon className={styles.icon} sx={{ fontSize: "35px" }} />
           {selected === 0 && <div className={styles.indicator} />}
-        </a>
-        <a
-          href="#brands"
+        </div>
+        <div
           className={`${styles.menuItem} ${
             selected === 1 ? styles.active : ""
           }`}
@@ -36,9 +34,8 @@ const BottomMenu = ({ onPageChange }) => {
         >
           <StorefrontIcon className={styles.icon} sx={{ fontSize: "30px" }} />
           {selected === 1 && <div className={styles.indicator} />}
-        </a>
-        <a
-          href="#profile"
+        </div>
+        <div
           className={`${styles.menuItem} ${
             selected === 2 ? styles.active : ""
           }`}
@@ -46,9 +43,8 @@ const BottomMenu = ({ onPageChange }) => {
         >
           <PermIdentityIcon className={styles.icon} sx={{ fontSize: "30px" }} />
           {selected === 2 && <div className={styles.indicator} />}
-        </a>
-        <a
-          href="#tasks"
+        </div>
+        <div
           className={`${styles.menuItem} ${
             selected === 3 ? styles.active : ""
           }`}
@@ -59,9 +55,8 @@ const BottomMenu = ({ onPageChange }) => {
             sx={{ fontSize: "30px" }}
           />
           {selected === 3 && <div className={styles.indicator} />}
-        </a>
-        <a
-          href="#suggested"
+        </div>
+        <div
           className={`${styles.menuItem} ${
             selected === 4 ? styles.active : ""
           }`}
@@ -69,7 +64,7 @@ const BottomMenu = ({ onPageChange }) => {
         >
           <LocalOfferIcon className={styles.icon} sx={{ fontSize: "30px" }} />
           {selected === 4 && <div className={styles.indicator} />}
-        </a>
+        </div>
       </div>
       <hr className={styles.divider} />
       <p className={styles.footer}>Designed by Kourosh Mohajeri</p>
