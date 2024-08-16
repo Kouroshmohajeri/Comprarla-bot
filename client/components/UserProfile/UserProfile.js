@@ -10,7 +10,6 @@ const UserProfile = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log(userId);
     if (userId) {
       const fetchUserDetails = async () => {
         try {
