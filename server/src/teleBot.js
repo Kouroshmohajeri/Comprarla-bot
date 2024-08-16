@@ -14,18 +14,17 @@ bot.start(async (ctx) => {
   const userId = ctx.from.id;
   const username = ctx.from.username;
   const dateJoined = new Date(); // Current date for demonstration
-  console.log("object");
   try {
     // Send user data to your backend to be saved in MongoDB
-    await axios.post(`${backendAPIUrl}`, {
-      userId,
-      username,
-      dateJoined,
-      points: 0, // Initial points
-      invitations: [], // Initial invitations
-      tasksDone: 0, // Initial tasks
-      isOG: false, // Initial status
-    });
+    // await axios.post(`${backendAPIUrl}`, {
+    //   userId,
+    //   username,
+    //   dateJoined,
+    //   points: 0, // Initial points
+    //   invitations: [], // Initial invitations
+    //   tasksDone: 0, // Initial tasks
+    //   isOG: false, // Initial status
+    // });
 
     ctx.reply("Welcome to ComprarLa.", {
       reply_markup: {
