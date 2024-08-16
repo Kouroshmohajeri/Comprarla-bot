@@ -6,14 +6,15 @@ const LoadingScreen = ({ onLoaded }) => {
   const [isFadingOut, setIsFadingOut] = useState(false);
 
   useEffect(() => {
-    // Simulate loading time and start fading out after the loading is done
-    const timer = setTimeout(() => {
+    // Start fading out after the loading is done
+    const fadeOutTimer = setTimeout(() => {
       setIsFadingOut(true);
       // Call onLoaded function after fade-out duration
-      setTimeout(() => onLoaded(), 1000); // Match duration with CSS animation
+      const onLoadedTimer = setTimeout(() => onLoaded(), 1000); // Match duration with CSS animation
+      return () => clearTimeout(onLoadedTimer);
     }, 2000); // Simulate loading time
 
-    return () => clearTimeout(timer);
+    return () => clearTimeout(fadeOutTimer);
   }, [onLoaded]);
 
   return (

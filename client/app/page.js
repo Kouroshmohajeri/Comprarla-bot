@@ -11,6 +11,7 @@ import LoadingScreen from "@/components/LoadingScreen/LoadingScreen.js"; // Impo
 export default function Home() {
   const [selectedPage, setSelectedPage] = useState(0); // Use index 0 as the default page
   const [loading, setLoading] = useState(true);
+  const [contentLoaded, setContentLoaded] = useState(false);
 
   useEffect(() => {
     if (
@@ -24,32 +25,32 @@ export default function Home() {
     }
   }, []);
 
-  useEffect(() => {
-    // Simulate loading time (e.g., for data fetching)
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000); // Adjust the duration as needed
-
-    return () => clearTimeout(timer);
-  }, []);
-
   const handlePageChange = (page) => {
     setSelectedPage(page);
+  };
+
+  const handleLoaded = () => {
+    setLoading(false);
+    setTimeout(() => setContentLoaded(true), 100); // Small delay to allow content to appear after loading screen
   };
 
   return (
     <div className={styles.container}>
       {loading ? (
-        <LoadingScreen />
+        <LoadingScreen onLoaded={handleLoaded} />
       ) : (
-        <>
+        <div
+          className={`${styles.mainContent} ${
+            contentLoaded ? styles.fadeIn : ""
+          }`}
+        >
           <ParticlesBackground id="particles" />
           <Header />
           {selectedPage === 0 && <Converter />} {/* Index 0: Converter */}
           {selectedPage === 1 && <BrandsDisplay />} {/* Index 1: Brands */}
           {/* You can add more conditions here for other pages */}
           <BottomMenu onPageChange={handlePageChange} />
-        </>
+        </div>
       )}
     </div>
   );

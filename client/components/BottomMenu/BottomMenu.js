@@ -24,7 +24,7 @@ const BottomMenu = ({ onPageChange }) => {
           }`}
           onClick={() => handleClick(0)}
         >
-          <EuroIcon className={styles.icon} />
+          <EuroIcon className={styles.icon} sx={{ fontSize: "35px" }} />
           {selected === 0 && <div className={styles.indicator} />}
         </a>
         <a
@@ -34,7 +34,7 @@ const BottomMenu = ({ onPageChange }) => {
           }`}
           onClick={() => handleClick(1)}
         >
-          <StorefrontIcon className={styles.icon} />
+          <StorefrontIcon className={styles.icon} sx={{ fontSize: "30px" }} />
           {selected === 1 && <div className={styles.indicator} />}
         </a>
         <a
@@ -42,9 +42,9 @@ const BottomMenu = ({ onPageChange }) => {
           className={`${styles.menuItem} ${
             selected === 2 ? styles.active : ""
           }`}
-          onClick={() => handleClick(3)}
+          onClick={() => handleClick(2)}
         >
-          <PermIdentityIcon className={styles.icon} />
+          <PermIdentityIcon className={styles.icon} sx={{ fontSize: "30px" }} />
           {selected === 2 && <div className={styles.indicator} />}
         </a>
         <a
@@ -52,9 +52,12 @@ const BottomMenu = ({ onPageChange }) => {
           className={`${styles.menuItem} ${
             selected === 3 ? styles.active : ""
           }`}
-          onClick={() => handleClick(2)}
+          onClick={() => handleClick(3)}
         >
-          <FormatListBulletedIcon className={styles.icon} />
+          <FormatListBulletedIcon
+            className={styles.icon}
+            sx={{ fontSize: "30px" }}
+          />
           {selected === 3 && <div className={styles.indicator} />}
         </a>
         <a
@@ -64,7 +67,7 @@ const BottomMenu = ({ onPageChange }) => {
           }`}
           onClick={() => handleClick(4)}
         >
-          <LocalOfferIcon className={styles.icon} />
+          <LocalOfferIcon className={styles.icon} sx={{ fontSize: "30px" }} />
           {selected === 4 && <div className={styles.indicator} />}
         </a>
       </div>

@@ -1,57 +1,60 @@
 .bottomMenu {
-    position: fixed;
-    bottom: 0; /* Fixed to the bottom with no space */
-    left: 50%;
-    transform: translateX(-50%); /* Center horizontally */
-    display: flex;
-    flex-direction: column; /* Stack items vertically */
-    align-items: center;
-    width: 100%; /* Full width */
-    padding: 0.5rem;
-    background: rgba(255, 255, 255, 0.1); /* Transparent white background */
-    backdrop-filter: blur(10px); /* Blurry background */
-    border-radius: 1rem; /* Rounded borders */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Optional shadow */
-    z-index: 1000; /* Ensure it is above other content */
-  }
-  
-  .menuItems {
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-  }
-  
-  .menuItem {
-    color: #fff; /* Icon color */
-    text-decoration: none; /* Remove underline from links */
-    position: relative; /* Position relative to use the indicator */
-  }
-  
-  .icon {
-    font-size: 2rem; /* Icon size */
-  }
-  
-  .indicator {
-    position: absolute;
-    bottom: -5px; /* Distance from the bottom of the menu item */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%; /* Adjust width as needed */
-    height: 2px; /* Height of the line */
-    background-color: #fff; /* Color of the line */
-    border-radius: 2px; /* Rounded ends */
-  }
-  
-  .divider {
-    width: 50%;
-    border: 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.3); /* Light white divider */
-    margin: 0.5rem 0; /* Space above and below the divider */
-  }
-  
-  .footer {
-    color: #fff; /* Text color */
-    font-size: 0.75rem; /* Font size for the credit text */
-    text-align: center;
-  }
-  
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.menuItems {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.menuItem {
+  color: #fff;
+  text-decoration: none;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.icon {
+  font-size: 6rem; /* Increase icon size */
+  transition: font-size 0.3s ease; /* Smooth transition for size change */
+}
+
+.indicator {
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 2px;
+  background-color: #fff;
+  border-radius: 2px;
+}
+
+.divider {
+  width: 50%;
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.3);
+  margin: 0.5rem 0;
+}
+
+.footer {
+  color: #fff;
+  font-size: 0.75rem;
+  text-align: center;
+}
