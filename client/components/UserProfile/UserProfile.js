@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { getUserDetails } from "@/api/users/actions";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import styles from "./UserProfile.module.css";
 
 const UserProfile = () => {
-  const router = useRouter();
-  const { userId } = router.query; // Extract userId from query parameter
-
+  const router = useSearchParams();
+  const userId = router.get("userId");
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log(userId);
     if (userId) {
       const fetchUserDetails = async () => {
         try {
