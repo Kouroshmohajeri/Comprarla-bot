@@ -25,7 +25,6 @@ bot.start(async (ctx) => {
       tasksDone: 0, // Initial tasks
       isOG: false, // Initial status
     });
-    console.log(`${web_link}?userId=${userId}`);
     ctx.reply("Welcome to ComprarLa.", {
       reply_markup: {
         keyboard: [
