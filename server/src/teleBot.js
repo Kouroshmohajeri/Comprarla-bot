@@ -9,7 +9,7 @@ const bot = new Telegraf(TOKEN);
 
 // Base URL for your backend API
 const backendAPIUrl = `${process.env.BACKEND_URL}:${process.env.PORT}/api/users`;
-const web_link = "https://comprarlabot.netlify.app/";
+const web_link = "https://comprarla.es/";
 bot.start(async (ctx) => {
   const userId = ctx.from.id;
   const username = ctx.from.username;
