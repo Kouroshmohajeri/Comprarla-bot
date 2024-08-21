@@ -28,16 +28,20 @@ bot.start(async (ctx) => {
     }
 
     // Send user data to your backend to be saved or updated in MongoDB
-    await axios.post(`${backendAPIUrl}`, {
-      userId,
-      username,
-      dateJoined,
-      points: 0, // Initial points
-      invitations: [], // Initial invitations
-      tasksDone: 0, // Initial tasks
-      isOG: false, // Initial status
-      profilePhotoUrl, // Include the profile photo URL
-    });
+    await axios
+      .post(`${backendAPIUrl}`, {
+        userId,
+        username,
+        dateJoined,
+        points: 0, // Initial points
+        invitations: [], // Initial invitations
+        tasksDone: 0, // Initial tasks
+        isOG: false, // Initial status
+        profilePhotoUrl, // Include the profile photo URL
+      })
+      .then((res) => {
+        console.log(res.data);
+      });
 
     ctx.reply("Welcome to ComprarLa.", {
       reply_markup: {
