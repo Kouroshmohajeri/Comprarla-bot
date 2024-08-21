@@ -1,3 +1,5 @@
+// components/UserProfile.js
+
 import React, { useEffect, useState } from "react";
 import { getUserDetails } from "@/api/users/actions";
 import { useSearchParams } from "next/navigation";
@@ -26,22 +28,33 @@ const UserProfile = () => {
     }
   }, [userId]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <p className={styles.loading}>Loading...</p>;
 
-  if (!user) return <p>User not found.</p>;
+  if (!user) return <p className={styles.notFound}>User not found.</p>;
 
   return (
     <div className={styles.profileBox}>
-      <h2>User Profile</h2>
-      <p>
-        <strong>Username:</strong> {user.username}
-      </p>
+      <div className={styles.profileHeader}>
+        {user.profilePhotoUrl ? (
+          <img
+            src={user.profilePhotoUrl}
+            alt={`${user.username}'s profile`}
+            className={styles.profilePicture}
+          />
+        ) : (
+          <div className={styles.defaultPicture}>No Image</div>
+        )}
+        <h2>{user.username}</h2>
+      </div>
       <p>
         <strong>Date of Joining:</strong>{" "}
         {new Date(user.dateJoined).toLocaleDateString()}
       </p>
       <p>
         <strong>Points:</strong> {user.points}
+      </p>
+      <p>
+        <strong>Invitations:</strong> {user.invitations.length}
       </p>
     </div>
   );
