@@ -13,6 +13,7 @@ class UserController {
       invitations,
       tasksDone,
       isOG,
+      profilePhotoUrl, // Add this line
     } = req.body;
 
     try {
@@ -27,6 +28,7 @@ class UserController {
           invitations,
           tasksDone,
           isOG,
+          profilePhotoUrl, // Add this line
         });
       } else {
         user.username = username;
@@ -35,6 +37,7 @@ class UserController {
         user.invitations = invitations;
         user.tasksDone = tasksDone;
         user.isOG = isOG;
+        user.profilePhotoUrl = profilePhotoUrl; // Add this line
         await user.save();
       }
 

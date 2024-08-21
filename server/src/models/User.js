@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   invitations: [{ type: String }], // Array of invited user IDs
   tasksDone: { type: Number, default: 0 },
   isOG: { type: Boolean, default: false },
+  profilePhotoUrl: { type: String }, // Add this line
 });
 
 const User = mongoose.model("User", userSchema);
