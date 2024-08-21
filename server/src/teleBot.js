@@ -9,7 +9,7 @@ const bot = new Telegraf(TOKEN);
 
 // Base URL for your backend API
 const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
-const web_link = "http://comprarla.es/";
+const web_link = "https://localhost:8443/";
 
 bot.start(async (ctx) => {
   const userId = ctx.from.id;
