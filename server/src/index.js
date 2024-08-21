@@ -18,5 +18,5 @@ app.use(express.json());
 // Import routes
 app.use("/api/users", userRoutes);
 
-const PORT = process.env.PORT || 8800;
+const PORT = process.env.PORT || 8443;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
