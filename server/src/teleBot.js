@@ -15,7 +15,7 @@ bot.start(async (ctx) => {
   const userId = ctx.from.id;
   const username = ctx.from.username;
   const dateJoined = new Date(); // Current date for demonstration
-
+  console.log(userId);
   try {
     // Retrieve user's profile photo
     const userPhotos = await bot.telegram.getUserProfilePhotos(userId);
@@ -27,7 +27,7 @@ bot.start(async (ctx) => {
       profilePhotoUrl = fileLink;
     }
 
-    // Send user data to your backend to be saved in MongoDB
+    // Send user data to your backend to be saved or updated in MongoDB
     await axios.post(`${backendAPIUrl}`, {
       userId,
       username,
