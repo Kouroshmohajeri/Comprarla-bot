@@ -6,7 +6,7 @@ import UserController from "../controllers/UserController.js";
 const router = express.Router();
 
 // POST request to save or update user data
-router.post("/", UserController.handleUserData);
+router.post("/add", UserController.handleUserData);
 
 // GET request to fetch user details by ID
 router.get("/:userId", UserController.getUserDetails);

@@ -15,7 +15,7 @@ class UserController {
       isOG,
       profilePhotoUrl, // Add this line
     } = req.body;
-    console.log(userId);
+    console.log("user id:", userId);
     try {
       let user = await UserRepository.findUserById(userId);
 
