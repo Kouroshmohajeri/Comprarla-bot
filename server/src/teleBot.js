@@ -8,7 +8,7 @@ const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new Telegraf(TOKEN);
 
 // Base URL for your backend API
-const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
+const backendAPIUrl = `${process.env.BACKEND_URL}/api/users/`;
 const web_link = "https://comprarla.es/";
 
 bot.start(async (ctx) => {
