@@ -61,7 +61,8 @@ const Converter = () => {
         }}
       />
       <Typography variant="h6">
-        Converted Price: {convertedPrice} Toman
+        Converted Price: {convertedPrice} Toman The shipping price will be
+        announced
       </Typography>
     </Box>
   );
