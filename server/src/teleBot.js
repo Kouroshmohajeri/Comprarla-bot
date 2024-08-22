@@ -1,5 +1,4 @@
-import { Telegraf } from "telegraf";
-import { session } from "@telegraf/session"; // Import session from @telegraf/session
+import { Telegraf, session } from "telegraf"; // Import both Telegraf and session directly
 import axios from "axios";
 import dotenv from "dotenv";
 import broadcastMessage from "./services/broadcast.js"; // Adjust the path as necessary
@@ -9,7 +8,7 @@ dotenv.config(); // Load environment variables from .env file
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new Telegraf(TOKEN);
 
-// Use session middleware from @telegraf/session
+// Use session middleware directly from Telegraf
 bot.use(session());
 
 // Base URL for your backend API
