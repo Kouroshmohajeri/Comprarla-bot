@@ -23,7 +23,6 @@ export default function Home() {
       const webApp = window.Telegram.WebApp;
       webApp.ready();
       webApp.expand();
-      webApp.requestViewPortHeight(100);
       document.body.style.backgroundColor = "#f0f0f0";
     }
   }, []);
