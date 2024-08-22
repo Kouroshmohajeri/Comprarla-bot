@@ -1,7 +1,7 @@
 import { Telegraf } from "telegraf";
 import axios from "axios";
 import dotenv from "dotenv";
-import broadcastMessage from "./path/to/broadcastMessage.js"; // Adjust the path as necessary
+import broadcastMessage from "./services/broadcast.js"; // Adjust the path as necessary
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -12,7 +12,7 @@ const bot = new Telegraf(TOKEN);
 const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
 const web_link = "https://comprarla.es/";
 const AUTHORIZED_USER_ID = parseInt(process.env.AUTHORIZED_USER_ID, 10); // Ensure it's an integer
-
+console.log(AUTHORIZED_USER_ID);
 // Start command
 bot.start(async (ctx) => {
   const userId = ctx.from.id;
