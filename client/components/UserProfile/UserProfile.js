@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getUserDetails } from "@/api/users/actions";
 import { useSearchParams } from "next/navigation";
+import Image from "next/image";
 import styles from "./UserProfile.module.css";
 
 const UserProfile = () => {
@@ -42,17 +43,23 @@ const UserProfile = () => {
     <div className={styles.profileBox}>
       <div className={styles.profileHeader}>
         {user.profilePhotoUrl ? (
-          <img
-            src={user.profilePhotoUrl}
-            alt={`${user.username}'s profile`}
-            className={styles.profilePicture}
-          />
+          <div className={styles.profilePicture}>
+            <Image
+              src={user.profilePhotoUrl}
+              alt={`${user.firstName} ${user.lastName}'s profile`}
+              width={100} // Specify the width
+              height={100} // Specify the height
+              className={styles.profileImage}
+            />
+          </div>
         ) : (
           <div className={styles.defaultPicture}>
             {getInitials(user.firstName, user.lastName)}
           </div>
         )}
-        <h2>{user.username}</h2>
+        <h2>
+          {user.firstName} {user.lastName ? user.lastName : ""}
+        </h2>
       </div>
       <p>
         <strong>Date of Joining:</strong>{" "}
