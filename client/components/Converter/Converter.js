@@ -46,7 +46,7 @@ const Converter = () => {
     <Box className={styles.container}>
       <Typography variant="h4">Price Converter</Typography>
       <TextField
-        label="Enter Price"
+        label="Enter Price (euro €)"
         type="number"
         value={price}
         onChange={handlePriceChange}
