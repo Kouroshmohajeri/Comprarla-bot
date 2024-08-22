@@ -1,4 +1,5 @@
 import { Telegraf } from "telegraf";
+import { session } from "@telegraf/session"; // Import session from @telegraf/session
 import axios from "axios";
 import dotenv from "dotenv";
 import broadcastMessage from "./services/broadcast.js"; // Adjust the path as necessary
@@ -8,11 +9,14 @@ dotenv.config(); // Load environment variables from .env file
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new Telegraf(TOKEN);
 
+// Use session middleware from @telegraf/session
+bot.use(session());
+
 // Base URL for your backend API
 const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
 const web_link = "https://comprarla.es/";
 const AUTHORIZED_USER_ID = parseInt(process.env.AUTHORIZED_USER_ID, 10); // Ensure it's an integer
-console.log(AUTHORIZED_USER_ID);
+
 // Start command
 bot.start(async (ctx) => {
   const userId = ctx.from.id;
@@ -81,11 +85,13 @@ bot.on("callback_query", async (ctx) => {
     if (ctx.from.id === AUTHORIZED_USER_ID) {
       // Initiate the broadcasting process
       await ctx.answerCbQuery(); // Acknowledge the button press
-      ctx.reply("Please send the message you want to broadcast.");
-      ctx.session = { isBroadcasting: true };
+      ctx.session.isBroadcasting = true;
+      await ctx.reply(
+        "The bot is ready. Please send the message you want to broadcast."
+      );
     } else {
       await ctx.answerCbQuery(); // Acknowledge the button press
-      ctx.reply("You are not authorized to broadcast messages.");
+      await ctx.reply("You are not authorized to broadcast messages.");
     }
   }
 });
@@ -94,19 +100,19 @@ bot.on("callback_query", async (ctx) => {
 bot.on("text", async (ctx) => {
   if (ctx.session && ctx.session.isBroadcasting) {
     if (ctx.from.id !== AUTHORIZED_USER_ID) {
-      ctx.reply("You are not authorized to broadcast messages.");
+      await ctx.reply("You are not authorized to broadcast messages.");
       return;
     }
 
     const message = ctx.message.text;
     try {
       // Broadcast the message using the broadcastMessage function
-      await broadcastMessage(message);
+      await broadcastMessage(bot, message); // Pass bot instance to broadcastMessage function
 
-      ctx.reply("Broadcast message sent to all users.");
+      await ctx.reply("Broadcast message sent to all users.");
       ctx.session.isBroadcasting = false; // End broadcasting mode
     } catch (error) {
-      ctx.reply("Failed to send broadcast message.");
+      await ctx.reply("Failed to send broadcast message.");
       console.error("Error broadcasting message:", error);
     }
   }
