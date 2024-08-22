@@ -1,7 +1,7 @@
 import { Telegraf } from "telegraf";
 import axios from "axios";
 import dotenv from "dotenv";
-import broadcastMessage from "./services/broadcast.js"; // Adjust path accordingly
+import broadcastMessage from "./path/to/broadcastMessage.js"; // Adjust the path as necessary
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -11,14 +11,16 @@ const bot = new Telegraf(TOKEN);
 // Base URL for your backend API
 const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
 const web_link = "https://comprarla.es/";
-const AUTHORIZED_USER_ID = parseInt(process.env.AUTHORIZED_USER_ID);
+const AUTHORIZED_USER_ID = parseInt(process.env.AUTHORIZED_USER_ID, 10); // Ensure it's an integer
 
+// Start command
 bot.start(async (ctx) => {
   const userId = ctx.from.id;
   const username = ctx.from.username;
   const firstName = ctx.from.first_name;
   const lastName = ctx.from.last_name || "";
   const dateJoined = new Date();
+
   try {
     // Retrieve user's profile photo
     const userPhotos = await bot.telegram.getUserProfilePhotos(userId);
@@ -56,7 +58,7 @@ bot.start(async (ctx) => {
           [
             {
               text: "Broadcast Message",
-              callback_data: "broadcast_message",
+              callback_data: "broadcast_message", // This is critical for handling the button click
             },
           ],
         ],
@@ -70,17 +72,25 @@ bot.start(async (ctx) => {
   }
 });
 
-// Handle broadcast command
-bot.command("broadcast", (ctx) => {
-  if (ctx.from.id === AUTHORIZED_USER_ID) {
-    ctx.reply("Please send the message you want to broadcast.");
-    ctx.session = { isBroadcasting: true };
-  } else {
-    ctx.reply("You are not authorized to broadcast messages.");
+// Handle callback queries (e.g., button presses)
+bot.on("callback_query", async (ctx) => {
+  const callbackData = ctx.callbackQuery.data;
+
+  if (callbackData === "broadcast_message") {
+    // Check if the user is authorized
+    if (ctx.from.id === AUTHORIZED_USER_ID) {
+      // Initiate the broadcasting process
+      await ctx.answerCbQuery(); // Acknowledge the button press
+      ctx.reply("Please send the message you want to broadcast.");
+      ctx.session = { isBroadcasting: true };
+    } else {
+      await ctx.answerCbQuery(); // Acknowledge the button press
+      ctx.reply("You are not authorized to broadcast messages.");
+    }
   }
 });
 
-// Handle incoming messages for broadcasting
+// Handle incoming text messages for broadcasting
 bot.on("text", async (ctx) => {
   if (ctx.session && ctx.session.isBroadcasting) {
     if (ctx.from.id !== AUTHORIZED_USER_ID) {
@@ -99,17 +109,6 @@ bot.on("text", async (ctx) => {
       ctx.reply("Failed to send broadcast message.");
       console.error("Error broadcasting message:", error);
     }
-  }
-});
-
-// Handle callback queries for broadcasting
-bot.on("callback_query", async (ctx) => {
-  if (
-    ctx.callbackQuery.data === "broadcast_message" &&
-    ctx.from.id === AUTHORIZED_USER_ID
-  ) {
-    ctx.reply("Please send the message you want to broadcast.");
-    ctx.session = { isBroadcasting: true };
   }
 });
 
