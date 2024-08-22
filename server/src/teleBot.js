@@ -1,6 +1,7 @@
 import { Telegraf } from "telegraf";
 import axios from "axios";
 import dotenv from "dotenv";
+import broadcastMessage from "./services/broadcast.js"; // Adjust path accordingly
 
 dotenv.config(); // Load environment variables from .env file
 
@@ -68,7 +69,8 @@ bot.start(async (ctx) => {
     );
   }
 });
-// Handle /broadcast command
+
+// Handle broadcast command
 bot.command("broadcast", (ctx) => {
   if (ctx.from.id === AUTHORIZED_USER_ID) {
     ctx.reply("Please send the message you want to broadcast.");
@@ -88,18 +90,8 @@ bot.on("text", async (ctx) => {
 
     const message = ctx.message.text;
     try {
-      // Fetch all user IDs from the database
-      const { data } = await axios.get(`${backendAPIUrl}`);
-      const userIds = data.map((user) => user.userId);
-
-      // Broadcast the message to all users
-      for (const userId of userIds) {
-        try {
-          await bot.telegram.sendMessage(userId, message);
-        } catch (error) {
-          console.error(`Failed to send message to ${userId}:`, error);
-        }
-      }
+      // Broadcast the message using the broadcastMessage function
+      await broadcastMessage(message);
 
       ctx.reply("Broadcast message sent to all users.");
       ctx.session.isBroadcasting = false; // End broadcasting mode
@@ -109,5 +101,17 @@ bot.on("text", async (ctx) => {
     }
   }
 });
+
+// Handle callback queries for broadcasting
+bot.on("callback_query", async (ctx) => {
+  if (
+    ctx.callbackQuery.data === "broadcast_message" &&
+    ctx.from.id === AUTHORIZED_USER_ID
+  ) {
+    ctx.reply("Please send the message you want to broadcast.");
+    ctx.session = { isBroadcasting: true };
+  }
+});
+
 // Launch the bot
 bot.launch();
