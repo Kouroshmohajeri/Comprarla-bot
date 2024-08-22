@@ -21,8 +21,8 @@ export default function Home() {
       window.Telegram.WebApp
     ) {
       const webApp = window.Telegram.WebApp;
-      webApp.ready();
       webApp.expand();
+      webApp.ready();
       document.body.style.backgroundColor = "#f0f0f0";
     }
   }, []);
