@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { TextField, Typography, Box } from "@mui/material";
 import { convertPrice } from "@/lib/converter";
-import { getEuroToTomanRate } from "@/lib/action"; // Adjust the import path based on your directory structure
+import { getEuroToTomanRate } from "@/api/conversion/actions.js";
 import styles from "./Converter.module.css";
 
 const Converter = () => {
