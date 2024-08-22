@@ -1,33 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextField, Typography, Box } from "@mui/material";
 import { convertPrice } from "@/lib/converter";
+import { getEuroToTomanRate } from "@/lib/action"; // Adjust the import path based on your directory structure
 import styles from "./Converter.module.css";
 
 const Converter = () => {
   const [price, setPrice] = useState("");
   const [convertedPrice, setConvertedPrice] = useState("");
+  const [fixedPrice, setFixedPrice] = useState(null);
 
-  const fixedPrice = 64740; // Example fixed price
+  useEffect(() => {
+    const fetchFixedPrice = async () => {
+      try {
+        const rate = await getEuroToTomanRate();
+        setFixedPrice(rate);
+      } catch (error) {
+        console.error("Error fetching fixed price:", error);
+      }
+    };
+
+    fetchFixedPrice();
+  }, []);
 
   const handlePriceChange = (event) => {
     const inputValue = event.target.value;
     setPrice(inputValue);
 
-    // Perform the conversion
-    const finalPrice = convertPrice(parseFloat(inputValue), fixedPrice);
-
-    // Round to the nearest whole number and format with commas
-    setConvertedPrice(formatNumber(Math.round(finalPrice)));
+    if (fixedPrice) {
+      const finalPrice = convertPrice(parseFloat(inputValue), fixedPrice);
+      setConvertedPrice(formatNumber(Math.round(finalPrice)));
+    }
   };
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
-      // If the user presses "Enter" or "Go", blur the input field
       event.target.blur();
     }
   };
 
-  // Function to format numbers with commas
   const formatNumber = (number) => {
     return number.toLocaleString();
   };
@@ -40,37 +50,26 @@ const Converter = () => {
         type="number"
         value={price}
         onChange={handlePriceChange}
-        onKeyPress={handleKeyPress} // Add the onKeyPress handler
+        onKeyPress={handleKeyPress}
         fullWidth
         margin="normal"
         variant="outlined"
         inputProps={{ step: "0.01" }}
         sx={{
-          "& .MuiInputBase-input": {
-            color: "white", // Text color
-          },
-          "& .MuiInputLabel-root": {
-            color: "white", // Label color
-          },
+          "& .MuiInputBase-input": { color: "white" },
+          "& .MuiInputLabel-root": { color: "white" },
           "& .MuiOutlinedInput-root": {
-            "& fieldset": {
-              borderColor: "white", // Border color
-            },
-            "&:hover fieldset": {
-              borderColor: "white", // Border color on hover
-            },
-            "&.Mui-focused fieldset": {
-              borderColor: "white", // Border color when focused
-            },
+            "& fieldset": { borderColor: "white" },
+            "&:hover fieldset": { borderColor: "white" },
+            "&.Mui-focused fieldset": { borderColor: "white" },
           },
-          "& .MuiInputBase-input::placeholder": {
-            color: "white", // Placeholder color
-          },
+          "& .MuiInputBase-input::placeholder": { color: "white" },
         }}
       />
       <Typography variant="h6">
-        Converted Price: {convertedPrice} Toman The shipping price will be
-        announced
+        {convertedPrice
+          ? `${convertedPrice} Toman`
+          : "Enter a price to convert"}
       </Typography>
     </Box>
   );
