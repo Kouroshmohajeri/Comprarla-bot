@@ -10,6 +10,7 @@ const bot = new Telegraf(TOKEN);
 // Base URL for your backend API
 const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
 const web_link = "https://comprarla.es/";
+const AUTHORIZED_USER_ID = parseInt(process.env.AUTHORIZED_USER_ID);
 
 bot.start(async (ctx) => {
   const userId = ctx.from.id;
@@ -17,7 +18,6 @@ bot.start(async (ctx) => {
   const firstName = ctx.from.first_name;
   const lastName = ctx.from.last_name || "";
   const dateJoined = new Date();
-  console.log(userId);
   try {
     // Retrieve user's profile photo
     const userPhotos = await bot.telegram.getUserProfilePhotos(userId);
@@ -30,22 +30,18 @@ bot.start(async (ctx) => {
     }
 
     // Send user data to your backend to be saved or updated in MongoDB
-    await axios
-      .post(`${backendAPIUrl}/add`, {
-        userId,
-        username,
-        firstName,
-        lastName,
-        dateJoined,
-        points: 0, // Initial points
-        invitations: [], // Initial invitations
-        tasksDone: 0, // Initial tasks
-        isOG: false, // Initial status
-        profilePhotoUrl, // Include the profile photo URL
-      })
-      .then((res) => {
-        console.log(res.data);
-      });
+    await axios.post(`${backendAPIUrl}/add`, {
+      userId,
+      username,
+      firstName,
+      lastName,
+      dateJoined,
+      points: 0, // Initial points
+      invitations: [], // Initial invitations
+      tasksDone: 0, // Initial tasks
+      isOG: false, // Initial status
+      profilePhotoUrl, // Include the profile photo URL
+    });
 
     ctx.reply("Welcome to ComprarLa.", {
       reply_markup: {
@@ -54,6 +50,12 @@ bot.start(async (ctx) => {
             {
               text: "Open Mini App",
               web_app: { url: `${web_link}?userId=${userId}` },
+            },
+          ],
+          [
+            {
+              text: "Broadcast Message",
+              callback_data: "broadcast_message",
             },
           ],
         ],
@@ -66,6 +68,46 @@ bot.start(async (ctx) => {
     );
   }
 });
+// Handle /broadcast command
+bot.command("broadcast", (ctx) => {
+  if (ctx.from.id === AUTHORIZED_USER_ID) {
+    ctx.reply("Please send the message you want to broadcast.");
+    ctx.session = { isBroadcasting: true };
+  } else {
+    ctx.reply("You are not authorized to broadcast messages.");
+  }
+});
 
+// Handle incoming messages for broadcasting
+bot.on("text", async (ctx) => {
+  if (ctx.session && ctx.session.isBroadcasting) {
+    if (ctx.from.id !== AUTHORIZED_USER_ID) {
+      ctx.reply("You are not authorized to broadcast messages.");
+      return;
+    }
+
+    const message = ctx.message.text;
+    try {
+      // Fetch all user IDs from the database
+      const { data } = await axios.get(`${backendAPIUrl}`);
+      const userIds = data.map((user) => user.userId);
+
+      // Broadcast the message to all users
+      for (const userId of userIds) {
+        try {
+          await bot.telegram.sendMessage(userId, message);
+        } catch (error) {
+          console.error(`Failed to send message to ${userId}:`, error);
+        }
+      }
+
+      ctx.reply("Broadcast message sent to all users.");
+      ctx.session.isBroadcasting = false; // End broadcasting mode
+    } catch (error) {
+      ctx.reply("Failed to send broadcast message.");
+      console.error("Error broadcasting message:", error);
+    }
+  }
+});
 // Launch the bot
 bot.launch();
