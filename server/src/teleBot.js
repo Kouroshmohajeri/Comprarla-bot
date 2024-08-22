@@ -14,7 +14,9 @@ const web_link = "https://comprarla.es/";
 bot.start(async (ctx) => {
   const userId = ctx.from.id;
   const username = ctx.from.username;
-  const dateJoined = new Date(); // Current date for demonstration
+  const firstName = ctx.from.first_name;
+  const lastName = ctx.from.last_name || "";
+  const dateJoined = new Date();
   console.log(userId);
   try {
     // Retrieve user's profile photo
@@ -32,6 +34,8 @@ bot.start(async (ctx) => {
       .post(`${backendAPIUrl}/add`, {
         userId,
         username,
+        firstName,
+        lastName,
         dateJoined,
         points: 0, // Initial points
         invitations: [], // Initial invitations

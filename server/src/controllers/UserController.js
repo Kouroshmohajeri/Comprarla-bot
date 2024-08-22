@@ -8,12 +8,14 @@ class UserController {
     const {
       userId,
       username,
+      firstName,
+      lastName,
       dateJoined,
       points,
       invitations,
       tasksDone,
       isOG,
-      profilePhotoUrl, // Add this line
+      profilePhotoUrl,
     } = req.body;
     console.log("user id:", userId);
     try {
@@ -23,12 +25,14 @@ class UserController {
         user = await UserRepository.createUser({
           userId,
           username,
+          firstName,
+          lastName,
           dateJoined,
           points,
           invitations,
           tasksDone,
           isOG,
-          profilePhotoUrl, // Add this line
+          profilePhotoUrl,
         });
       } else {
         user.username = username;

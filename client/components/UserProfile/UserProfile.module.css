@@ -34,17 +34,15 @@
 }
 
 .defaultPicture {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background-color: #ccc;
-  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: bold;
+  width: 100px; /* Adjust size as needed */
+  height: 100px; /* Adjust size as needed */
+  background-color: #ccc; /* Background color */
+  border-radius: 50%; /* Circular shape */
+  font-size: 24px; /* Adjust font size as needed */
+  color: #fff; /* Text color */
 }
 
 .profileBox h2 {

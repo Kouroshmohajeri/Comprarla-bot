@@ -1,5 +1,3 @@
-// components/UserProfile.js
-
 import React, { useEffect, useState } from "react";
 import { getUserDetails } from "@/api/users/actions";
 import { useSearchParams } from "next/navigation";
@@ -32,6 +30,14 @@ const UserProfile = () => {
 
   if (!user) return <p className={styles.notFound}>User not found.</p>;
 
+  // Helper function to get user initials
+  const getInitials = (firstName, lastName) => {
+    if (!firstName) return "";
+    const firstInitial = firstName.charAt(0).toUpperCase();
+    const lastInitial = lastName ? lastName.charAt(0).toUpperCase() : "";
+    return lastInitial ? `${firstInitial}${lastInitial}` : firstInitial;
+  };
+
   return (
     <div className={styles.profileBox}>
       <div className={styles.profileHeader}>
@@ -42,7 +48,9 @@ const UserProfile = () => {
             className={styles.profilePicture}
           />
         ) : (
-          <div className={styles.defaultPicture}>No Image</div>
+          <div className={styles.defaultPicture}>
+            {getInitials(user.firstName, user.lastName)}
+          </div>
         )}
         <h2>{user.username}</h2>
       </div>
