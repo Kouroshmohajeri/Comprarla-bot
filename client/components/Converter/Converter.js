@@ -20,6 +20,13 @@ const Converter = () => {
     setConvertedPrice(formatNumber(Math.round(finalPrice)));
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      // If the user presses "Enter" or "Go", blur the input field
+      event.target.blur();
+    }
+  };
+
   // Function to format numbers with commas
   const formatNumber = (number) => {
     return number.toLocaleString();
@@ -33,6 +40,7 @@ const Converter = () => {
         type="number"
         value={price}
         onChange={handlePriceChange}
+        onKeyPress={handleKeyPress} // Add the onKeyPress handler
         fullWidth
         margin="normal"
         variant="outlined"
