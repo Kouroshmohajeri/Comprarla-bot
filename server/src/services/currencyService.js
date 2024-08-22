@@ -26,7 +26,7 @@ export const fetchEuroToToman = async () => {
 
     const rateText = await page.evaluate(() => {
       const rateElement = document.querySelector(
-        'span[data-col="info.last_trade.PDrCotVal"]'
+        "#main > div.stocks-profile > div.stocks-header > div.stocks-header-main > div > div.fs-cell.fs-xl-3.fs-lg-3.fs-md-6.fs-sm-12.fs-xs-12.top-header-item-block-2.mobile-top-item-hide > div > h3.line.clearfix.mobile-hide-block > span.value > span:nth-child(1)"
       );
       return rateElement
         ? rateElement.textContent.replace(/[^0-9]/g, "")

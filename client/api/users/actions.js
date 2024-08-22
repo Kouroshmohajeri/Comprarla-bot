@@ -1,4 +1,4 @@
-import API from "../server";
+import API from "../server.js";
 
 // Function to get user details by user ID
 export const getUserDetails = async (userId) => {
