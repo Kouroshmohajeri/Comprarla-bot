@@ -16,6 +16,23 @@ const web_link = "https://comprarla.es/";
 const AUTHORIZED_USER_IDS =
   process.env.AUTHORIZED_USER_IDS.split(",").map(Number); // List of authorized user IDs
 
+// Utility function to send a message with the "Open Mini App" button
+const sendMessageWithButton = async (ctx, text) => {
+  await ctx.reply(text, {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: "Open Mini App",
+            web_app: { url: `${web_link}?userId=${ctx.from.id}` },
+          },
+        ],
+      ],
+    },
+  });
+};
+
+// Start command
 bot.start(async (ctx) => {
   const userId = ctx.from.id;
   const username = ctx.from.username;
@@ -76,7 +93,8 @@ bot.start(async (ctx) => {
     });
   } catch (error) {
     console.error("Failed to save user data:", error);
-    await ctx.reply(
+    await sendMessageWithButton(
+      ctx,
       "An error occurred while processing your data. Please try again."
     );
   }
@@ -94,12 +112,16 @@ bot.on("callback_query", async (ctx) => {
       if (!ctx.session) ctx.session = {};
 
       ctx.session.isBroadcasting = true;
-      await ctx.reply(
+      await sendMessageWithButton(
+        ctx,
         `The bot is ready, ${ctx.from.first_name}. Let's broadcast your message!`
       );
     } else {
       await ctx.answerCbQuery();
-      await ctx.reply("You are not authorized to broadcast messages.");
+      await sendMessageWithButton(
+        ctx,
+        "You are not authorized to broadcast messages."
+      );
     }
   }
 });
@@ -109,7 +131,10 @@ bot.on("text", async (ctx) => {
   // Ensure session is initialized before checking
   if (ctx.session && ctx.session.isBroadcasting) {
     if (!AUTHORIZED_USER_IDS.includes(ctx.from.id)) {
-      await ctx.reply("You are not authorized to broadcast messages.");
+      await sendMessageWithButton(
+        ctx,
+        "You are not authorized to broadcast messages."
+      );
       return;
     }
 
@@ -117,10 +142,10 @@ bot.on("text", async (ctx) => {
     try {
       await broadcastMessage(bot, message);
 
-      await ctx.reply("Broadcast message sent to all users.");
+      await sendMessageWithButton(ctx, "Broadcast message sent to all users.");
       ctx.session.isBroadcasting = false;
     } catch (error) {
-      await ctx.reply("Failed to send broadcast message.");
+      await sendMessageWithButton(ctx, "Failed to send broadcast message.");
       console.error("Error broadcasting message:", error);
     }
   }
