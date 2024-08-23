@@ -9,10 +9,31 @@ const broadcastMessage = async (bot, message) => {
     const { data } = await axios.get(`${process.env.BACKEND_URL}/api/users`);
     const userIds = data.map((user) => user.userId);
 
-    // Send the message to each user
+    // Create the inline keyboard with the "Open Mini App" button
+    const keyboardOptions = [
+      [
+        {
+          text: "Open Mini App",
+          web_app: { url: `https://comprarla.es/?userId={{userId}}` },
+        },
+      ],
+    ];
+
+    // Send the message to each user with the inline keyboard
     for (const userId of userIds) {
       try {
-        await bot.telegram.sendMessage(userId, message);
+        await bot.telegram.sendMessage(userId, message, {
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: "Open Mini App",
+                  web_app: { url: `https://comprarla.es/?userId=${userId}` },
+                },
+              ],
+            ],
+          },
+        });
       } catch (error) {
         console.error(`Failed to send message to ${userId}:`, error);
       }
