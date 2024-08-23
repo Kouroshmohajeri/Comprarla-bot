@@ -49,7 +49,19 @@ const MyInvitations = () => {
 
   if (loading) return <p className={styles.loading}>Loading...</p>;
   if (invitations.length === 0)
-    return <p className={styles.noInvitations}>No invitations found.</p>;
+    return (
+      <div className={styles.noInvitationContainer}>
+        <p className={styles.noInvitations}>No invitations found.</p>
+        <div className={styles.inviteButtonContainer}>
+          <button
+            onClick={handleGenerateInvitation}
+            className={styles.generateButton}
+          >
+            Generate Invitation Code
+          </button>
+        </div>
+      </div>
+    );
 
   return (
     <div className={styles.invitationsContainer}>
