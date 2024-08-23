@@ -8,6 +8,7 @@ dotenv.config();
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new Telegraf(TOKEN);
 
+// Initialize session middleware
 bot.use(session());
 
 const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
@@ -79,6 +80,10 @@ bot.on("callback_query", async (ctx) => {
   if (callbackData === "broadcast_message") {
     if (ctx.from.id === AUTHORIZED_USER_ID) {
       await ctx.answerCbQuery();
+
+      // Initialize the session if not done already
+      if (!ctx.session) ctx.session = {};
+
       ctx.session.isBroadcasting = true;
       await ctx.reply(
         "The bot is ready. Please send the message you want to broadcast."
@@ -92,6 +97,7 @@ bot.on("callback_query", async (ctx) => {
 
 // Handle incoming text messages for broadcasting
 bot.on("text", async (ctx) => {
+  // Ensure session is initialized before checking
   if (ctx.session && ctx.session.isBroadcasting) {
     if (ctx.from.id !== AUTHORIZED_USER_ID) {
       await ctx.reply("You are not authorized to broadcast messages.");
