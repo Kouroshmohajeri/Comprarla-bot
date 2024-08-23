@@ -47,9 +47,10 @@ bot.start(async (ctx) => {
       profilePhotoUrl,
     });
 
+    // Use an inline keyboard for the "Broadcast Message" button
     ctx.reply("Welcome to ComprarLa.", {
       reply_markup: {
-        keyboard: [
+        inline_keyboard: [
           [
             {
               text: "Open Mini App",
@@ -101,11 +102,10 @@ bot.on("text", async (ctx) => {
 
     const message = ctx.message.text;
     try {
-      // Broadcast the message using the broadcastMessage function
       await broadcastMessage(bot, message);
 
       await ctx.reply("Broadcast message sent to all users.");
-      ctx.session.isBroadcasting = false; // End broadcasting mode
+      ctx.session.isBroadcasting = false;
     } catch (error) {
       await ctx.reply("Failed to send broadcast message.");
       console.error("Error broadcasting message:", error);
