@@ -57,12 +57,10 @@ bot.start(async (ctx) => {
               web_app: { url: `${web_link}?userId=${userId}` },
             },
           ],
-          [
-            {
-              text: "Broadcast Message",
-              callback_data: "broadcast_message",
-            },
-          ],
+          {
+            text: "Broadcast Message",
+            callback_data: "broadcast_message",
+          },
         ],
       },
     });
