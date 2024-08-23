@@ -19,7 +19,7 @@ const broadcastMessage = async (bot, message) => {
     }
 
     console.log(
-      `Broadcast message successfully sent to ${userIds.length} users.`
+      `Broadcast message successfully sent to ${userIds.length} users!`
     );
   } catch (error) {
     console.error("Error broadcasting message:", error);

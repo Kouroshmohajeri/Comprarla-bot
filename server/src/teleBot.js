@@ -117,7 +117,7 @@ bot.on("text", async (ctx) => {
     try {
       await broadcastMessage(bot, message);
 
-      await ctx.reply("Broadcast message sent to all authorized users.");
+      await ctx.reply("Broadcast message sent to all users.");
       ctx.session.isBroadcasting = false;
     } catch (error) {
       await ctx.reply("Failed to send broadcast message.");
