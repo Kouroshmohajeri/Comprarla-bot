@@ -13,7 +13,7 @@ bot.use(session());
 
 const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
 const web_link = "https://comprarla.es/";
-const AUTHORIZED_USER_ID = parseInt(process.env.AUTHORIZED_USER_ID, 10);
+const AUTHORIZED_USER_IDS = [83068196, 41949121]; // List of authorized user IDs
 
 // Start command
 bot.start(async (ctx) => {
@@ -48,21 +48,30 @@ bot.start(async (ctx) => {
       profilePhotoUrl,
     });
 
-    // Use an inline keyboard for the "Broadcast Message" button
+    // Prepare the keyboard options
+    const keyboardOptions = [
+      [
+        {
+          text: "Open Mini App",
+          web_app: { url: `${web_link}?userId=${userId}` },
+        },
+      ],
+    ];
+
+    // Conditionally add the "Broadcast Message" button if the user is authorized
+    if (AUTHORIZED_USER_IDS.includes(userId)) {
+      keyboardOptions.push([
+        {
+          text: "Broadcast Message",
+          callback_data: "broadcast_message",
+        },
+      ]);
+    }
+
+    // Send the welcome message with the appropriate keyboard
     ctx.reply("Welcome to ComprarLa.", {
       reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "Open Mini App",
-              web_app: { url: `${web_link}?userId=${userId}` },
-            },
-            {
-              text: "Broadcast Message",
-              callback_data: "broadcast_message",
-            },
-          ],
-        ],
+        inline_keyboard: keyboardOptions,
       },
     });
   } catch (error) {
@@ -78,7 +87,7 @@ bot.on("callback_query", async (ctx) => {
   const callbackData = ctx.callbackQuery.data;
 
   if (callbackData === "broadcast_message") {
-    if (ctx.from.id === AUTHORIZED_USER_ID) {
+    if (AUTHORIZED_USER_IDS.includes(ctx.from.id)) {
       await ctx.answerCbQuery();
 
       // Initialize the session if not done already
@@ -99,7 +108,7 @@ bot.on("callback_query", async (ctx) => {
 bot.on("text", async (ctx) => {
   // Ensure session is initialized before checking
   if (ctx.session && ctx.session.isBroadcasting) {
-    if (ctx.from.id !== AUTHORIZED_USER_ID) {
+    if (!AUTHORIZED_USER_IDS.includes(ctx.from.id)) {
       await ctx.reply("You are not authorized to broadcast messages.");
       return;
     }
@@ -108,7 +117,7 @@ bot.on("text", async (ctx) => {
     try {
       await broadcastMessage(bot, message);
 
-      await ctx.reply("Broadcast message sent to all users.");
+      await ctx.reply("Broadcast message sent to all authorized users.");
       ctx.session.isBroadcasting = false;
     } catch (error) {
       await ctx.reply("Failed to send broadcast message.");
@@ -119,3 +128,5 @@ bot.on("text", async (ctx) => {
 
 // Launch the bot
 bot.launch();
+
+export default broadcastMessage;
