@@ -13,7 +13,7 @@ bot.use(session());
 
 const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
 const web_link = "https://comprarla.es/";
-const AUTHORIZED_USER_IDS = [83068196]; // List of authorized user IDs
+const AUTHORIZED_USER_IDS = process.env.AUTHORIZED_USER_IDS; // List of authorized user IDs
 
 // Start command
 bot.start(async (ctx) => {
