@@ -3,7 +3,7 @@
   overflow: hidden;
   overflow-y: scroll;
   width: 100%;
-  height: auto; /* Full height of the viewport */
+  height: 110vh; /* Full height of the viewport */
   background-color: #333333; /* Background color */
 }
 
