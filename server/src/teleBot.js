@@ -13,7 +13,8 @@ bot.use(session());
 
 const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
 const web_link = "https://comprarla.es/";
-const AUTHORIZED_USER_IDS = process.env.AUTHORIZED_USER_IDS; // List of authorized user IDs
+const AUTHORIZED_USER_IDS =
+  process.env.AUTHORIZED_USER_IDS.split(",").map(Number); // List of authorized user IDs
 
 // Start command
 bot.start(async (ctx) => {
@@ -95,7 +96,7 @@ bot.on("callback_query", async (ctx) => {
 
       ctx.session.isBroadcasting = true;
       await ctx.reply(
-        "The bot is ready. Please send the message you want to broadcast."
+        `The bot is ready, ${ctx.from.first_name}. Let's broadcast your message!`
       );
     } else {
       await ctx.answerCbQuery();
