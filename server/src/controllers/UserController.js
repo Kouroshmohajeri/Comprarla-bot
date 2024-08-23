@@ -1,6 +1,5 @@
-// src/controllers/UserController.js
-
 import UserRepository from "../repositories/UserRepository.js";
+import { v4 as uuidv4 } from "uuid";
 
 class UserController {
   // Handle the creation or update of user data
@@ -11,17 +10,32 @@ class UserController {
       firstName,
       lastName,
       dateJoined,
-      points,
-      invitations,
-      tasksDone,
-      isOG,
       profilePhotoUrl,
+      invitationCode, // Capture invitation code if present
     } = req.body;
-    console.log("user id:", userId);
+
     try {
       let user = await UserRepository.findUserById(userId);
 
       if (!user) {
+        // Create a new user with 100 points and generate a unique invitation code
+        const generatedInvitationCode = uuidv4(); // Generate a unique code
+        let points = 100;
+
+        // Check if the user joined via an invitation link
+        let invitedByUser = null;
+        if (invitationCode) {
+          invitedByUser = await UserRepository.findUserByInvitationCode(
+            invitationCode
+          );
+          if (invitedByUser) {
+            points += 50; // Award 50 points to the new user
+            invitedByUser.points += 100; // Award 100 points to the inviter
+            invitedByUser.invitations.push(userId); // Add new user's ID to the inviter's invitations list
+            await invitedByUser.save();
+          }
+        }
+
         user = await UserRepository.createUser({
           userId,
           username,
@@ -29,25 +43,47 @@ class UserController {
           lastName,
           dateJoined,
           points,
-          invitations,
-          tasksDone,
-          isOG,
+          invitations: [],
+          invitationCode: generatedInvitationCode,
+          invitedBy: invitedByUser ? invitedByUser.userId : null,
+          tasksDone: 0,
+          isOG: false,
           profilePhotoUrl,
         });
       } else {
+        // Update existing user information
         user.username = username;
-        user.dateJoined = dateJoined;
-        user.points = points;
-        user.invitations = invitations;
-        user.tasksDone = tasksDone;
-        user.isOG = isOG;
-        user.profilePhotoUrl = profilePhotoUrl; // Add this line
+        user.firstName = firstName;
+        user.lastName = lastName;
+        user.profilePhotoUrl = profilePhotoUrl;
         await user.save();
       }
 
       res.status(200).json(user);
     } catch (error) {
       res.status(500).json({ message: "Error handling user data", error });
+    }
+  }
+
+  // Generate a new invitation code
+  async generateInvitationCode(req, res) {
+    const { userId } = req.params;
+
+    try {
+      const user = await UserRepository.findUserById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const newInvitationCode = uuidv4();
+      user.invitationCode = newInvitationCode;
+      await user.save();
+
+      res.status(200).json({ invitationCode: newInvitationCode });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "Error generating invitation code", error });
     }
   }
 

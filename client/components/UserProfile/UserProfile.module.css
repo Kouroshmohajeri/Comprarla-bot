@@ -11,13 +11,15 @@
   color: white;
   text-align: center;
   background: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  /* box-shadow: 0 8px 32px 0 rgba(255, 255, 255, 0.18); */
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
-
+.profileImage{
+  border-radius: 50%;
+}
 .profileHeader {
   display: flex;
   flex-direction: column;
@@ -34,15 +36,17 @@
 }
 
 .defaultPicture {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: #ccc;
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100px; /* Adjust size as needed */
-  height: 100px; /* Adjust size as needed */
-  background-color: #ccc; /* Background color */
-  border-radius: 50%; /* Circular shape */
-  font-size: 24px; /* Adjust font size as needed */
-  color: #fff; /* Text color */
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 .profileBox h2 {

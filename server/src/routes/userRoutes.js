@@ -1,3 +1,5 @@
+// src/routes/userRoutes.js
+
 import express from "express";
 import UserController from "../controllers/UserController.js";
 
@@ -5,6 +7,12 @@ const router = express.Router();
 
 // POST request to save or update user data
 router.post("/add", UserController.handleUserData);
+
+// POST request to generate invitation code
+router.post(
+  "/generate-invitation/:userId",
+  UserController.generateInvitationCode
+);
 
 // GET request to fetch user details by ID
 router.get("/:userId", UserController.getUserDetails);

@@ -1,3 +1,5 @@
+// src/repositories/UserRepository.js
+
 import User from "../models/User.js";
 
 class UserRepository {
@@ -24,6 +26,11 @@ class UserRepository {
 
   async getAllUsers() {
     return await User.find({});
+  }
+
+  // Find a user by their invitation code
+  async findUserByInvitationCode(invitationCode) {
+    return await User.findOne({ invitationCode });
   }
 }
 

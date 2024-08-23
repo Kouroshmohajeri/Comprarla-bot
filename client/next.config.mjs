@@ -17,4 +17,7 @@ export default {
       },
     ];
   },
+  images: {
+    domains: ["api.telegram.org"], // Allow images from api.telegram.org
+  },
 };
