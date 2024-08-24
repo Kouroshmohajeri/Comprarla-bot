@@ -8,6 +8,9 @@ dotenv.config();
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new Telegraf(TOKEN);
 
+// Set the webhook path
+const webhookPath = "/comprarla-hook";
+
 // Initialize session middleware
 bot.use(session());
 
@@ -127,5 +130,10 @@ bot.on("text", async (ctx) => {
   }
 });
 
-// Launch the bot
-bot.launch();
+// Set up the webhook and start the bot with it
+bot.telegram.setWebhook(`https://23.227.167.112${webhookPath}`);
+bot.startWebhook(webhookPath, null, 5000);
+
+console.log(
+  `Bot is running and webhook is set to https://23.227.167.112${webhookPath}`
+);

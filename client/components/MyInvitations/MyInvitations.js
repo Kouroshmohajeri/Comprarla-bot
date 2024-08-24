@@ -16,7 +16,6 @@ const MyInvitations = () => {
     if (userId) {
       const fetchInvitations = async () => {
         try {
-          // Fetch the user's details including the invitations list
           const userData = await getUserDetails(userId);
           setInvitations(userData.invitations);
         } catch (error) {
@@ -36,13 +35,15 @@ const MyInvitations = () => {
       console.log(response);
       const invitationCode = response.invitationCode;
       const invitationLink = `${process.env.BOT_URL}/start?invitationCode=${invitationCode}`;
-      const message = `Hi! Join me on Comprala store using my invitation link and earn 50 points using this link along with 100 points for new users! ${invitationLink}`;
+      const message = `Hi! Join me on Comprarla store using my invitation link and earn 50 points using this link along with 100 points for new users! ${invitationLink}`;
 
-      // Open the forward dialog in Telegram
-      window.Telegram.WebApp.showModal({
-        text: message,
-        url: invitationLink,
-      });
+      // Minimize the WebApp and show the message dialog
+      window.Telegram.WebApp.close();
+      window.Telegram.WebApp.openTelegramLink(
+        `https://t.me/share/url?url=${encodeURIComponent(
+          invitationLink
+        )}&text=${encodeURIComponent(message)}`
+      );
     } catch (error) {
       console.error("Failed to generate invitation code:", error);
     }
