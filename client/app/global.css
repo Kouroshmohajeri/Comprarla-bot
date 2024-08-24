@@ -1,6 +1,7 @@
 /* app/globals.css */
 
 body {
+    margin: 0;
     background-color: #333333 !important;
     font-family: 'Inter', sans-serif;
   }

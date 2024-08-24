@@ -1,14 +1,14 @@
 .container {
-    padding: 20px;
-    text-align: center;
-    color: white;
-    margin-top: 40%;
-    position: relative;
-    background: rgba( 255, 255, 255, 0.25 );
-/* box-shadow: 0 8px 32px 0 rgba( 255, 255, 255, 0.18 ); */
-backdrop-filter: blur( 4px );
--webkit-backdrop-filter: blur( 4px );
-border-radius: 10px;
-border: 1px solid rgba( 255, 255, 255, 0.18 );
-  }
+  padding: 20px;
+  text-align: center;
+  color: white;
+  margin: 40% 0% 40%;
+  position: relative;
+  background: rgba( 255, 255, 255, 0.25 );
+  /* box-shadow: 0 8px 32px 0 rgba( 255, 255, 255, 0.18 ); */
+  backdrop-filter: blur( 4px );
+  -webkit-backdrop-filter: blur( 4px );
+  border-radius: 10px;
+  border: 1px solid rgba( 255, 255, 255, 0.18 );
+}
   
