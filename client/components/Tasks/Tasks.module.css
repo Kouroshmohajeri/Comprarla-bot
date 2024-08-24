@@ -1,0 +1,50 @@
+.container {
+    color: white;
+    text-align: center;
+    position: relative;
+    
+  }
+  .divider{
+    width: 50%;
+  }
+  .taskList {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .taskItem {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 2%;
+    background: rgba( 51, 51, 51, 0.25 );
+    backdrop-filter: blur( 4px );
+    -webkit-backdrop-filter: blur( 4px );
+    border-radius: 10px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+  }
+  
+  .taskInfo {
+    display: flex;
+    align-items: center;
+  }
+  
+  .taskIcon {
+    margin-right: 10px;
+  }
+  
+  .taskButton {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .taskButtonDisabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  

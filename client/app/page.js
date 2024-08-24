@@ -8,6 +8,7 @@ import Converter from "@/components/Converter/Converter.js";
 import BrandsDisplay from "@/components/BrandsDisplay/BrandsDisplay.js";
 import LoadingScreen from "@/components/LoadingScreen/LoadingScreen.js"; // Import the LoadingScreen component
 import UserProfile from "@/components/UserProfile/UserProfile";
+import Tasks from "@/components/Tasks/Tasks";
 
 export default function Home() {
   const [selectedPage, setSelectedPage] = useState(0); // Use index 0 as the default page
@@ -48,9 +49,10 @@ export default function Home() {
         >
           <ParticlesBackground id="particles" />
           <Header />
-          {selectedPage === 0 && <Converter />} {/* Index 0: Converter */}
-          {selectedPage === 1 && <BrandsDisplay />} {/* Index 1: Brands */}
-          {selectedPage === 2 && <UserProfile />} {/* Index 1: Brands */}
+          {selectedPage === 0 && <Converter />}
+          {selectedPage === 1 && <BrandsDisplay />}
+          {selectedPage === 2 && <UserProfile />}
+          {selectedPage === 3 && <Tasks />}
           {/* You can add more conditions here for other pages */}
           <BottomMenu onPageChange={handlePageChange} />
         </div>

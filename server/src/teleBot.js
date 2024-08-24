@@ -1,8 +1,7 @@
 import { Telegraf, session } from "telegraf";
 import axios from "axios";
 import dotenv from "dotenv";
-import broadcastMessage from "./services/broadcast.js";
-import crypto from "crypto"; // For generating OTPs
+import crypto from "crypto";
 
 dotenv.config();
 
@@ -17,13 +16,26 @@ const web_link = "https://comprarla.es/";
 const AUTHORIZED_USER_IDS =
   process.env.AUTHORIZED_USER_IDS.split(",").map(Number); // List of authorized user IDs
 
-// Store OTPs in memory (you might want to use a persistent store)
-const otpStore = {};
+// Utility function to generate OTP
+const generateOTP = () => {
+  return crypto.randomInt(100000, 999999).toString();
+};
 
-// Generate OTP
-function generateOTP() {
-  return crypto.randomInt(100000, 999999).toString(); // Generate a 6-digit OTP
-}
+// Utility function to save OTP (In-memory storage for simplicity, replace with DB)
+const otpStore = {}; // In-memory storage
+const saveOtp = (userId, otp) => {
+  otpStore[userId] = otp;
+};
+
+// Utility function to get OTP
+const getOtp = (userId) => {
+  return otpStore[userId];
+};
+
+// Utility function to delete OTP
+const deleteOtp = (userId) => {
+  delete otpStore[userId];
+};
 
 // Start command
 bot.start(async (ctx) => {
@@ -38,6 +50,13 @@ bot.start(async (ctx) => {
   const invitationCode = messageText.split(" ")[1]; // Extract the payload after /start
 
   try {
+    // Generate and save OTP
+    const otp = generateOTP();
+    saveOtp(userId, otp);
+
+    // Send OTP to user
+    await ctx.reply(`Your OTP is: ${otp}`);
+
     // Retrieve user's profile photo
     const userPhotos = await bot.telegram.getUserProfilePhotos(userId);
     let profilePhotoUrl = "";
@@ -84,11 +103,14 @@ bot.start(async (ctx) => {
     }
 
     // Send the welcome message with the appropriate keyboard
-    ctx.reply("Welcome to ComprarLa.", {
-      reply_markup: {
-        inline_keyboard: keyboardOptions,
-      },
-    });
+    ctx.reply(
+      "Welcome to ComprarLa. Please enter the OTP sent to you to continue.",
+      {
+        reply_markup: {
+          inline_keyboard: keyboardOptions,
+        },
+      }
+    );
   } catch (error) {
     console.error("Failed to save user data:", error);
     ctx.reply(
@@ -97,46 +119,55 @@ bot.start(async (ctx) => {
   }
 });
 
-// Handle OTP request from frontend
-bot.on("callback_query", async (ctx) => {
-  const callbackData = ctx.callbackQuery.data;
-
-  // If the callback data indicates a connect action, generate and send OTP
-  if (callbackData === "connect_telegram") {
-    const userId = ctx.from.id;
-    const otp = generateOTP();
-
-    // Store OTP with expiration (e.g., 5 minutes)
-    otpStore[userId] = { otp, expiresAt: Date.now() + 300000 }; // 5 minutes expiration
-
-    // Send OTP to the user
-    await ctx.reply(`Your OTP is: ${otp}`);
-  }
-});
-
-// Verify OTP
+// Handle OTP verification
 bot.on("text", async (ctx) => {
   const userId = ctx.from.id;
-  const userOTP = ctx.message.text;
+  const otpEntered = ctx.message.text;
 
-  if (otpStore[userId]) {
-    if (otpStore[userId].otp === userOTP) {
-      if (Date.now() > otpStore[userId].expiresAt) {
-        await ctx.reply("OTP has expired. Please request a new one.");
-      } else {
+  if (otpEntered.length === 6 && !isNaN(otpEntered)) {
+    try {
+      const storedOtp = getOtp(userId);
+
+      if (storedOtp === otpEntered) {
+        // OTP is valid; remove OTP record
+        deleteOtp(userId);
+
+        // Send success message
         await ctx.reply("OTP verified successfully. You are now logged in.");
-        delete otpStore[userId]; // Clear the OTP after successful verification
-        // Proceed with login logic, e.g., update user status in your backend
+
+        // Optionally, you can add additional logic here to proceed further
+      } else {
+        // OTP is invalid
+        await ctx.reply("Invalid OTP. Please try again.");
       }
-    } else {
-      await ctx.reply("Invalid OTP. Please try again.");
+    } catch (error) {
+      console.error("Error verifying OTP:", error);
+      await ctx.reply(
+        "An error occurred while verifying your OTP. Please try again."
+      );
     }
   } else {
-    await ctx.reply("No OTP request found. Please request an OTP first.");
+    // Handle non-OTP text input
+    if (ctx.session && ctx.session.isBroadcasting) {
+      if (!AUTHORIZED_USER_IDS.includes(ctx.from.id)) {
+        await ctx.reply("You are not authorized to broadcast messages.");
+        return;
+      }
+
+      const message = ctx.message.text;
+      try {
+        await broadcastMessage(bot, message);
+        await ctx.reply("Broadcast message sent to all users.");
+        ctx.session.isBroadcasting = false;
+      } catch (error) {
+        await ctx.reply("Failed to send broadcast message.");
+        console.error("Error broadcasting message:", error);
+      }
+    }
   }
 });
 
-// Handle other callback queries (e.g., button presses)
+// Handle callback queries (e.g., button presses)
 bot.on("callback_query", async (ctx) => {
   const callbackData = ctx.callbackQuery.data;
 
@@ -154,27 +185,6 @@ bot.on("callback_query", async (ctx) => {
     } else {
       await ctx.answerCbQuery();
       await ctx.reply("You are not authorized to broadcast messages.");
-    }
-  }
-});
-
-// Handle incoming text messages for broadcasting
-bot.on("text", async (ctx) => {
-  // Ensure session is initialized before checking
-  if (ctx.session && ctx.session.isBroadcasting) {
-    if (!AUTHORIZED_USER_IDS.includes(ctx.from.id)) {
-      await ctx.reply("You are not authorized to broadcast messages.");
-      return;
-    }
-
-    const message = ctx.message.text;
-    try {
-      await broadcastMessage(bot, message);
-      await ctx.reply("Broadcast message sent to all users.");
-      ctx.session.isBroadcasting = false;
-    } catch (error) {
-      await ctx.reply("Failed to send broadcast message.");
-      console.error("Error broadcasting message:", error);
     }
   }
 });
