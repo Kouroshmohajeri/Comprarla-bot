@@ -34,7 +34,7 @@ const MyInvitations = () => {
       const response = await generateInvitationCode(userId);
       console.log(response);
       const invitationCode = response.invitationCode;
-      const invitationLink = `https://t.me/comprarlabot/start?invitationCode=${invitationCode}`;
+      const invitationLink = `https://t.me/comprarlabot?start=${invitationCode}`;
       const message = `Hi! Join me on Comprarla store using my invitation link and earn 50 points using this link along with 100 points for new users! ${invitationLink}`;
 
       // Minimize the WebApp and show the message dialog
