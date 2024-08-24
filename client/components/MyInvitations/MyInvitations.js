@@ -32,12 +32,11 @@ const MyInvitations = () => {
   const handleGenerateInvitation = async () => {
     try {
       const response = await generateInvitationCode(userId);
-      console.log(response);
       const invitationCode = response.invitationCode;
       const invitationLink = `https://t.me/comprarlabot?start=${invitationCode}`;
       const message = `Hi! Join me on Comprarla store using my invitation link and earn 50 points using this link along with 100 points for new users! ${invitationLink}`;
 
-      // Minimize the WebApp and show the message dialog
+      // Send the message via Telegram
       window.Telegram.WebApp.close();
       window.Telegram.WebApp.openTelegramLink(
         `https://t.me/share/url?url=${encodeURIComponent(

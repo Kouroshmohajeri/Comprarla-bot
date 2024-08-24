@@ -20,7 +20,7 @@ class UserController {
       if (!user) {
         // Create a new user with 100 points and generate a unique invitation code
         const generatedInvitationCode = uuidv4(); // Generate a unique code
-        let points = 100;
+        let points = 100; // Base points for the new user
 
         // Check if the user joined via an invitation link
         let invitedByUser = null;
@@ -29,13 +29,14 @@ class UserController {
             invitationCode
           );
           if (invitedByUser) {
-            points += 50; // Award 50 points to the new user
+            points += 50; // Award 50 bonus points to the new user
             invitedByUser.points += 100; // Award 100 points to the inviter
             invitedByUser.invitations.push(userId); // Add new user's ID to the inviter's invitations list
-            await invitedByUser.save();
+            await invitedByUser.save(); // Save the updated inviter details
           }
         }
 
+        // Create the new user with the calculated points and generated invitation code
         user = await UserRepository.createUser({
           userId,
           username,
@@ -43,7 +44,7 @@ class UserController {
           lastName,
           dateJoined,
           points,
-          invitations: [],
+          invitations: [], // Start with an empty invitations list
           invitationCode: generatedInvitationCode,
           invitedBy: invitedByUser ? invitedByUser.userId : null,
           tasksDone: 0,
@@ -56,7 +57,7 @@ class UserController {
         user.firstName = firstName;
         user.lastName = lastName;
         user.profilePhotoUrl = profilePhotoUrl;
-        await user.save();
+        await user.save(); // Save the updated user details
       }
 
       res.status(200).json(user);
