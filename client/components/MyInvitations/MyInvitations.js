@@ -34,7 +34,17 @@ const MyInvitations = () => {
       const response = await generateInvitationCode(userId);
       const invitationCode = response.invitationCode;
       const invitationLink = `https://t.me/comprarlabot?start=${invitationCode}`;
-      const message = `Hi! Join me on Comprarla store using my invitation link and earn 50 points using this link along with 100 points for new users! ${invitationLink}`;
+      const message = `Hi there! Let's join Comprarla✨️
+
+First ever online shop with a Telegram mini app!
+
+Join now with the link below and earn 100 points and 50 extra points as a bonus🤩
+
+Join here👇🏼
+${invitationLink}
+
+Also, join our channel for the latest news💡
+https://t.me/comprarla`;
 
       // Send the message via Telegram
       window.Telegram.WebApp.close();
