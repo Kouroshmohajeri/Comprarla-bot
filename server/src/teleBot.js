@@ -24,6 +24,9 @@ bot.start(async (ctx) => {
   const lastName = ctx.from.last_name || "";
   const dateJoined = new Date();
 
+  // Extract the invitation code from the command if available
+  const invitationCode = ctx.startPayload; // ctx.startPayload contains the payload passed in the start link
+
   try {
     // Retrieve user's profile photo
     const userPhotos = await bot.telegram.getUserProfilePhotos(userId);
@@ -47,6 +50,7 @@ bot.start(async (ctx) => {
       tasksDone: 0,
       isOG: false,
       profilePhotoUrl,
+      invitationCode, // Include the invitation code
     });
 
     // Prepare the keyboard options
