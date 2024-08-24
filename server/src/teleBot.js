@@ -12,6 +12,9 @@ const bot = new Telegraf(TOKEN);
 // Set the webhook path
 const webhookPath = "/comprarla-webhook"; // Ensure this matches your Nginx configuration
 const app = express();
+app.post("/test-webhook", (req, res) => {
+  res.send("Webhook is working");
+});
 const port = process.env.BOT_PORT || 88;
 
 // Initialize session middleware
