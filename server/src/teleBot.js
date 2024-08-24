@@ -27,7 +27,7 @@ app.listen(port, () => {
 });
 
 // Set up the webhook with Telegram
-bot.telegram.setWebhook(`https://localhost${webhookPath}`);
+bot.telegram.setWebhook(`https://localhost:30001${webhookPath}`);
 
 const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
 const web_link = "https://comprarla.es/";
