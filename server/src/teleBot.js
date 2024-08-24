@@ -2,6 +2,7 @@ import { Telegraf, session } from "telegraf";
 import axios from "axios";
 import dotenv from "dotenv";
 import broadcastMessage from "./services/broadcast.js";
+import crypto from "crypto"; // For generating OTPs
 
 dotenv.config();
 
@@ -15,6 +16,14 @@ const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
 const web_link = "https://comprarla.es/";
 const AUTHORIZED_USER_IDS =
   process.env.AUTHORIZED_USER_IDS.split(",").map(Number); // List of authorized user IDs
+
+// Store OTPs in memory (you might want to use a persistent store)
+const otpStore = {};
+
+// Generate OTP
+function generateOTP() {
+  return crypto.randomInt(100000, 999999).toString(); // Generate a 6-digit OTP
+}
 
 // Start command
 bot.start(async (ctx) => {
@@ -88,7 +97,46 @@ bot.start(async (ctx) => {
   }
 });
 
-// Handle callback queries (e.g., button presses)
+// Handle OTP request from frontend
+bot.on("callback_query", async (ctx) => {
+  const callbackData = ctx.callbackQuery.data;
+
+  // If the callback data indicates a connect action, generate and send OTP
+  if (callbackData === "connect_telegram") {
+    const userId = ctx.from.id;
+    const otp = generateOTP();
+
+    // Store OTP with expiration (e.g., 5 minutes)
+    otpStore[userId] = { otp, expiresAt: Date.now() + 300000 }; // 5 minutes expiration
+
+    // Send OTP to the user
+    await ctx.reply(`Your OTP is: ${otp}`);
+  }
+});
+
+// Verify OTP
+bot.on("text", async (ctx) => {
+  const userId = ctx.from.id;
+  const userOTP = ctx.message.text;
+
+  if (otpStore[userId]) {
+    if (otpStore[userId].otp === userOTP) {
+      if (Date.now() > otpStore[userId].expiresAt) {
+        await ctx.reply("OTP has expired. Please request a new one.");
+      } else {
+        await ctx.reply("OTP verified successfully. You are now logged in.");
+        delete otpStore[userId]; // Clear the OTP after successful verification
+        // Proceed with login logic, e.g., update user status in your backend
+      }
+    } else {
+      await ctx.reply("Invalid OTP. Please try again.");
+    }
+  } else {
+    await ctx.reply("No OTP request found. Please request an OTP first.");
+  }
+});
+
+// Handle other callback queries (e.g., button presses)
 bot.on("callback_query", async (ctx) => {
   const callbackData = ctx.callbackQuery.data;
 
@@ -122,7 +170,6 @@ bot.on("text", async (ctx) => {
     const message = ctx.message.text;
     try {
       await broadcastMessage(bot, message);
-
       await ctx.reply("Broadcast message sent to all users.");
       ctx.session.isBroadcasting = false;
     } catch (error) {
