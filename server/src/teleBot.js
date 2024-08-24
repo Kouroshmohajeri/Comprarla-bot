@@ -1,7 +1,6 @@
 import { Telegraf, session } from "telegraf";
 import axios from "axios";
 import dotenv from "dotenv";
-import crypto from "crypto";
 import broadcastMessage from "./services/broadcast.js";
 
 dotenv.config();
@@ -12,21 +11,10 @@ const bot = new Telegraf(TOKEN);
 // Initialize session middleware
 bot.use(session());
 
-const backendAPIUrl = `${process.env.BACKEND_URL}/api/otp`;
-const userAPIUrl = `${process.env.BACKEND_URL}/api/users`;
+const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
 const web_link = "https://comprarla.es/";
 const AUTHORIZED_USER_IDS =
   process.env.AUTHORIZED_USER_IDS.split(",").map(Number); // List of authorized user IDs
-
-// Utility function to generate OTP
-const generateOTP = () => {
-  return crypto.randomInt(100000, 999999).toString();
-};
-
-// Utility function to save OTP
-const saveOtp = async (userId, otp) => {
-  await axios.post(`${backendAPIUrl}/generate`, { userId, otp });
-};
 
 // Start command
 bot.start(async (ctx) => {
@@ -41,10 +29,6 @@ bot.start(async (ctx) => {
   const invitationCode = messageText.split(" ")[1]; // Extract the payload after /start
 
   try {
-    // Generate and save OTP
-    const otp = generateOTP();
-    await saveOtp(userId, otp);
-
     // Retrieve user's profile photo
     const userPhotos = await bot.telegram.getUserProfilePhotos(userId);
     let profilePhotoUrl = "";
@@ -56,7 +40,7 @@ bot.start(async (ctx) => {
     }
 
     // Send user data to your backend to be saved or updated in MongoDB
-    await axios.post(`${userAPIUrl}/add`, {
+    await axios.post(`${backendAPIUrl}/add`, {
       userId,
       username,
       firstName,
@@ -91,59 +75,16 @@ bot.start(async (ctx) => {
     }
 
     // Send the welcome message with the appropriate keyboard
-    ctx.reply(
-      `Welcome to ComprarLa. Your OTP is ${otp}. Please enter this OTP on the following website: ${web_link}?userId=${userId}`,
-      {
-        reply_markup: {
-          inline_keyboard: keyboardOptions,
-        },
-      }
-    );
+    ctx.reply("Welcome to ComprarLa.", {
+      reply_markup: {
+        inline_keyboard: keyboardOptions,
+      },
+    });
   } catch (error) {
     console.error("Failed to save user data:", error);
     ctx.reply(
       "An error occurred while processing your data. Please try again."
     );
-  }
-});
-
-// Handle OTP verification
-bot.on("text", async (ctx) => {
-  const userId = ctx.from.id;
-  const otpEntered = ctx.message.text;
-
-  // Check if OTP is being entered
-  if (otpEntered.length === 6 && !isNaN(otpEntered)) {
-    try {
-      const response = await axios.post(`${backendAPIUrl}/verify`, {
-        userId,
-        otpEntered,
-      });
-
-      // Send success message
-      await ctx.reply("OTP verified successfully. You are now logged in.");
-    } catch (error) {
-      // OTP is invalid
-      await ctx.reply("Invalid OTP. Please try again.");
-    }
-  } else {
-    // Handle other text messages for broadcasting
-    if (ctx.session && ctx.session.isBroadcasting) {
-      if (!AUTHORIZED_USER_IDS.includes(ctx.from.id)) {
-        await ctx.reply("You are not authorized to broadcast messages.");
-        return;
-      }
-
-      const message = ctx.message.text;
-      try {
-        await broadcastMessage(bot, message);
-        await ctx.reply("Broadcast message sent to all users.");
-        ctx.session.isBroadcasting = false;
-      } catch (error) {
-        await ctx.reply("Failed to send broadcast message.");
-        console.error("Error broadcasting message:", error);
-      }
-    }
   }
 });
 
@@ -165,6 +106,28 @@ bot.on("callback_query", async (ctx) => {
     } else {
       await ctx.answerCbQuery();
       await ctx.reply("You are not authorized to broadcast messages.");
+    }
+  }
+});
+
+// Handle incoming text messages for broadcasting
+bot.on("text", async (ctx) => {
+  // Ensure session is initialized before checking
+  if (ctx.session && ctx.session.isBroadcasting) {
+    if (!AUTHORIZED_USER_IDS.includes(ctx.from.id)) {
+      await ctx.reply("You are not authorized to broadcast messages.");
+      return;
+    }
+
+    const message = ctx.message.text;
+    try {
+      await broadcastMessage(bot, message);
+
+      await ctx.reply("Broadcast message sent to all users.");
+      ctx.session.isBroadcasting = false;
+    } catch (error) {
+      await ctx.reply("Failed to send broadcast message.");
+      console.error("Error broadcasting message:", error);
     }
   }
 });
