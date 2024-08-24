@@ -8,13 +8,13 @@ dotenv.config();
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new Telegraf(TOKEN);
 
-const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`; // Ensure this line is present and correctly initialized
-const web_link = process.env.WEB_LINK || "https://localhost:3000/";
-const AUTHORIZED_USER_IDS =
-  process.env.AUTHORIZED_USER_IDS.split(",").map(Number); // List of authorized user IDs
-
 // Initialize session middleware
 bot.use(session());
+
+const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
+const web_link = "https://comprarla.es/";
+const AUTHORIZED_USER_IDS =
+  process.env.AUTHORIZED_USER_IDS.split(",").map(Number); // List of authorized user IDs
 
 // Start command
 bot.start(async (ctx) => {
@@ -127,9 +127,5 @@ bot.on("text", async (ctx) => {
   }
 });
 
-// Start polling
-bot.launch({
-  polling: true,
-});
-
-console.log(`Bot is running and polling for updates`);
+// Launch the bot
+bot.launch();
