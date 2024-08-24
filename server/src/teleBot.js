@@ -12,7 +12,7 @@ const bot = new Telegraf(TOKEN);
 // Set the webhook path
 const webhookPath = "/comprarla-hook";
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.BOT_PORT || 3001;
 // Initialize session middleware
 bot.use(session());
 app.use(express.json());
