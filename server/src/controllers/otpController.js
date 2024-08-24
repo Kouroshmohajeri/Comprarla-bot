@@ -1,16 +1,15 @@
 import { saveOtp, getOtp, deleteOtp } from "../repositories/OtpRepository.js";
 
-export const generateAndSendOtp = async (ctx) => {
-  const userId = ctx.from.id;
-
-  // Generate OTP
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+export const generateAndSendOtp = async (req, res) => {
+  const { userId, otp } = req.body;
 
   // Save OTP to the database
   await saveOtp(userId, otp);
 
-  // Send OTP to the user
-  await ctx.reply(`Your OTP is: ${otp}`);
+  // Send OTP to the user (if necessary, adjust to your method of sending OTP)
+  // Example: using a messaging service
+
+  res.status(200).send("OTP generated and sent.");
 };
 
 export const verifyOtp = async (req, res) => {

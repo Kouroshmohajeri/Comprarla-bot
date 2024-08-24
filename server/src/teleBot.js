@@ -2,6 +2,7 @@ import { Telegraf, session } from "telegraf";
 import axios from "axios";
 import dotenv from "dotenv";
 import crypto from "crypto";
+import broadcastMessage from "./services/broadcast.js";
 
 dotenv.config();
 
@@ -11,7 +12,8 @@ const bot = new Telegraf(TOKEN);
 // Initialize session middleware
 bot.use(session());
 
-const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
+const backendAPIUrl = `${process.env.BACKEND_URL}/api/otp`;
+const userAPIUrl = `${process.env.BACKEND_URL}/api/users`;
 const web_link = "https://comprarla.es/";
 const AUTHORIZED_USER_IDS =
   process.env.AUTHORIZED_USER_IDS.split(",").map(Number); // List of authorized user IDs
@@ -21,20 +23,9 @@ const generateOTP = () => {
   return crypto.randomInt(100000, 999999).toString();
 };
 
-// Utility function to save OTP (In-memory storage for simplicity, replace with DB)
-const otpStore = {}; // In-memory storage
-const saveOtp = (userId, otp) => {
-  otpStore[userId] = otp;
-};
-
-// Utility function to get OTP
-const getOtp = (userId) => {
-  return otpStore[userId];
-};
-
-// Utility function to delete OTP
-const deleteOtp = (userId) => {
-  delete otpStore[userId];
+// Utility function to save OTP
+const saveOtp = async (userId, otp) => {
+  await axios.post(`${backendAPIUrl}/generate`, { userId, otp });
 };
 
 // Start command
@@ -52,10 +43,7 @@ bot.start(async (ctx) => {
   try {
     // Generate and save OTP
     const otp = generateOTP();
-    saveOtp(userId, otp);
-
-    // Send OTP to user
-    await ctx.reply(`Your OTP is: ${otp}`);
+    await saveOtp(userId, otp);
 
     // Retrieve user's profile photo
     const userPhotos = await bot.telegram.getUserProfilePhotos(userId);
@@ -68,7 +56,7 @@ bot.start(async (ctx) => {
     }
 
     // Send user data to your backend to be saved or updated in MongoDB
-    await axios.post(`${backendAPIUrl}/add`, {
+    await axios.post(`${userAPIUrl}/add`, {
       userId,
       username,
       firstName,
@@ -104,7 +92,7 @@ bot.start(async (ctx) => {
 
     // Send the welcome message with the appropriate keyboard
     ctx.reply(
-      "Welcome to ComprarLa. Please enter the OTP sent to you to continue.",
+      `Welcome to ComprarLa. Your OTP is ${otp}. Please enter this OTP on the following website: ${web_link}?userId=${userId}`,
       {
         reply_markup: {
           inline_keyboard: keyboardOptions,
@@ -124,30 +112,22 @@ bot.on("text", async (ctx) => {
   const userId = ctx.from.id;
   const otpEntered = ctx.message.text;
 
+  // Check if OTP is being entered
   if (otpEntered.length === 6 && !isNaN(otpEntered)) {
     try {
-      const storedOtp = getOtp(userId);
+      const response = await axios.post(`${backendAPIUrl}/verify`, {
+        userId,
+        otpEntered,
+      });
 
-      if (storedOtp === otpEntered) {
-        // OTP is valid; remove OTP record
-        deleteOtp(userId);
-
-        // Send success message
-        await ctx.reply("OTP verified successfully. You are now logged in.");
-
-        // Optionally, you can add additional logic here to proceed further
-      } else {
-        // OTP is invalid
-        await ctx.reply("Invalid OTP. Please try again.");
-      }
+      // Send success message
+      await ctx.reply("OTP verified successfully. You are now logged in.");
     } catch (error) {
-      console.error("Error verifying OTP:", error);
-      await ctx.reply(
-        "An error occurred while verifying your OTP. Please try again."
-      );
+      // OTP is invalid
+      await ctx.reply("Invalid OTP. Please try again.");
     }
   } else {
-    // Handle non-OTP text input
+    // Handle other text messages for broadcasting
     if (ctx.session && ctx.session.isBroadcasting) {
       if (!AUTHORIZED_USER_IDS.includes(ctx.from.id)) {
         await ctx.reply("You are not authorized to broadcast messages.");
