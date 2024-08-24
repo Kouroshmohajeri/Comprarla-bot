@@ -1,4 +1,5 @@
 import { Telegraf, session } from "telegraf";
+import express from "express";
 import axios from "axios";
 import dotenv from "dotenv";
 import broadcastMessage from "./services/broadcast.js";
@@ -10,9 +11,22 @@ const bot = new Telegraf(TOKEN);
 
 // Set the webhook path
 const webhookPath = "/comprarla-hook";
-
+const app = express();
+const port = process.env.PORT || 3001;
 // Initialize session middleware
 bot.use(session());
+app.use(express.json());
+
+// Webhook route
+app.use("/comprarla-webhook", bot.webhookCallback("/comprarla-webhook"));
+
+// Runnig on port listening to webhook
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+
+// Set up the webhook with Telegram
+bot.telegram.setWebhook(`https://comprarla.es/comprarla-webhook`);
 
 const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
 const web_link = "https://comprarla.es/";
