@@ -10,23 +10,24 @@ const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new Telegraf(TOKEN);
 
 // Set the webhook path
-const webhookPath = "/comprarla-hook";
+const webhookPath = "/comprarla-webhook"; // Ensure this matches your Nginx configuration
 const app = express();
 const port = process.env.BOT_PORT || 3001;
+
 // Initialize session middleware
 bot.use(session());
 app.use(express.json());
 
 // Webhook route
-app.use("/comprarla-webhook", bot.webhookCallback("/comprarla-webhook"));
+app.use(webhookPath, bot.webhookCallback(webhookPath));
 
-// Runnig on port listening to webhook
+// Start the server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
 
 // Set up the webhook with Telegram
-bot.telegram.setWebhook(`https://comprarla.es/comprarla-webhook`);
+bot.telegram.setWebhook(`https://comprarla.es${webhookPath}`);
 
 const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
 const web_link = "https://comprarla.es/";
@@ -144,10 +145,6 @@ bot.on("text", async (ctx) => {
   }
 });
 
-// Set up the webhook and start the bot with it
-bot.telegram.setWebhook(`https://23.227.167.112${webhookPath}`);
-bot.startWebhook(webhookPath, null, 5000);
-
 console.log(
-  `Bot is running and webhook is set to https://23.227.167.112${webhookPath}`
+  `Bot is running and webhook is set to https://comprarla.es${webhookPath}`
 );
