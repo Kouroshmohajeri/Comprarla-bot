@@ -12,7 +12,6 @@ const bot = new Telegraf(TOKEN);
 bot.use(session());
 
 const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
-const web_link = "https://comprarla.es/";
 const AUTHORIZED_USER_IDS =
   process.env.AUTHORIZED_USER_IDS.split(",").map(Number); // List of authorized user IDs
 
@@ -54,7 +53,7 @@ bot.start(async (ctx) => {
       [
         {
           text: "Open Mini App",
-          web_app: { url: `${web_link}?userId=${userId}` },
+          web_app: { url: `https://comprarla.es/?userId=${userId}` },
         },
       ],
     ];
@@ -62,6 +61,10 @@ bot.start(async (ctx) => {
     // Conditionally add the "Broadcast Message" button if the user is authorized
     if (AUTHORIZED_USER_IDS.includes(userId)) {
       keyboardOptions.push([
+        {
+          text: "Generate Invitation Code",
+          callback_data: "generate_invitation_code",
+        },
         {
           text: "Broadcast Message",
           callback_data: "broadcast_message",
@@ -87,7 +90,32 @@ bot.start(async (ctx) => {
 bot.on("callback_query", async (ctx) => {
   const callbackData = ctx.callbackQuery.data;
 
-  if (callbackData === "broadcast_message") {
+  if (callbackData === "generate_invitation_code") {
+    if (AUTHORIZED_USER_IDS.includes(ctx.from.id)) {
+      await ctx.answerCbQuery();
+
+      try {
+        const response = await axios.post(
+          `${backendAPIUrl}/generate-invitation/${ctx.from.id}`
+        );
+        const { invitationCode } = response.data;
+
+        // Send the invitation code to the user
+        await ctx.reply(
+          `Here is your invitation code: ${invitationCode}. Please forward this message to others.`
+        );
+        await ctx.reply(
+          'To forward this message, press and hold the message, then select "Forward".'
+        );
+      } catch (error) {
+        await ctx.reply("Failed to generate invitation code.");
+        console.error("Error generating invitation code:", error);
+      }
+    } else {
+      await ctx.answerCbQuery();
+      await ctx.reply("You are not authorized to generate invitation codes.");
+    }
+  } else if (callbackData === "broadcast_message") {
     if (AUTHORIZED_USER_IDS.includes(ctx.from.id)) {
       await ctx.answerCbQuery();
 
@@ -107,7 +135,6 @@ bot.on("callback_query", async (ctx) => {
 
 // Handle incoming text messages for broadcasting
 bot.on("text", async (ctx) => {
-  // Ensure session is initialized before checking
   if (ctx.session && ctx.session.isBroadcasting) {
     if (!AUTHORIZED_USER_IDS.includes(ctx.from.id)) {
       await ctx.reply("You are not authorized to broadcast messages.");
@@ -116,6 +143,7 @@ bot.on("text", async (ctx) => {
 
     const message = ctx.message.text;
     try {
+      // Add your broadcasting logic here
       await broadcastMessage(bot, message);
 
       await ctx.reply("Broadcast message sent to all users.");
@@ -129,5 +157,3 @@ bot.on("text", async (ctx) => {
 
 // Launch the bot
 bot.launch();
-
-export default broadcastMessage;

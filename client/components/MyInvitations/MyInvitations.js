@@ -33,9 +33,10 @@ const MyInvitations = () => {
   const handleGenerateInvitation = async () => {
     try {
       const response = await generateInvitationCode(userId);
+      console.log(response);
       const invitationCode = response.invitationCode;
       const invitationLink = `${process.env.BOT_URL}/start?invitationCode=${invitationCode}`;
-      const message = `Hi! Join me on this platform using my invitation link: ${invitationLink}`;
+      const message = `Hi! Join me on Comprala store using my invitation link and earn 50 points using this link along with 100 points for new users! ${invitationLink}`;
 
       // Open the forward dialog in Telegram
       window.Telegram.WebApp.showModal({
