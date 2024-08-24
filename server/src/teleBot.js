@@ -1,5 +1,4 @@
 import { Telegraf, session } from "telegraf";
-import express from "express";
 import axios from "axios";
 import dotenv from "dotenv";
 import broadcastMessage from "./services/broadcast.js";
@@ -9,7 +8,10 @@ dotenv.config();
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new Telegraf(TOKEN);
 
-const port = process.env.BOT_PORT || 88;
+const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`; // Ensure this line is present and correctly initialized
+const web_link = process.env.WEB_LINK || "https://localhost:3000/";
+const AUTHORIZED_USER_IDS =
+  process.env.AUTHORIZED_USER_IDS.split(",").map(Number); // List of authorized user IDs
 
 // Initialize session middleware
 bot.use(session());
