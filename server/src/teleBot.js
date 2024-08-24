@@ -25,7 +25,8 @@ bot.start(async (ctx) => {
   const dateJoined = new Date();
 
   // Extract the invitation code from the command if available
-  const invitationCode = ctx.startPayload; // ctx.startPayload contains the payload passed in the start link
+  const messageText = ctx.message.text;
+  const invitationCode = messageText.split(" ")[1]; // Extract the payload after /start
 
   try {
     // Retrieve user's profile photo
