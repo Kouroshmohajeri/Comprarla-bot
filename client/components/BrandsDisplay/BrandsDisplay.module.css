@@ -17,6 +17,7 @@
     max-height: 80vh; /* Limit height of the grid */
     overflow-y: auto; /* Enable vertical scrolling */
     padding-bottom: 30%;
+    margin: 1% 2%;
 
   }
   
