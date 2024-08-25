@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
 import InstagramIcon from "@mui/icons-material/Instagram";
-import { getAllTasks } from "@/api/tasks/actions.js"; // Function to fetch all tasks
-import { getTasksDoneByUser, markTaskAsDone } from "@/api/tasksDone/actions.js"; // Functions to fetch tasks done by user and mark a task as done
-import { getUserDetails, updateUserDetails } from "@/api/users/actions.js"; // Functions to fetch and update user details
-import { useSearchParams, useRouter } from "next/navigation"; // For getting the userId from URL parameters and redirecting
-import styles from "./Tasks.module.css"; // Import the CSS module
-import Alert from "@/components/Alert/Alert.js"; // Import the Alert component
+import { FaDiscord, FaYoutube, FaPinterestP } from "react-icons/fa";
+import { BsTelegram, BsTwitterX } from "react-icons/bs";
+import LanguageIcon from "@mui/icons-material/Language";
 
-const LOCAL_STORAGE_KEY = "task_state"; // Key for local storage
+import { getAllTasks } from "@/api/tasks/actions.js";
+import { getTasksDoneByUser, markTaskAsDone } from "@/api/tasksDone/actions.js";
+import { getUserDetails, updateUserDetails } from "@/api/users/actions.js";
+import { useSearchParams, useRouter } from "next/navigation";
+import styles from "./Tasks.module.css";
+import Alert from "@/components/Alert/Alert.js";
+
+const LOCAL_STORAGE_KEY = "task_state";
 
 const Tasks = () => {
   const [tasks, setTasks] = useState([]);
@@ -16,26 +20,23 @@ const Tasks = () => {
   const [userPoints, setUserPoints] = useState(0);
   const [taskToClaim, setTaskToClaim] = useState(null);
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const [alert, setAlert] = useState(null); // State for managing alert
+  const [alert, setAlert] = useState(null);
 
   const searchParams = useSearchParams();
-  const router = useRouter(); // For redirection
+  const router = useRouter();
   const userId = searchParams.get("userId");
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        // Fetch all tasks
         const fetchedTasks = await getAllTasks();
         setTasks(fetchedTasks);
 
-        // Fetch completed tasks by the user
         if (userId) {
           const doneTasks = await getTasksDoneByUser(userId);
-          const doneTaskIds = doneTasks.map((task) => task.taskId._id); // Extract task IDs
+          const doneTaskIds = doneTasks.map((task) => task.taskId._id);
           setCompletedTasks(doneTaskIds);
 
-          // Fetch user details to get current points
           const userDetails = await getUserDetails(userId);
           setUserPoints(userDetails.points);
         }
@@ -50,13 +51,12 @@ const Tasks = () => {
   }, [userId]);
 
   useEffect(() => {
-    // Check local storage for any tasks to claim
     const storedTask = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (storedTask) {
       const { taskId } = JSON.parse(storedTask);
       const task = tasks.find((task) => task._id === taskId);
       if (task) {
-        setTaskToClaim(task); // Set task to claim
+        setTaskToClaim(task);
       }
     }
   }, [tasks]);
@@ -66,23 +66,18 @@ const Tasks = () => {
       setButtonDisabled(true);
       await markTaskAsDone({ userId, taskId });
 
-      // Store the task ID in local storage
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ taskId }));
 
-      // Retrieve the task
       const task = tasks.find((task) => task._id === taskId);
 
-      // Use window.open with _blank to open in a new browser tab
       if (task?.link) {
         window.open(task.link, "_blank");
       }
 
-      // Disable the button for 5 seconds, then re-enable
       setTimeout(() => {
         setButtonDisabled(false);
       }, 5000);
 
-      // Show alert for task completion
       setAlert({
         message:
           "Task marked as done. Please return and click 'Claim' to earn points.",
@@ -90,7 +85,7 @@ const Tasks = () => {
       });
     } catch (error) {
       console.error("Error marking task as done:", error);
-      setButtonDisabled(false); // Re-enable button in case of error
+      setButtonDisabled(false);
     }
   };
 
@@ -100,14 +95,12 @@ const Tasks = () => {
       const newPoints = userPoints + task.points;
 
       await updateUserDetails(userId, { points: newPoints });
-      setUserPoints(newPoints); // Update user's points in the state
-      setCompletedTasks([...completedTasks, taskId]); // Mark task as completed
-      setTaskToClaim(null); // Reset the task to claim
+      setUserPoints(newPoints);
+      setCompletedTasks([...completedTasks, taskId]);
+      setTaskToClaim(null);
 
-      // Clear local storage for this task
       localStorage.removeItem(LOCAL_STORAGE_KEY);
 
-      // Show alert for claiming points
       setAlert({
         message: `Points claimed successfully! You have earned ${task.points} points.`,
         type: "success",
@@ -127,9 +120,45 @@ const Tasks = () => {
         {tasks.map((task) => (
           <li key={task._id} className={styles.taskItem}>
             <div className={styles.taskInfo}>
+              {/* Render the appropriate icon */}
               {task.icon === "instagram" && (
                 <InstagramIcon className={styles.taskIcon} fontSize="large" />
               )}
+              {task.icon === "discord" && (
+                <FaDiscord
+                  className={styles.taskIcon}
+                  size={"5vh"}
+                  color="#5462EB"
+                />
+              )}
+              {task.icon === "twitter" && (
+                <BsTwitterX className={styles.taskIcon} size={"5vh"} />
+              )}
+              {task.icon === "channel" && (
+                <BsTelegram
+                  className={styles.taskIcon}
+                  size={"5vh"}
+                  color="#34AAE2"
+                />
+              )}
+              {task.icon === "youtube" && (
+                <FaYoutube
+                  className={styles.taskIcon}
+                  size={"5vh"}
+                  color="#FF0000"
+                />
+              )}
+              {task.icon === "website" && (
+                <LanguageIcon className={styles.taskIcon} fontSize="large" />
+              )}
+              {task.icon === "pinterest" && (
+                <FaPinterestP
+                  className={styles.taskIcon}
+                  size={"5vh"}
+                  color="#C41F26"
+                />
+              )}
+
               <span>{task.title}</span>
             </div>
             {!completedTasks.includes(task._id) ? (

@@ -8,6 +8,19 @@ const taskSchema = new mongoose.Schema({
   availableTime: { type: Date, required: true },
   userId: { type: String, required: true },
   isTaskDone: { type: Boolean, default: false },
+  icon: {
+    type: String,
+    enum: [
+      "discord",
+      "instagram",
+      "channel",
+      "youtube",
+      "website",
+      "twitter",
+      "pinterest",
+    ], // Only allow these values
+    required: true,
+  },
   createdAt: { type: Date, default: Date.now },
 });
 
