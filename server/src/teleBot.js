@@ -1,7 +1,6 @@
 import { Telegraf, session } from "telegraf";
 import axios from "axios";
 import dotenv from "dotenv";
-import crypto from "crypto";
 import broadcastMessage from "./services/broadcast.js";
 
 dotenv.config();
@@ -13,20 +12,9 @@ const bot = new Telegraf(TOKEN);
 bot.use(session());
 
 const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
-const otpAPIUrl = `${process.env.BACKEND_URL}/api/otp`; // Add OTP API endpoint
 const web_link = "https://comprarla.es/";
 const AUTHORIZED_USER_IDS =
   process.env.AUTHORIZED_USER_IDS.split(",").map(Number); // List of authorized user IDs
-
-// Utility function to generate OTP
-const generateOTP = () => {
-  return crypto.randomInt(100000, 999999).toString();
-};
-
-// Utility function to save OTP
-const saveOtp = async (userId, otp) => {
-  await axios.post(`${otpAPIUrl}/generate`, { userId, otp });
-};
 
 // Start command
 bot.start(async (ctx) => {
@@ -41,13 +29,6 @@ bot.start(async (ctx) => {
   const invitationCode = messageText.split(" ")[1]; // Extract the payload after /start
 
   try {
-    // Generate and save OTP
-    const otp = generateOTP();
-    await saveOtp(userId, otp);
-
-    // Prepare the login link with the userId
-    const loginLink = `${web_link}/login?userId=${userId}`;
-
     // Retrieve user's profile photo
     const userPhotos = await bot.telegram.getUserProfilePhotos(userId);
     let profilePhotoUrl = "";
@@ -93,15 +74,12 @@ bot.start(async (ctx) => {
       ]);
     }
 
-    // Send the OTP and login link to the user
-    ctx.reply(
-      `Welcome to ComprarLa! Your OTP is ${otp}. Click the link below to verify your login:\n${loginLink}`,
-      {
-        reply_markup: {
-          inline_keyboard: keyboardOptions,
-        },
-      }
-    );
+    // Send the welcome message with the appropriate keyboard
+    ctx.reply("Welcome to ComprarLa.", {
+      reply_markup: {
+        inline_keyboard: keyboardOptions,
+      },
+    });
   } catch (error) {
     console.error("Failed to save user data:", error);
     ctx.reply(
