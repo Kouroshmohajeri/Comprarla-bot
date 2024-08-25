@@ -1,5 +1,3 @@
-// src/components/MyInvitations.js
-
 import React, { useEffect, useState } from "react";
 import { getUserDetails, generateInvitationCode } from "@/api/users/actions.js";
 import { useSearchParams } from "next/navigation";
@@ -68,7 +66,7 @@ https://t.me/comprarla`;
             onClick={handleGenerateInvitation}
             className={styles.generateButton}
           >
-            Generate Invitation Code
+            Invite a friend
           </button>
         </div>
       </div>
