@@ -3,9 +3,11 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import { getAllTasks } from "@/api/tasks/actions.js"; // Function to fetch all tasks
 import { getTasksDoneByUser, markTaskAsDone } from "@/api/tasksDone/actions.js"; // Functions to fetch tasks done by user and mark a task as done
 import { getUserDetails, updateUserDetails } from "@/api/users/actions.js"; // Functions to fetch and update user details
-import { useSearchParams, useRouter } from "next/navigation"; // For getting the userId from URL parameters and for redirection
+import { useSearchParams, useRouter } from "next/navigation"; // For getting the userId from URL parameters and redirecting
 import styles from "./Tasks.module.css"; // Import the CSS module
 import Alert from "@/components/Alert/Alert.js"; // Import the Alert component
+
+const LOCAL_STORAGE_KEY = "task_state"; // Key for local storage
 
 const Tasks = () => {
   const [tasks, setTasks] = useState([]);
@@ -17,8 +19,8 @@ const Tasks = () => {
   const [alert, setAlert] = useState(null); // State for managing alert
 
   const searchParams = useSearchParams();
+  const router = useRouter(); // For redirection
   const userId = searchParams.get("userId");
-  const router = useRouter(); // Hook for redirection
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -47,15 +49,28 @@ const Tasks = () => {
     fetchTasks();
   }, [userId]);
 
+  useEffect(() => {
+    // Check local storage for any tasks to claim
+    const storedTask = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (storedTask) {
+      const { taskId } = JSON.parse(storedTask);
+      const task = tasks.find((task) => task._id === taskId);
+      if (task) {
+        setTaskToClaim(task); // Set task to claim
+      }
+    }
+  }, [tasks]);
+
   const handleStartClick = async (taskId) => {
     try {
       setButtonDisabled(true);
       await markTaskAsDone({ userId, taskId });
-      setCompletedTasks([...completedTasks, taskId]); // Add task to completed list
-      const task = tasks.find((task) => task._id === taskId);
-      setTaskToClaim(task); // Store the task to allow claiming points
+
+      // Store the task ID in local storage
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ taskId }));
 
       // Redirect to the task link
+      const task = tasks.find((task) => task._id === taskId);
       if (task?.link) {
         router.push(task.link);
       }
@@ -64,12 +79,6 @@ const Tasks = () => {
       setTimeout(() => {
         setButtonDisabled(false);
       }, 5000);
-
-      // Show alert for task completion
-      setAlert({
-        message: "Task marked as done. Please wait 5 seconds before claiming.",
-        type: "info",
-      });
     } catch (error) {
       console.error("Error marking task as done:", error);
       setButtonDisabled(false); // Re-enable button in case of error
@@ -83,7 +92,11 @@ const Tasks = () => {
 
       await updateUserDetails(userId, { points: newPoints });
       setUserPoints(newPoints); // Update user's points in the state
+      setCompletedTasks([...completedTasks, taskId]); // Mark task as completed
       setTaskToClaim(null); // Reset the task to claim
+
+      // Clear local storage for this task
+      localStorage.removeItem(LOCAL_STORAGE_KEY);
 
       // Show alert for claiming points
       setAlert({
@@ -110,30 +123,28 @@ const Tasks = () => {
               )}
               <span>{task.title}</span>
             </div>
-            <button
-              onClick={() => {
-                if (!completedTasks.includes(task._id)) {
-                  handleStartClick(task._id);
-                } else if (taskToClaim?._id === task._id) {
-                  handleClaimClick(task._id);
-                }
-              }}
-              disabled={buttonDisabled && !completedTasks.includes(task._id)}
-              className={
-                completedTasks.includes(task._id) &&
-                taskToClaim?._id === task._id
-                  ? `${styles.taskButton} ${styles.taskButtonClaim}`
-                  : !completedTasks.includes(task._id)
-                  ? `${styles.taskButton} ${styles.taskButtonStart}`
-                  : `${styles.taskButton} ${styles.taskButtonCompleted}`
-              }
-            >
-              {completedTasks.includes(task._id)
-                ? taskToClaim?._id === task._id
-                  ? "Claim"
-                  : "Completed"
-                : "Start"}
-            </button>
+            {!completedTasks.includes(task._id) ? (
+              <button
+                onClick={() => handleStartClick(task._id)}
+                disabled={buttonDisabled}
+                className={`${styles.taskButton} ${styles.taskButtonStart}`}
+              >
+                Start
+              </button>
+            ) : taskToClaim?._id === task._id ? (
+              <button
+                onClick={() => handleClaimClick(task._id)}
+                className={`${styles.taskButton} ${styles.taskButtonClaim}`}
+              >
+                Claim
+              </button>
+            ) : (
+              <span
+                className={`${styles.taskButton} ${styles.taskButtonCompleted}`}
+              >
+                Completed
+              </span>
+            )}
           </li>
         ))}
       </ul>
