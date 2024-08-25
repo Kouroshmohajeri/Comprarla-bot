@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 const taskSchema = new mongoose.Schema({
-  _id: { type: mongoose.Schema.Types.ObjectId }, // Use ObjectId for _id
   title: { type: String, required: true },
   description: { type: String, required: true },
   points: { type: Number, required: true },

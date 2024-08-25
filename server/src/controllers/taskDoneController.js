@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import TasksDone from "../models/TasksDone.js";
 import Task from "../models/Task.js";
 
@@ -7,8 +6,8 @@ export const markTaskAsDone = async (req, res) => {
     const { userId, taskId } = req.body;
 
     // Validate that the task exists
-    const task = await Task.findById(taskId);
-    console.log(task);
+    const taskObjectId = mongoose.Types.ObjectId(taskId); // Convert taskId to ObjectId
+    const task = await Task.findById(taskObjectId);
     if (!task) {
       return res.status(404).json({ message: "Task not found" });
     }
@@ -16,7 +15,7 @@ export const markTaskAsDone = async (req, res) => {
     // Check if the task has already been marked as done by this user
     const existingTaskDone = await TasksDone.findOne({
       userId: userId,
-      taskId: taskId,
+      taskId: taskObjectId,
     });
     if (existingTaskDone) {
       return res.status(400).json({ message: "Task already marked as done" });
@@ -25,7 +24,7 @@ export const markTaskAsDone = async (req, res) => {
     // Create a new TasksDone document
     const taskDone = new TasksDone({
       userId: userId,
-      taskId: taskId,
+      taskId: taskObjectId,
     });
 
     // Save the new taskDone entry and update the task
@@ -40,18 +39,12 @@ export const markTaskAsDone = async (req, res) => {
   }
 };
 
-// Get all tasks done by a specific user
 export const getTasksDoneByUser = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // Check if ObjectId format is valid
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ message: "Invalid userId format" });
-    }
-
     const tasksDone = await TasksDone.find({
-      userId: mongoose.Types.ObjectId(userId),
+      userId: userId,
     }).populate("taskId");
     res.status(200).json(tasksDone);
   } catch (error) {
