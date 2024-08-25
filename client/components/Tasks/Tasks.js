@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import InstagramIcon from "@mui/icons-material/Instagram";
 import { FaDiscord, FaYoutube, FaPinterestP } from "react-icons/fa";
-import { BsTelegram, BsTwitterX } from "react-icons/bs";
+import { BsTelegram, BsTwitterX, BsInstagram } from "react-icons/bs";
 import LanguageIcon from "@mui/icons-material/Language";
 
 import { getAllTasks } from "@/api/tasks/actions.js";
@@ -122,7 +121,11 @@ const Tasks = () => {
             <div className={styles.taskInfo}>
               {/* Render the appropriate icon */}
               {task.icon === "instagram" && (
-                <InstagramIcon className={styles.taskIcon} fontSize="large" />
+                <BsInstagram
+                  className={styles.taskIcon}
+                  size={"5vh"}
+                  color="#E82276"
+                />
               )}
               {task.icon === "discord" && (
                 <FaDiscord
