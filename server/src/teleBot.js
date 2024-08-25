@@ -54,18 +54,33 @@ bot.start(async (ctx) => {
       invitationCode, // Include the invitation code
     });
 
+    // If the invitation code is "connect_telegram", generate and send the OTP automatically
+    if (invitationCode === "connect_telegram") {
+      try {
+        // Request the OTP from your backend
+        const response = await axios.post(`${backendAPIUrl}/otp/generate-otp`, {
+          userId,
+        });
+
+        // Extract the OTP from the response
+        const otpCode = response.data.otpCode;
+
+        // Send the OTP to the user via the bot
+        await ctx.reply(`Your OTP is: ${otpCode}`);
+      } catch (error) {
+        console.error("Failed to generate OTP:", error);
+        ctx.reply(
+          "An error occurred while generating your OTP. Please try again."
+        );
+      }
+    }
+
     // Prepare the keyboard options
     const keyboardOptions = [
       [
         {
           text: "Open Mini App",
           web_app: { url: `${web_link}?userId=${userId}` },
-        },
-      ],
-      [
-        {
-          text: "Get OTP",
-          callback_data: "get_otp",
         },
       ],
     ];
@@ -99,25 +114,7 @@ bot.on("callback_query", async (ctx) => {
   const callbackData = ctx.callbackQuery.data;
   const userId = ctx.from.id;
 
-  if (callbackData === "get_otp") {
-    try {
-      // Request the OTP from your backend
-      const response = await axios.post(`${backendAPIUrl}/otp/generate-otp`, {
-        userId,
-      });
-
-      // Extract the OTP from the response
-      const otpCode = response.data.otpCode;
-
-      // Send the OTP to the user via the bot
-      await ctx.reply(`Your OTP is: ${otpCode}`);
-    } catch (error) {
-      console.error("Failed to generate OTP:", error);
-      ctx.reply(
-        "An error occurred while generating your OTP. Please try again."
-      );
-    }
-  } else if (callbackData === "broadcast_message") {
+  if (callbackData === "broadcast_message") {
     if (AUTHORIZED_USER_IDS.includes(userId)) {
       await ctx.answerCbQuery();
 
