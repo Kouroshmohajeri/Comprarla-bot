@@ -69,16 +69,35 @@ const Tasks = () => {
       // Store the task ID in local storage
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ taskId }));
 
-      // Redirect to the task link
+      // Retrieve the task
       const task = tasks.find((task) => task._id === taskId);
-      if (task?.link) {
-        router.push(task.link);
+
+      // Check if the link is an Instagram link
+      if (task?.link.includes("instagram.com")) {
+        // Replace the link with the deep link for Instagram
+        const instagramDeepLink = task.link.replace(
+          "https://www.instagram.com/",
+          "instagram://"
+        );
+        window.location.href = instagramDeepLink;
+      } else {
+        // Redirect to the task link
+        if (task?.link) {
+          router.push(task.link);
+        }
       }
 
       // Disable the button for 5 seconds, then re-enable
       setTimeout(() => {
         setButtonDisabled(false);
       }, 5000);
+
+      // Show alert for task completion
+      setAlert({
+        message:
+          "Task marked as done. Please return and click 'Claim' to earn points.",
+        type: "info",
+      });
     } catch (error) {
       console.error("Error marking task as done:", error);
       setButtonDisabled(false); // Re-enable button in case of error
