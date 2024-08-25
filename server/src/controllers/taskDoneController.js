@@ -5,7 +5,7 @@ import Task from "../models/Task.js";
 export const markTaskAsDone = async (req, res) => {
   try {
     const { userId, taskId } = req.body;
-
+    console.log(userId, taskId);
     // Check if ObjectId format is valid
     if (
       !mongoose.Types.ObjectId.isValid(userId) ||
