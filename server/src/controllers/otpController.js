@@ -1,29 +1,56 @@
-import { saveOtp, getOtp, deleteOtp } from "../repositories/OtpRepository.js";
+// controllers/otpController.js
+import Otp from "../models/Otp.js";
+import User from "../models/User.js";
+import crypto from "crypto";
 
-export const generateAndSendOtp = async (req, res) => {
-  const { userId, otp } = req.body;
+// Generate OTP and send it to the user via Telegram bot
+export const generateOtp = async (req, res) => {
+  const { userId } = req.body;
 
-  // Save OTP to the database
-  await saveOtp(userId, otp);
-
-  // Send OTP to the user (if necessary, adjust to your method of sending OTP)
-  // Example: using a messaging service
-
-  res.status(200).send("OTP generated and sent.");
-};
-
-export const verifyOtp = async (req, res) => {
-  const { userId, otpEntered } = req.body;
-
-  // Fetch the latest OTP for the user
-  const otpRecord = await getOtp(userId);
-
-  if (!otpRecord || otpRecord.otp !== otpEntered) {
-    return res.status(400).send("Invalid OTP. Please try again.");
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required." });
   }
 
-  // OTP is valid; remove OTP record
-  await deleteOtp(userId);
+  try {
+    // Generate a random 6-digit OTP
+    const otpCode = crypto.randomInt(100000, 999999).toString();
 
-  res.send("OTP verified successfully.");
+    // Save the OTP to the database
+    const otp = new Otp({ userId, otp: otpCode });
+    await otp.save();
+
+    // Send the OTP to the user via Telegram bot
+    // Make sure you have the Telegram bot configured to send this message
+    // We'll assume the bot can access an endpoint to trigger this
+    await axios.post(`${process.env.TELEGRAM_BOT_URL}/send-otp`, {
+      userId,
+      otp: otpCode,
+    });
+
+    return res
+      .status(200)
+      .json({ otpCode, message: "OTP generated successfully." });
+  } catch (error) {
+    console.error("Error generating OTP:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+// Validate OTP entered by the user
+export const validateOtp = async (req, res) => {
+  const { userId, otp } = req.body;
+
+  try {
+    const otpEntry = await Otp.findOne({ userId, otp });
+
+    if (!otpEntry) {
+      return res.status(400).json({ message: "Invalid OTP." });
+    }
+
+    // If OTP is valid, consider user logged in (implement further logic as needed)
+    return res.status(200).json({ message: "Logged in successfully." });
+  } catch (error) {
+    console.error("Error validating OTP:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
 };

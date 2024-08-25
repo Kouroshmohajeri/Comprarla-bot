@@ -109,7 +109,19 @@ bot.on("callback_query", async (ctx) => {
     }
   }
 });
+// Handle the send-otp route
+bot.on("text", async (ctx) => {
+  const { userId, otp } = ctx.message.text.split(" ");
 
+  if (userId && otp) {
+    try {
+      await ctx.telegram.sendMessage(userId, `Your OTP is: ${otp}`);
+    } catch (error) {
+      console.error("Failed to send OTP:", error);
+      ctx.reply("An error occurred while sending your OTP.");
+    }
+  }
+});
 // Handle incoming text messages for broadcasting
 bot.on("text", async (ctx) => {
   // Ensure session is initialized before checking

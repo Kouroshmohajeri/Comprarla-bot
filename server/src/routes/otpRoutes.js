@@ -1,12 +1,13 @@
+// routes/otpRoutes.js
 import express from "express";
-import { generateAndSendOtp, verifyOtp } from "../controllers/otpController.js";
+import { generateOtp, validateOtp } from "../controllers/otpController.js";
 
 const router = express.Router();
 
-// Route to generate and send OTP
-router.post("/generate", generateAndSendOtp);
+// Route to generate OTP
+router.post("/generate-otp", generateOtp);
 
-// Route to verify OTP
-router.post("/verify", verifyOtp);
+// Route to validate OTP
+router.post("/validate-otp", validateOtp);
 
 export default router;
