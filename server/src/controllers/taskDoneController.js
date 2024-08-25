@@ -15,8 +15,8 @@ export const markTaskAsDone = async (req, res) => {
 
     // Check if the task has already been marked as done by this user
     const existingTaskDone = await TasksDone.findOne({
-      userId: userObjectId,
-      taskId: taskObjectId,
+      userId: userId,
+      taskId: taskId,
     });
     if (existingTaskDone) {
       return res.status(400).json({ message: "Task already marked as done" });
@@ -24,8 +24,8 @@ export const markTaskAsDone = async (req, res) => {
 
     // Create a new TasksDone document
     const taskDone = new TasksDone({
-      userId: userObjectId,
-      taskId: taskObjectId,
+      userId: userId,
+      taskId: taskId,
     });
 
     // Save the new taskDone entry and update the task
