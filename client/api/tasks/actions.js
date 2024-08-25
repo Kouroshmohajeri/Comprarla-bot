@@ -1,9 +1,9 @@
-import API from "../server.js";
+import API from "../server.js"; // Import the axios instance
 
-// Function to create a new task
+// Create a new task
 export const createTask = async (taskData) => {
   try {
-    const response = await API.post("/tasks/create", taskData);
+    const response = await API.post("/tasks", taskData);
     return response.data;
   } catch (error) {
     console.error("Error creating task:", error);
@@ -11,8 +11,19 @@ export const createTask = async (taskData) => {
   }
 };
 
-// Function to fetch a task by ID
-export const getTask = async (taskId) => {
+// Get all tasks
+export const getAllTasks = async () => {
+  try {
+    const response = await API.get("/tasks/tasks");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+    throw error;
+  }
+};
+
+// Get a single task by ID
+export const getTaskById = async (taskId) => {
   try {
     const response = await API.get(`/tasks/${taskId}`);
     return response.data;
@@ -22,32 +33,10 @@ export const getTask = async (taskId) => {
   }
 };
 
-// Function to complete a task
-export const completeTask = async (taskId, userId) => {
+// Update a task by ID
+export const updateTask = async (taskId, updatedData) => {
   try {
-    const response = await API.post(`/tasks/complete/${taskId}`, { userId });
-    return response.data;
-  } catch (error) {
-    console.error("Error completing task:", error);
-    throw error;
-  }
-};
-
-// Function to fetch all tasks
-export const getAllTasks = async () => {
-  try {
-    const response = await API.get("/tasks");
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching tasks:", error);
-    throw error;
-  }
-};
-
-// Function to update a task
-export const updateTask = async (taskId, taskData) => {
-  try {
-    const response = await API.put(`/tasks/${taskId}`, taskData);
+    const response = await API.put(`/tasks/${taskId}`, updatedData);
     return response.data;
   } catch (error) {
     console.error("Error updating task:", error);
@@ -55,7 +44,7 @@ export const updateTask = async (taskId, taskData) => {
   }
 };
 
-// Function to delete a task
+// Delete a task by ID
 export const deleteTask = async (taskId) => {
   try {
     const response = await API.delete(`/tasks/${taskId}`);

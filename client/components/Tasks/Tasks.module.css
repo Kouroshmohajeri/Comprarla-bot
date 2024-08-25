@@ -1,50 +1,69 @@
 .container {
-    color: white;
-    text-align: center;
-    position: relative;
-    
-  }
-  .divider{
-    width: 50%;
-  }
-  .taskList {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .taskItem {
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 20px 2%;
-    background: rgba( 51, 51, 51, 0.25 );
-    backdrop-filter: blur( 4px );
-    -webkit-backdrop-filter: blur( 4px );
-    border-radius: 10px;
-    border: 1px solid rgba( 255, 255, 255, 0.18 );
-  }
-  
-  .taskInfo {
-    display: flex;
-    align-items: center;
-  }
-  
-  .taskIcon {
-    margin-right: 10px;
-  }
-  
-  .taskButton {
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 10px;
-    padding: 10px;
-    cursor: pointer;
-  }
-  
-  .taskButtonDisabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  
+  color: white;
+  text-align: center;
+  position: relative;
+}
+
+.divider {
+  width: 50%;
+}
+
+.taskList {
+  list-style-type: none;
+  padding: 0;
+}
+
+.taskItem {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20px 2%;
+  background: rgba(51, 51, 51, 0.25);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.taskInfo {
+  display: flex;
+  align-items: center;
+}
+
+.taskIcon {
+  margin-right: 10px;
+}
+
+/* Base taskButton style */
+.taskButton {
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s, cursor 0.3s;
+}
+
+/* Start button style */
+.taskButtonStart {
+  background-color: #30A4DA; /* Blue color for Start button */
+}
+
+/* Claim button style */
+.taskButtonClaim {
+  background-color: #4de705; /* Green color for Claim button */
+}
+
+/* Completed button style */
+.taskButtonCompleted {
+  background-color: gray; /* Gray color for Completed button */
+  cursor: not-allowed;
+}
+
+/* Disabled button style */
+.taskButtonDisabled {
+  background-color: lightgray; /* Light gray color for Disabled button */
+  cursor: not-allowed;
+}

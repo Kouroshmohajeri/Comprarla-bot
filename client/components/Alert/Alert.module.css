@@ -1,0 +1,41 @@
+.alert {
+    position: fixed;
+    top: 0; /* Position at the top */
+    left: 3px;
+    transform: translateX(-50%); /* Center horizontally */
+    width: 90%;
+    max-width: 600px; /* Maximum width */
+    margin: 10px auto; /* Margin from the top and bottom */
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* Ensure it appears on top of other elements */
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    opacity: 0; /* Initially hidden */
+  }
+  
+  .alert.show {
+    opacity: 1; /* Visible when 'show' class is added */
+    transform: translateY(0); /* Slide down effect */
+  }
+  
+  .alert.hide {
+    opacity: 0; /* Hidden when 'hide' class is added */
+    transform: translateY(-20px); /* Slide up effect */
+  }
+  
+  .alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+  }
+  
+  .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  .alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  

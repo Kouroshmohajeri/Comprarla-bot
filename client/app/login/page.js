@@ -1,37 +1,35 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import TelegramIcon from "@mui/icons-material/Telegram";
+import axios from "axios";
 import styles from "./login.module.css";
-import { useRouter } from "next/navigation";
+
+const TELEGRAM_LOGIN_URL = "https://t.me/comprarlabot?start=connect_telegram";
 
 const Page = () => {
-  const [userId, setUserId] = useState(""); // Generate or fetch userId here
   const [otp, setOtp] = useState("");
-  const [isOtpSent, setIsOtpSent] = useState(false);
-  const [error, setError] = useState("");
-  const router = useRouter();
+  const [userId, setUserId] = useState(""); // This could be set based on user session or Telegram login info
+  const [loginMessage, setLoginMessage] = useState("");
 
-  useEffect(() => {
-    // Retrieve userId from query parameters
-    const queryUserId = new URLSearchParams(window.location.search).get(
-      "userId"
-    );
-    if (queryUserId) {
-      setUserId(queryUserId);
-      setIsOtpSent(true); // Show OTP input if userId is present
-    }
-  }, []);
-
-  const TELEGRAM_LOGIN_URL = `https://t.me/comprarlabot?start=${userId}`;
-
-  const handleOtpSubmit = async () => {
+  const handleRequestOtp = async () => {
     try {
-      // Verify OTP with backend
-      await verifyOtp(userId, otp);
-      alert("Logged In");
-      router.push("/"); // Redirect to the home page or another route upon successful login
-    } catch (err) {
-      setError("Incorrect OTP. Please try again.");
+      const response = await axios.post("/api/otp/generate-otp", { userId });
+      alert(`Your OTP is: ${response.data.otpCode}`);
+    } catch (error) {
+      console.error("Error generating OTP:", error);
+    }
+  };
+
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post("/api/otp/validate-otp", {
+        userId,
+        otp,
+      });
+      setLoginMessage(response.data.message);
+    } catch (error) {
+      console.error("Error validating OTP:", error);
+      setLoginMessage("Incorrect OTP.");
     }
   };
 
@@ -40,23 +38,26 @@ const Page = () => {
       <div className={styles.glassBox}>
         <h1 className={styles.heading}>Login</h1>
         <a href={TELEGRAM_LOGIN_URL} target="_blank" rel="noopener noreferrer">
-          <button className={styles.connectButton}>
+          <button className={styles.connectButton} onClick={handleRequestOtp}>
             <TelegramIcon className={styles.icon} />
             Connect with Telegram
           </button>
         </a>
-        {isOtpSent && (
-          <div>
-            <input
-              type="text"
-              placeholder="Enter OTP"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-            />
-            <button onClick={handleOtpSubmit}>Submit OTP</button>
-          </div>
+        <div className={styles.otpSection}>
+          <input
+            type="text"
+            placeholder="Enter OTP"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+            className={styles.otpInput}
+          />
+          <button onClick={handleLogin} className={styles.loginButton}>
+            Login
+          </button>
+        </div>
+        {loginMessage && (
+          <div className={styles.loginMessage}>{loginMessage}</div>
         )}
-        {error && <p className={styles.error}>{error}</p>}
         <div className={styles.footerText}>®ComprarLa</div>
       </div>
     </main>
