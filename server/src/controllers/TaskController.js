@@ -1,107 +1,83 @@
-// controllers/TaskController.js
-import TaskRepository from "../repositories/TaskRepository.js";
-import UserRepository from "../repositories/UserRepository.js";
-import TasksDoneRepository from "../repositories/tasksDoneRepository.js"; // Import TasksDone repository
+import Task from "../models/Task.js";
 
-class TaskController {
-  async createTask(req, res) {
-    try {
-      const task = await TaskRepository.createTask(req.body);
-      res.status(201).json(task);
-    } catch (error) {
-      res.status(500).json({ message: "Error creating task", error });
-    }
+// Create a new task
+export const createTask = async (req, res) => {
+  try {
+    const { title, description, points, link, availableTime, userId } =
+      req.body;
+
+    const newTask = new Task({
+      title,
+      description,
+      points,
+      link,
+      availableTime,
+      userId,
+    });
+
+    const savedTask = await newTask.save();
+    res.status(201).json(savedTask);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
+};
 
-  async getTask(req, res) {
+// Get all tasks
+export const getAllTasks = async (req, res) => {
+  try {
+    const tasks = await Task.find();
+    res.status(200).json(tasks);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get a single task by ID
+export const getTaskById = async (req, res) => {
+  try {
     const { id } = req.params;
-    try {
-      const task = await TaskRepository.findTaskById(id);
-      if (!task) return res.status(404).json({ message: "Task not found" });
-      res.status(200).json(task);
-    } catch (error) {
-      res.status(500).json({ message: "Error fetching task", error });
-    }
-  }
+    const task = await Task.findById(id);
 
-  async completeTask(req, res) {
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    res.status(200).json(task);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Update a task by ID
+export const updateTask = async (req, res) => {
+  try {
     const { id } = req.params;
-    const { userId } = req.body;
+    const updatedTask = await Task.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
 
-    try {
-      const task = await TaskRepository.findTaskById(id);
-      if (!task) return res.status(404).json({ message: "Task not found" });
-
-      // Check if the task is still available
-      if (task.availableTime < new Date()) {
-        return res.status(400).json({ message: "Task is no longer available" });
-      }
-
-      // Check if the task has already been completed by the user
-      const existingTaskDone = await TasksDoneRepository.findTaskDone({
-        userId,
-        taskId: id,
-      });
-      if (existingTaskDone) {
-        return res.status(400).json({ message: "Task already completed" });
-      }
-
-      // Update task status to completed
-      task.isTaskDone = true;
-      await TaskRepository.updateTask(id, task);
-
-      // Create a record in the TasksDone collection
-      await TasksDoneRepository.createTaskDone({ userId, taskId: id });
-
-      // Update user points and tasksDone
-      const user = await UserRepository.getUserById(userId);
-      if (!user) return res.status(404).json({ message: "User not found" });
-
-      user.tasksDone += 1;
-      user.points += task.points;
-      await user.save();
-
-      res.status(200).json({ message: "Task completed successfully", user });
-    } catch (error) {
-      res.status(500).json({ message: "Error completing task", error });
+    if (!updatedTask) {
+      return res.status(404).json({ message: "Task not found" });
     }
-  }
 
-  async getAllTasks(req, res) {
-    try {
-      const tasks = await TaskRepository.getAllTasks();
-      res.status(200).json(tasks);
-    } catch (error) {
-      res.status(500).json({ message: "Error fetching tasks", error });
-    }
+    res.status(200).json(updatedTask);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
+};
 
-  async updateTask(req, res) {
+// Delete a task by ID
+export const deleteTask = async (req, res) => {
+  try {
     const { id } = req.params;
-    const updateData = req.body;
+    const deletedTask = await Task.findByIdAndDelete(id);
 
-    try {
-      const updatedTask = await TaskRepository.updateTask(id, updateData);
-      if (!updatedTask)
-        return res.status(404).json({ message: "Task not found" });
-      res.status(200).json(updatedTask);
-    } catch (error) {
-      res.status(500).json({ message: "Error updating task", error });
+    if (!deletedTask) {
+      return res.status(404).json({ message: "Task not found" });
     }
+
+    res.status(200).json({ message: "Task deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
-
-  async deleteTask(req, res) {
-    const { id } = req.params;
-
-    try {
-      const deletedTask = await TaskRepository.deleteTask(id);
-      if (!deletedTask)
-        return res.status(404).json({ message: "Task not found" });
-      res.status(200).json({ message: "Task deleted successfully" });
-    } catch (error) {
-      res.status(500).json({ message: "Error deleting task", error });
-    }
-  }
-}
-
-export default new TaskController();
+};

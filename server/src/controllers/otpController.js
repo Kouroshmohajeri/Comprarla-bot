@@ -1,6 +1,5 @@
 // controllers/otpController.js
 import Otp from "../models/Otp.js";
-import User from "../models/User.js";
 import crypto from "crypto";
 
 // Generate OTP and send it to the user via Telegram bot
