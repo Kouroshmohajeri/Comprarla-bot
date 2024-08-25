@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import conversionRoutes from "./routes/conversionRoutes.js";
 import otpRoutes from "./routes/otpRoutes.js";
+import taskRoutes from "./routes/taskRoutes.js";
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/conversion", conversionRoutes);
 app.use("/api/otp", otpRoutes);
+app.use("/api/tasks", taskRoutes);
 
 const PORT = process.env.PORT || 8443;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
