@@ -1,5 +1,7 @@
+// controllers/TaskController.js
 import TaskRepository from "../repositories/TaskRepository.js";
 import UserRepository from "../repositories/UserRepository.js";
+import TasksDoneRepository from "../repositories/tasksDoneRepository.js"; // Import TasksDone repository
 
 class TaskController {
   async createTask(req, res) {
@@ -35,13 +37,21 @@ class TaskController {
         return res.status(400).json({ message: "Task is no longer available" });
       }
 
-      if (task.isTaskDone) {
+      // Check if the task has already been completed by the user
+      const existingTaskDone = await TasksDoneRepository.findTaskDone({
+        userId,
+        taskId: id,
+      });
+      if (existingTaskDone) {
         return res.status(400).json({ message: "Task already completed" });
       }
 
       // Update task status to completed
       task.isTaskDone = true;
       await TaskRepository.updateTask(id, task);
+
+      // Create a record in the TasksDone collection
+      await TasksDoneRepository.createTaskDone({ userId, taskId: id });
 
       // Update user points and tasksDone
       const user = await UserRepository.getUserById(userId);
