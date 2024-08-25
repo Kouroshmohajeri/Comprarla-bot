@@ -1,9 +1,6 @@
 import TasksDone from "../models/TasksDone.js"; // Import the TasksDone model
 import Task from "../models/Task.js"; // Import the Task model
 
-import TasksDone from "../models/TasksDone.js"; // Import the TasksDone model
-import Task from "../models/Task.js"; // Import the Task model
-
 // Mark a task as done
 export const markTaskAsDone = async (req, res) => {
   try {
