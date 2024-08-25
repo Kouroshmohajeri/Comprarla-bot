@@ -10,6 +10,6 @@ const router = express.Router();
 router.post("/tasks-done", markTaskAsDone);
 
 // Get all tasks done by a specific user
-router.get("/tasks-done/:userId", getTasksDoneByUser);
+router.get("/:userId", getTasksDoneByUser);
 
 export default router;
