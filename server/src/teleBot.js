@@ -11,7 +11,7 @@ const bot = new Telegraf(TOKEN);
 // Initialize session middleware
 bot.use(session());
 
-const backendAPIUrl = `${process.env.BACKEND_URL}/api/users`;
+const backendAPIUrl = `${process.env.BACKEND_URL}/api`;
 const web_link = "https://comprarla.es/";
 const AUTHORIZED_USER_IDS =
   process.env.AUTHORIZED_USER_IDS.split(",").map(Number); // List of authorized user IDs
@@ -40,7 +40,7 @@ bot.start(async (ctx) => {
     }
 
     // Send user data to your backend to be saved or updated in MongoDB
-    await axios.post(`${backendAPIUrl}/add`, {
+    await axios.post(`${backendAPIUrl}/users/add`, {
       userId,
       username,
       firstName,
@@ -60,6 +60,12 @@ bot.start(async (ctx) => {
         {
           text: "Open Mini App",
           web_app: { url: `${web_link}?userId=${userId}` },
+        },
+      ],
+      [
+        {
+          text: "Get OTP",
+          callback_data: "get_otp",
         },
       ],
     ];
@@ -91,9 +97,28 @@ bot.start(async (ctx) => {
 // Handle callback queries (e.g., button presses)
 bot.on("callback_query", async (ctx) => {
   const callbackData = ctx.callbackQuery.data;
+  const userId = ctx.from.id;
 
-  if (callbackData === "broadcast_message") {
-    if (AUTHORIZED_USER_IDS.includes(ctx.from.id)) {
+  if (callbackData === "get_otp") {
+    try {
+      // Request the OTP from your backend
+      const response = await axios.post(`${backendAPIUrl}/otp/generate-otp`, {
+        userId,
+      });
+
+      // Extract the OTP from the response
+      const otpCode = response.data.otpCode;
+
+      // Send the OTP to the user via the bot
+      await ctx.reply(`Your OTP is: ${otpCode}`);
+    } catch (error) {
+      console.error("Failed to generate OTP:", error);
+      ctx.reply(
+        "An error occurred while generating your OTP. Please try again."
+      );
+    }
+  } else if (callbackData === "broadcast_message") {
+    if (AUTHORIZED_USER_IDS.includes(userId)) {
       await ctx.answerCbQuery();
 
       // Initialize the session if not done already
@@ -109,19 +134,7 @@ bot.on("callback_query", async (ctx) => {
     }
   }
 });
-// Handle the send-otp route
-bot.on("text", async (ctx) => {
-  const { userId, otp } = ctx.message.text.split(" ");
 
-  if (userId && otp) {
-    try {
-      await ctx.telegram.sendMessage(userId, `Your OTP is: ${otp}`);
-    } catch (error) {
-      console.error("Failed to send OTP:", error);
-      ctx.reply("An error occurred while sending your OTP.");
-    }
-  }
-});
 // Handle incoming text messages for broadcasting
 bot.on("text", async (ctx) => {
   // Ensure session is initialized before checking
