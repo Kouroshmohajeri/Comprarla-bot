@@ -1,13 +1,14 @@
 import mongoose from "mongoose";
 
 const taskSchema = new mongoose.Schema({
+  _id: { type: mongoose.Schema.Types.ObjectId }, // Use ObjectId for _id
   title: { type: String, required: true },
   description: { type: String, required: true },
   points: { type: Number, required: true },
-  link: { type: String }, // Optional link for the task
-  availableTime: { type: Date, required: true }, // When the task is available until
-  userId: { type: String, required: true }, // User who created the task
-  isTaskDone: { type: Boolean, default: false }, // Track if the task is completed
+  link: { type: String },
+  availableTime: { type: Date, required: true },
+  userId: { type: String, required: true },
+  isTaskDone: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
 });
 

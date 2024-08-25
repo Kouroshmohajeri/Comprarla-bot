@@ -5,11 +5,13 @@ import Task from "../models/Task.js";
 export const markTaskAsDone = async (req, res) => {
   try {
     const { userId, taskId } = req.body;
-    console.log(userId, taskId);
+
+    // Convert userId and taskId to ObjectId if necessary
+    const userObjectId = mongoose.Types.ObjectId(userId);
+    const taskObjectId = mongoose.Types.ObjectId(taskId);
 
     // Validate that the task exists
-    const task = await Task.findById(taskId);
-    console.log(task);
+    const task = await Task.findById(taskObjectId);
     if (!task) {
       return res.status(404).json({ message: "Task not found" });
     }
