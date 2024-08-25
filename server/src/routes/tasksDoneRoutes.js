@@ -7,7 +7,7 @@ import {
 const router = express.Router();
 
 // Mark a task as done
-router.post("/tasks-done", markTaskAsDone);
+router.post("/", markTaskAsDone);
 
 // Get all tasks done by a specific user
 router.get("/:userId", getTasksDoneByUser);
