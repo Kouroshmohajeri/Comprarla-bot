@@ -6,21 +6,10 @@ export const markTaskAsDone = async (req, res) => {
   try {
     const { userId, taskId } = req.body;
     console.log(userId, taskId);
-    // Check if ObjectId format is valid
-    if (
-      !mongoose.Types.ObjectId.isValid(userId) ||
-      !mongoose.Types.ObjectId.isValid(taskId)
-    ) {
-      return res
-        .status(400)
-        .json({ message: "Invalid userId or taskId format" });
-    }
-
-    const userObjectId = mongoose.Types.ObjectId(userId);
-    const taskObjectId = mongoose.Types.ObjectId(taskId);
 
     // Validate that the task exists
-    const task = await Task.findById(taskObjectId);
+    const task = await Task.findById(taskId);
+    console.log(task);
     if (!task) {
       return res.status(404).json({ message: "Task not found" });
     }
