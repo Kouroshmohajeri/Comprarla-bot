@@ -72,19 +72,9 @@ const Tasks = () => {
       // Retrieve the task
       const task = tasks.find((task) => task._id === taskId);
 
-      // Check if the link is an Instagram link
-      if (task?.link.includes("instagram.com")) {
-        // Replace the link with the deep link for Instagram
-        const instagramDeepLink = task.link.replace(
-          "https://www.instagram.com/",
-          "instagram://"
-        );
-        window.location.href = instagramDeepLink;
-      } else {
-        // Redirect to the task link
-        if (task?.link) {
-          router.push(task.link);
-        }
+      // Use window.open with _blank to open in a new browser tab
+      if (task?.link) {
+        window.open(task.link, "_blank");
       }
 
       // Disable the button for 5 seconds, then re-enable
