@@ -1,14 +1,34 @@
 import crypto from "crypto";
-import axios from "axios";
 import Otp from "../models/Otp.js";
+import axios from "axios";
 
-// Function to generate a random OTP
-export function generateOTP() {
-  return crypto.randomBytes(3).toString("hex").toUpperCase();
+// Function to generate an encrypted token
+function generateEncryptedToken(userId) {
+  const token = crypto.randomBytes(32).toString("hex");
+  const cipher = crypto.createCipheriv(
+    "aes-256-cbc",
+    Buffer.from(process.env.ENCRYPTION_KEY, "hex"),
+    Buffer.from(process.env.ENCRYPTION_IV, "hex")
+  );
+  let encryptedToken = cipher.update(token, "utf8", "hex");
+  encryptedToken += cipher.final("hex");
+  return encryptedToken;
+}
+
+// Function to decrypt a token
+function decryptToken(encryptedToken) {
+  const decipher = crypto.createDecipheriv(
+    "aes-256-cbc",
+    Buffer.from(process.env.ENCRYPTION_KEY, "hex"),
+    Buffer.from(process.env.ENCRYPTION_IV, "hex")
+  );
+  let decryptedToken = decipher.update(encryptedToken, "hex", "utf8");
+  decryptedToken += decipher.final("utf8");
+  return decryptedToken;
 }
 
 // Function to check if the user exists in the external system using Axios
-export async function checkUserExists(userId) {
+async function checkUserExists(userId) {
   const url = `https://comprarla.es/api/users/${userId}`;
   try {
     const response = await axios.get(url);
@@ -24,7 +44,6 @@ export async function checkUserExists(userId) {
 }
 
 // Controller for handling the /start command
-// Controller for handling the /start command
 export async function handleStart(ctx) {
   const telegramUserId = ctx.from.id;
 
@@ -32,29 +51,30 @@ export async function handleStart(ctx) {
   const userData = await checkUserExists(telegramUserId);
 
   if (userData) {
-    // Generate a new OTP
-    const otp = generateOTP();
+    // Generate a new encrypted token
+    const encryptedToken = generateEncryptedToken(telegramUserId);
 
     try {
-      // Check if there's an existing OTP record for this user and delete it
+      // Remove any existing OTP records for this user
       await Otp.deleteOne({ userId: telegramUserId });
 
-      // Save the new OTP
+      // Save the new token
       const otpRecord = new Otp({
         userId: telegramUserId,
-        otp: otp,
+        otp: encryptedToken,
       });
 
       await otpRecord.save();
-      console.log("OTP saved successfully:", otpRecord);
+      console.log("Token saved successfully:", otpRecord);
 
+      const loginUrl = `https://comprarla.es/login?auth=${encryptedToken}`;
       ctx.reply(
-        `Welcome ${userData.firstName}!\nYour OTP is: ${otp}\n_______________\nComprarLa`
+        `Welcome ${userData.firstName}!\nYour login link is: ${loginUrl}\nThis link will expire in 5 minutes.\n_______________\nComprarLa`
       );
     } catch (error) {
-      console.error("Error saving OTP:", error.message);
+      console.error("Error saving token:", error.message);
       ctx.reply(
-        "An error occurred while generating your OTP. Please try again."
+        "An error occurred while generating your login link. Please try again."
       );
     }
   } else {
@@ -64,31 +84,29 @@ export async function handleStart(ctx) {
   }
 }
 
-// Verification of OTP
+// Function to handle token verification
+export async function handleTokenVerification(req, res) {
+  const { auth } = req.query;
 
-export async function handleVerification(req, res) {
-  const { userId, otp } = req.body;
-
-  if (!userId || !otp) {
-    return res.status(400).json({ message: "User ID and OTP are required." });
+  if (!auth) {
+    return res.status(400).json({ message: "Token is required." });
   }
 
   try {
-    // Find the OTP record in the database
-    const otpRecord = await Otp.findOne({ userId, otp });
+    // Decrypt the token
+    const decryptedToken = decryptToken(auth);
+
+    // Check if the token exists and is valid
+    const otpRecord = await Otp.findOne({ otp: auth });
 
     if (!otpRecord) {
-      return res.status(400).json({ message: "Invalid OTP or OTP expired." });
+      return res.status(400).json({ message: "Invalid or expired token." });
     }
 
-    // Optionally, delete the OTP after successful verification
-    await Otp.deleteOne({ _id: otpRecord._id });
-
-    return res.status(200).json({ message: "OTP verified successfully!" });
+    // Token is valid; proceed with login
+    res.status(200).json({ message: "Token is valid. Proceed with login." });
   } catch (error) {
-    console.error("Error verifying OTP:", error);
-    return res
-      .status(500)
-      .json({ message: "Server error. Please try again later." });
+    console.error("Error validating token:", error);
+    res.status(500).json({ message: "Server error. Please try again later." });
   }
 }
