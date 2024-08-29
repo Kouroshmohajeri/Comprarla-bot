@@ -15,19 +15,6 @@ export default {
         source: "/api/:path*",
         destination: "http://localhost:8800/api/:path*",
       },
-      {
-        source: "/login/:path*",
-        destination: "http://localhost:3000/login/:path*", // Ensure login routes are handled
-      },
-    ];
-  },
-  async redirects() {
-    return [
-      {
-        source: "/",
-        destination: "/", // Redirect root to home if needed
-        permanent: true,
-      },
     ];
   },
   images: {
