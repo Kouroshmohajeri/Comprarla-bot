@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import fetch from "node-fetch"; // or use any other fetch implementation
+import axios from "axios";
 
 export async function middleware(req) {
   const { pathname, searchParams } = new URL(req.url);
@@ -8,16 +8,18 @@ export async function middleware(req) {
   if (pathname === "/login" && searchParams.has("auth")) {
     const authToken = searchParams.get("auth");
 
-    // Verify the token with your backend
+    // Verify the token with your backend using axios
     try {
-      const response = await fetch(
-        `https://comprarla.es/api/otp/verifyToken?auth=${authToken}`
+      const response = await axios.get(
+        `https://comprarla.es/api/otp/verifyToken`,
+        {
+          params: { auth: authToken },
+        }
       );
-      const data = await response.json();
 
       if (
-        response.ok &&
-        data.message === "Token is valid. Proceed with login."
+        response.status === 200 &&
+        response.data.message === "Token is valid. Proceed with login."
       ) {
         // Redirect to the dashboard if the token is valid
         return NextResponse.redirect("/dashboard");
@@ -27,7 +29,7 @@ export async function middleware(req) {
       }
     } catch (error) {
       console.error("Error verifying token:", error);
-      return NextResponse.redirect("/error"); // handle fetch errors
+      return NextResponse.redirect("/error"); // handle axios errors
     }
   }
 
