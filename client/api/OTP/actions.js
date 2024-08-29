@@ -8,12 +8,15 @@ export const generateOtp = async (userId) => {
   }
 };
 
-export const verifyOtp = async (userId, otp) => {
+export async function verifyToken(authToken) {
   try {
-    const response = await API.post("/otp/verify", { userId, otp });
+    const response = await API.get("/otp/verifyToken", {
+      params: { auth: authToken },
+    });
+
     return response.data;
   } catch (error) {
-    console.error("Error verifying OTP:", error);
-    throw error;
+    console.error("Error verifying token:", error);
+    throw error; // Re-throw the error to be handled by the calling function
   }
-};
+}
