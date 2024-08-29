@@ -18,7 +18,7 @@ bot.start(async (ctx) => {
   } else {
     // Handle other cases or default behavior if needed
     console.log("User started bot without 'auth' payload:", ctx.from.id);
-    ctx.reply("Please use the correct link to start the bot.");
+    ctx.reply("Please use https://comprarla.es/login to login.");
   }
 });
 
