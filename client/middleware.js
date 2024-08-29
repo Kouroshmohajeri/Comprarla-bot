@@ -1,38 +1,48 @@
 import { NextResponse } from "next/server";
-import axios from "axios";
+
+// Function to verify the token using fetch
+async function verifyTokenWithFetch(authToken) {
+  try {
+    const response = await fetch(
+      `https://comprarla.es/api/otp/login?auth=${authToken}`
+    );
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error verifying token with fetch:", error);
+    throw error;
+  }
+}
 
 export async function middleware(req) {
-  const { pathname, searchParams } = new URL(req.url);
+  const url = new URL(req.url);
 
-  // Check if the path is /login and has an auth query parameter
-  if (pathname === "/login" && searchParams.has("auth")) {
-    const authToken = searchParams.get("auth");
+  // Extract the auth token from the URL query parameters
+  const authToken = url.searchParams.get("auth");
 
-    // Verify the token with your backend using axios
+  if (authToken) {
     try {
-      const response = await axios.get(
-        `https://comprarla.es/api/otp/verifyToken`,
-        {
-          params: { auth: authToken },
-        }
-      );
+      // Verify the token by making a request to the backend
+      const data = await verifyTokenWithFetch(authToken);
 
-      if (
-        response.status === 200 &&
-        response.data.message === "Token is valid. Proceed with login."
-      ) {
+      if (data.message === "Token is valid. Proceed with login.") {
         // Redirect to the dashboard if the token is valid
         return NextResponse.redirect("/dashboard");
       } else {
-        // Redirect to an error page or handle the invalid token
-        return NextResponse.redirect("/error"); // or any other error handling
+        // Redirect to an error page if the token is invalid
+        return NextResponse.redirect("/error");
       }
     } catch (error) {
       console.error("Error verifying token:", error);
-      return NextResponse.redirect("/error"); // handle axios errors
+      return NextResponse.redirect("/error"); // handle fetch errors
     }
   }
 
-  // Continue as normal if the path is not /login or if there's no auth token
+  // Continue as normal if there's no auth token
   return NextResponse.next();
 }
