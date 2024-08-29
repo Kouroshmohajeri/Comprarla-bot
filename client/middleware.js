@@ -32,7 +32,7 @@ export async function middleware(req) {
 
       if (data.message === "Token is valid. Proceed with login.") {
         // Redirect to the dashboard if the token is valid
-        return NextResponse.redirect("/dashboard");
+        return NextResponse.redirect("/");
       } else {
         // Redirect to an error page if the token is invalid
         return NextResponse.redirect("/error");
