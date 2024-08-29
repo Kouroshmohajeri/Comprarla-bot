@@ -58,3 +58,31 @@ export async function handleStart(ctx) {
     );
   }
 }
+// Verification of OTP
+
+export async function handleVerification(req, res) {
+  const { userId, otp } = req.body;
+
+  if (!userId || !otp) {
+    return res.status(400).json({ message: "User ID and OTP are required." });
+  }
+
+  try {
+    // Find the OTP record in the database
+    const otpRecord = await Otp.findOne({ userId, otp });
+
+    if (!otpRecord) {
+      return res.status(400).json({ message: "Invalid OTP or OTP expired." });
+    }
+
+    // Optionally, delete the OTP after successful verification
+    await Otp.deleteOne({ _id: otpRecord._id });
+
+    return res.status(200).json({ message: "OTP verified successfully!" });
+  } catch (error) {
+    console.error("Error verifying OTP:", error);
+    return res
+      .status(500)
+      .json({ message: "Server error. Please try again later." });
+  }
+}
