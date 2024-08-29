@@ -34,16 +34,24 @@ export async function handleStart(ctx) {
     const otp = generateOTP();
 
     // Store the OTP in the database
-    const otpRecord = new Otp({
-      userId: telegramUserId,
-      otp: otp,
-    });
+    try {
+      const otpRecord = new Otp({
+        userId: telegramUserId,
+        otp: otp,
+      });
 
-    await otpRecord.save();
+      await otpRecord.save();
+      console.log("OTP saved successfully:", otpRecord);
 
-    ctx.reply(
-      `Welcome ${userData.firstName}!\nYour OTP is: ${otp}\n_______________\nComprarLa`
-    );
+      ctx.reply(
+        `Welcome ${userData.firstName}!\nYour OTP is: ${otp}\n_______________\nComprarLa`
+      );
+    } catch (error) {
+      console.error("Error saving OTP:", error.message);
+      ctx.reply(
+        "An error occurred while generating your OTP. Please try again."
+      );
+    }
   } else {
     ctx.reply(
       `You need to start the @comprarlabot first to get the code. Please go to https://t.me/comprarlabot and follow the instructions.`
