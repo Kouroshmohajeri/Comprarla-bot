@@ -25,7 +25,7 @@ export default {
     return [
       {
         source: "/",
-        destination: "/home", // Redirect root to home if needed
+        destination: "/", // Redirect root to home if needed
         permanent: true,
       },
     ];
