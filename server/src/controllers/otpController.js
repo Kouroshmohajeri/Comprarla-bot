@@ -24,6 +24,7 @@ export async function checkUserExists(userId) {
 }
 
 // Controller for handling the /start command
+// Controller for handling the /start command
 export async function handleStart(ctx) {
   const telegramUserId = ctx.from.id;
 
@@ -31,10 +32,14 @@ export async function handleStart(ctx) {
   const userData = await checkUserExists(telegramUserId);
 
   if (userData) {
+    // Generate a new OTP
     const otp = generateOTP();
 
-    // Store the OTP in the database
     try {
+      // Check if there's an existing OTP record for this user and delete it
+      await Otp.deleteOne({ userId: telegramUserId });
+
+      // Save the new OTP
       const otpRecord = new Otp({
         userId: telegramUserId,
         otp: otp,
@@ -58,6 +63,7 @@ export async function handleStart(ctx) {
     );
   }
 }
+
 // Verification of OTP
 
 export async function handleVerification(req, res) {
