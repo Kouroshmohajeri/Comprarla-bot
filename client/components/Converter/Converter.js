@@ -26,9 +26,11 @@ const Converter = () => {
     const inputValue = event.target.value;
     setPrice(inputValue);
 
-    if (fixedPrice) {
+    if (fixedPrice && inputValue !== "") {
       const finalPrice = convertPrice(parseFloat(inputValue), fixedPrice);
       setConvertedPrice(formatNumber(Math.round(finalPrice)));
+    } else {
+      setConvertedPrice(""); // Clear the converted price when input is empty
     }
   };
 
@@ -71,6 +73,18 @@ const Converter = () => {
           ? `${convertedPrice} Toman`
           : "Enter a price to convert"}
       </Typography>
+      {convertedPrice && (
+        <Typography
+          variant="body1"
+          sx={{
+            marginTop: "8px",
+            textAlign: "center", // Center the Farsi text
+            fontFamily: "Arial, sans-serif", // Optional: Set a font that supports Farsi
+          }}
+        >
+          با احتساب هزینه باربری
+        </Typography>
+      )}
     </Box>
   );
 };
