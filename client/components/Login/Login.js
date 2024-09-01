@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import TelegramIcon from "@mui/icons-material/Telegram";
-import styles from "./login.module.css";
+import styles from "./Login.module.css";
 
 const TELEGRAM_BOT_URL = "https://t.me/comprarlaAuthBot?start=auth"; // Updated URL with /start command
 
