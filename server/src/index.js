@@ -7,7 +7,6 @@ import conversionRoutes from "./routes/conversionRoutes.js";
 import otpRoutes from "./routes/otpRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 import taskDoneRoutes from "./routes/tasksDoneRoutes.js";
-import protectedRoutes from "./routes/protectedRoutes.js";
 
 dotenv.config();
 
@@ -27,7 +26,6 @@ app.use("/api/conversion", conversionRoutes);
 app.use("/api/otp", otpRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/tasks-done", taskDoneRoutes);
-app.use("/api", protectedRoutes);
 
 const PORT = process.env.PORT || 8443;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

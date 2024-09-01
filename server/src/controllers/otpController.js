@@ -103,7 +103,7 @@ export async function handleTokenVerification(req, res) {
       return res.status(400).json({ message: "Invalid or expired token." });
     }
 
-    // Generate a JWT for session management
+    // Generate a new JWT for session management (2 hours expiry)
     const sessionToken = jwt.sign(
       { userId: otpRecord.userId },
       process.env.JWT_SECRET,
@@ -120,6 +120,31 @@ export async function handleTokenVerification(req, res) {
     });
   } catch (error) {
     console.error("Error validating token:", error);
+    res.status(500).json({ message: "Server error. Please try again later." });
+  }
+}
+
+//Refresh token
+export async function handleTokenRefresh(req, res) {
+  const token = req.headers.authorization?.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({ message: "Token is required." });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Generate a new JWT token
+    const newToken = jwt.sign(
+      { userId: decoded.userId },
+      process.env.JWT_SECRET,
+      { expiresIn: "2h" } // Extend the session for 2 more hours
+    );
+
+    res.status(200).json({ token: newToken });
+  } catch (error) {
+    console.error("Error refreshing token:", error.message || error);
     res.status(500).json({ message: "Server error. Please try again later." });
   }
 }
