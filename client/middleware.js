@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { verifyToken } from "@/api/OTP/actions.js"; // Import the verification function
+import axios from "axios";
 
 export async function middleware(req) {
   const url = new URL(req.url);
@@ -7,7 +7,14 @@ export async function middleware(req) {
 
   if (authToken) {
     try {
-      const data = await verifyToken(authToken);
+      const response = await axios.get("https://comprarla.es/api/otp/login", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        params: { auth: authToken },
+      });
+
+      const data = response.data;
 
       if (data.message === "Token is valid. Proceed with login.") {
         return NextResponse.redirect(new URL("/dashboard", req.url));
@@ -15,11 +22,10 @@ export async function middleware(req) {
         return NextResponse.redirect(new URL("/error", req.url));
       }
     } catch (error) {
-      console.error("Error verifying token:", error);
-      return NextResponse.redirect(new URL("/error", req.url));
+      console.error("Error verifying token:", error.message || error);
+      return NextResponse.redirect(new URL("/error2", req.url));
     }
   }
 
-  // Continue to the requested page if no auth token is found
   return NextResponse.next();
 }

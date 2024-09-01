@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import Otp from "../models/Otp.js";
 import axios from "axios";
+import jwt from "jsonwebtoken";
 
 // Function to generate an encrypted token
 function generateEncryptedToken(userId) {
@@ -84,7 +85,6 @@ export async function handleStart(ctx) {
   }
 }
 
-// Function to handle token verification
 export async function handleTokenVerification(req, res) {
   const { auth } = req.query;
 
@@ -103,8 +103,21 @@ export async function handleTokenVerification(req, res) {
       return res.status(400).json({ message: "Invalid or expired token." });
     }
 
-    // Token is valid; proceed with login
-    res.status(200).json({ message: "Token is valid. Proceed with login." });
+    // Generate a JWT for session management
+    const sessionToken = jwt.sign(
+      { userId: otpRecord.userId },
+      process.env.JWT_SECRET,
+      { expiresIn: "2h" } // Token expires in 2 hours
+    );
+
+    // Optionally, delete the OTP record after successful use
+    await Otp.deleteOne({ otp: auth });
+
+    // Send the JWT to the user
+    res.status(200).json({
+      message: "Token is valid. Proceed with login.",
+      token: sessionToken,
+    });
   } catch (error) {
     console.error("Error validating token:", error);
     res.status(500).json({ message: "Server error. Please try again later." });
