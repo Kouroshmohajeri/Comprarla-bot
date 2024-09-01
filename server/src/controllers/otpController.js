@@ -64,7 +64,7 @@ export async function handleStart(ctx) {
         userId: telegramUserId,
         otp: encryptedToken,
       });
-      await otpRecord.save().then((res) => console.log(res));
+      await otpRecord.save();
 
       const loginUrl = `https://comprarla.es/login?auth=${encryptedToken}`;
       ctx.reply(
