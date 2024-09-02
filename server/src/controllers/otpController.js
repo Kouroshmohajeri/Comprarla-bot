@@ -103,8 +103,13 @@ export async function handleTokenVerification(req, res) {
       return res.status(400).json({ message: "Invalid or expired token." });
     }
 
-    // Token is valid; proceed with login
-    res.status(200).json({ message: "Token is valid. Proceed with login." });
+    // Extract the userId from the OTP record
+    const userId = otpRecord.userId;
+
+    // Token is valid; proceed with login and include the userId in the response
+    res
+      .status(200)
+      .json({ message: "Token is valid. Proceed with login.", userId });
   } catch (error) {
     console.error("Error validating token:", error);
     res.status(500).json({ message: "Server error. Please try again later." });
