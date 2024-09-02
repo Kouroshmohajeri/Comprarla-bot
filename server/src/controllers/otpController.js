@@ -2,6 +2,7 @@ import crypto from "crypto";
 import Otp from "../models/Otp.js";
 import axios from "axios";
 import jwt from "jsonwebtoken";
+import cookie from "cookie";
 
 // Function to generate an encrypted token
 function generateEncryptedToken(userId) {
