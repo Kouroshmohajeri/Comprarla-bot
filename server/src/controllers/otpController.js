@@ -94,13 +94,17 @@ export async function handleTokenVerification(req, res) {
   }
 
   try {
+    // Decrypt the token
     const decryptedToken = decryptToken(auth);
+
+    // Check if the OTP record exists and is valid
     const otpRecord = await Otp.findOne({ otp: auth });
 
     if (!otpRecord) {
       return res.status(400).json({ message: "Invalid or expired token." });
     }
 
+    // Extract userId from OTP record
     const userId = otpRecord.userId;
 
     // Create a JWT token with the userId
