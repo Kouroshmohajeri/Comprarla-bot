@@ -113,12 +113,21 @@ export async function handleTokenVerification(req, res) {
     });
 
     // Set the JWT token in an HTTP-only cookie
-    res.cookie("token", jwtToken, {
-      httpOnly: true, // Prevents JavaScript from accessing the cookie
-      secure: process.env.NODE_ENV === "production", // Ensures the cookie is sent over HTTPS in production
-      maxAge: 2 * 60 * 60 * 1000, // Expires in 2 hours
-      sameSite: "strict", // Prevents CSRF attacks
-    });
+    // res.cookie("token", jwtToken, {
+    //   httpOnly: true, // Prevents JavaScript from accessing the cookie
+    //   secure: process.env.NODE_ENV === "production", // Ensures the cookie is sent over HTTPS in production
+    //   maxAge: 2 * 60 * 60 * 1000, // Expires in 2 hours
+    //   sameSite: "strict", // Prevents CSRF attacks
+    // });
+    res.setHeader(
+      "Set-Cookie",
+      cookie.serialize("token", jwtToken, {
+        httpOnly: true,
+        sameSite: "strict",
+        path: "/",
+        maxAge: 2 * 60 * 60 * 1000,
+      })
+    );
 
     res
       .status(200)
