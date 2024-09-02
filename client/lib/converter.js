@@ -27,5 +27,5 @@ export const convertPrice = (price, fixedPrice) => {
   }
 
   // Multiply the adjusted price by the fixed conversion rate
-  return adjustedPrice * fixedPrice + 10 * fixedPrice;
+  return adjustedPrice * fixedPrice + 5 * fixedPrice;
 };
