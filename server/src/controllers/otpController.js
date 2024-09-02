@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import Otp from "../models/Otp.js";
 import axios from "axios";
+import jwt from "jsonwebtoken";
 
 // Function to generate an encrypted token
 function generateEncryptedToken(userId) {
@@ -93,20 +94,28 @@ export async function handleTokenVerification(req, res) {
   }
 
   try {
-    // Decrypt the token
     const decryptedToken = decryptToken(auth);
-
-    // Check if the token exists and is valid
     const otpRecord = await Otp.findOne({ otp: auth });
 
     if (!otpRecord) {
       return res.status(400).json({ message: "Invalid or expired token." });
     }
 
-    // Extract the userId from the OTP record
     const userId = otpRecord.userId;
 
-    // Token is valid; proceed with login and include the userId in the response
+    // Create a JWT token with the userId
+    const jwtToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
+      expiresIn: "2h",
+    });
+
+    // Set the JWT token in an HTTP-only cookie
+    res.cookie("token", jwtToken, {
+      httpOnly: true, // Prevents JavaScript from accessing the cookie
+      secure: process.env.NODE_ENV === "production", // Ensures the cookie is sent over HTTPS in production
+      maxAge: 2 * 60 * 60 * 1000, // Expires in 2 hours
+      sameSite: "strict", // Prevents CSRF attacks
+    });
+
     res
       .status(200)
       .json({ message: "Token is valid. Proceed with login.", userId });
