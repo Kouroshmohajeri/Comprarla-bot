@@ -96,8 +96,7 @@ export function scheduleLinkExpiration(ctx, messageId, delay) {
       ctx.chat.id,
       messageId,
       undefined,
-      `Link expired.
-      Please try go to https://comprarla.es/login and login to get the code!`
+      `Link expired.\nPlease go to https://comprarla.es/login and login to get the code!`
     );
   }, delay);
 }
