@@ -70,9 +70,12 @@ export async function handleStart(ctx) {
       console.log("Token saved successfully:", otpRecord);
 
       const loginUrl = `https://comprarla.es/login?auth=${encryptedToken}`;
-      ctx.reply(
-        `Welcome ${userData.firstName}!\nYour login link is: ${loginUrl}\nThis link will expire in 5 minutes.\n_______________\nComprarLa`
+      const message = await ctx.reply(
+        `Welcome ${userData.firstName}!\nYour login link is: ${loginUrl}\nThis link will expire in 2 minutes.\n_______________\nComprarLa`
       );
+
+      // Schedule link expiration after 2 minutes
+      scheduleLinkExpiration(ctx, message.message_id, 2 * 60 * 1000);
     } catch (error) {
       console.error("Error saving token:", error.message);
       ctx.reply(
@@ -84,6 +87,18 @@ export async function handleStart(ctx) {
       `You need to start the @comprarlabot first to get the code. Please go to https://t.me/comprarlabot and follow the instructions.`
     );
   }
+}
+
+// Function to schedule link expiration
+export function scheduleLinkExpiration(ctx, messageId, delay) {
+  setTimeout(() => {
+    ctx.telegram.editMessageText(
+      ctx.chat.id,
+      messageId,
+      undefined,
+      "Link expired."
+    );
+  }, delay);
 }
 
 // Function to handle token verification
@@ -113,13 +128,6 @@ export async function handleTokenVerification(req, res) {
       expiresIn: "2h",
     });
 
-    // Set the JWT token in an HTTP-only cookie
-    // res.cookie("token", jwtToken, {
-    //   httpOnly: true, // Prevents JavaScript from accessing the cookie
-    //   secure: process.env.NODE_ENV === "production", // Ensures the cookie is sent over HTTPS in production
-    //   maxAge: 2 * 60 * 60 * 1000, // Expires in 2 hours
-    //   sameSite: "strict", // Prevents CSRF attacks
-    // });
     res.setHeader(
       "Set-Cookie",
       cookie.serialize("token", jwtToken, {
