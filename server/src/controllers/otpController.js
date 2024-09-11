@@ -3,6 +3,7 @@ import Otp from "../models/Otp.js";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
+import { createSession } from "./sessionController.js";
 
 // Function to generate an encrypted token
 function generateEncryptedToken(userId) {
@@ -101,7 +102,6 @@ export function scheduleLinkExpiration(ctx, messageId, delay) {
   }, delay);
 }
 
-// Function to handle token verification
 export async function handleTokenVerification(req, res) {
   const { auth } = req.query;
 
@@ -123,11 +123,19 @@ export async function handleTokenVerification(req, res) {
     // Extract userId from OTP record
     const userId = otpRecord.userId;
 
-    // Create a JWT token with the userId
-    const jwtToken = jwt.sign({ userId }, process.env.JWT_SECRET, {
-      expiresIn: "2h",
-    });
+    // Create a session for the user and invalidate previous sessions
+    const sessionToken = await createSession(userId);
 
+    // Create a JWT token with the userId and sessionToken
+    const jwtToken = jwt.sign(
+      { userId, sessionToken },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "2h",
+      }
+    );
+
+    // Set the JWT token in an HTTP-only cookie
     res.setHeader(
       "Set-Cookie",
       cookie.serialize("token", jwtToken, {
