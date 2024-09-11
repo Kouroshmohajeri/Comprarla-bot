@@ -4,7 +4,7 @@ import {
   handleTokenVerification,
 } from "../controllers/otpController.js";
 import { logout } from "../controllers/logoutController.js";
-import { sessionMiddleware } from "../middlewares/sessionMiddleware.js";
+import { sessionMiddleware } from "../middleware/sessionMiddleware.js";
 
 const router = Router();
 
