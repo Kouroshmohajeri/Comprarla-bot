@@ -1,0 +1,38 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+/log
+
+# Environment variables
+.env
+
+# Ignore database configuration
+/src/config/db.js
+
+# PM2 logs
+pm2.log
+pm2.pid
+ecosystem.config.js
+ecosystem.config.cjs
+
+# Operating system specific
+.DS_Store
+Thumbs.db
+
+# Editor settings
+.vscode/
+.idea/
+*.swp
+*~
+
+# Dependency directories
+node_modules/

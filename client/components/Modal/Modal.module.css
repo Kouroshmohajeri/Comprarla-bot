@@ -1,0 +1,80 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modalContent {
+    color: white;
+    background-color: #1e1e2f;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  .image{
+    margin-bottom: -10%;
+  }
+  /* Pop-in animation */
+  @keyframes pop-in {
+    0% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  /* Pop-out animation (reverse of pop-in) */
+  @keyframes pop-out {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+  }
+  
+  .popIn {
+    animation: pop-in 0.3s ease-out;
+  }
+  
+  .popOut {
+    animation: pop-out 0.3s ease-out;
+  }
+  
+  .closeButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: white;
+  }
+  
+  .closeButton:hover {
+    color: #000;
+  }
+  
+  /* Responsive adjustments for mobile view */
+  @media (max-width: 768px) {
+    .modalContent {
+      max-width: 85%; /* Modal max-width for mobile view */
+    }
+  }
+  

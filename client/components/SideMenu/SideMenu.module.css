@@ -1,0 +1,134 @@
+/* Side Menu Container */
+.sideMenu {
+    height: 100vh;
+    background-color: #1e1e2f;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    transition: width 0.3s ease, background-color 0.3s ease; /* Ensure transition on width and background color */
+    position: fixed; 
+    z-index: 2;
+  }
+  
+  .openMenu {
+    /* width: 250px; */
+  }
+  
+  .closedMenu {
+    width: 60px;
+  }
+  
+  /* Responsive behavior */
+  @media (max-width: 768px) {
+    /* .openMenu {
+      width: 10%; 
+    } */
+    .closedMenu {
+    width: 10%;
+    background: transparent;
+    box-shadow: none;
+    }
+  }
+  
+  @media (min-width: 769px) {
+    .openMenu {
+      width: 250px;
+    }
+    .closedMenu {
+      width: 2%; /* 2% width when closed on desktop */
+    }
+  }
+  
+  /* Top Container holding the Hamburger and Logo */
+  .topContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+    position: relative; /* Ensure the X button can be positioned relative to the container */
+  }
+  
+  /* Hamburger Icon on the top-right of the side menu */
+  .hamburgerIcon {
+    position: absolute;
+    top: 10px;
+    right: 2px;
+    cursor: pointer;
+    font-size: 24px;
+    color: white;
+    z-index: 10; /* Ensure it's on top of other elements */
+  }
+  
+  /* Logo (displayed only when the menu is open) */
+  .logoContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+  }
+  
+  .logo {
+    height: auto;
+  }
+  
+  /* Menu List Styling */
+  .menuList {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 20px; /* Adjust spacing if needed */
+  }
+  
+  .menuItem {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+    color: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    transition: opacity 0.3s ease, margin-right 0.3s ease;
+  }
+  
+  .menuItem:hover {
+    background-color: #2a2a3e;
+    border-radius: 5px;
+    /* padding-left: 10px; */
+}
+  
+  .icon {
+    font-size: 20px;
+  }
+  
+  /* Hide icon and text when menu is closed on mobile */
+  .closedMenu .menuList .menuItem {
+    justify-content: center; /* Center align icon when closed */
+  }
+  
+  .closedMenu .menuItem span {
+    display: none; /* Hide text when menu is closed */
+  }
+  
+  /* Hide icons on mobile view when menu is closed */
+  @media (max-width: 768px) {
+    .closedMenu .menuItem {
+      display: none; /* Hide all menu items when closed on mobile */
+    }
+  }
+  
+  /* Bottom Menu (Settings, Log Out) */
+  .bottomMenuList {
+    list-style-type: none;
+    padding: 0;
+    margin-top: auto;
+  }
+  
+  .menuItem span {
+    margin-left: 10px;
+  }
+  
+  .closedMenu .menuItem span {
+    display: none; /* Hide text when menu is closed */
+  }
+  

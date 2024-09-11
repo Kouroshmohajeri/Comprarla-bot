@@ -9,6 +9,7 @@ import BrandsDisplay from "@/components/BrandsDisplay/BrandsDisplay.js";
 import LoadingScreen from "@/components/LoadingScreen/LoadingScreen.js"; // Import the LoadingScreen component
 import UserProfile from "@/components/UserProfile/UserProfile";
 import Tasks from "@/components/Tasks/Tasks";
+import Specials from "@/components/Specials/Specials";
 
 export default function Home() {
   const [selectedPage, setSelectedPage] = useState(0); // Use index 0 as the default page
@@ -53,6 +54,7 @@ export default function Home() {
           {selectedPage === 1 && <BrandsDisplay />}
           {selectedPage === 2 && <UserProfile />}
           {selectedPage === 3 && <Tasks />}
+          {selectedPage === 4 && <Specials />}
           {/* You can add more conditions here for other pages */}
           <BottomMenu onPageChange={handlePageChange} />
         </div>

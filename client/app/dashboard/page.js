@@ -1,7 +1,12 @@
 import React from "react";
+import Layout from "./layout.js"; // Use Layout component
 
-const page = () => {
-  return <div>Welcome</div>;
+const Page = () => {
+  return (
+    <main>
+      <Layout />
+    </main>
+  );
 };
 
-export default page;
+export default Page;

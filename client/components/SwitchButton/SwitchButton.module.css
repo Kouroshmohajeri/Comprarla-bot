@@ -1,0 +1,79 @@
+.switchContainer {
+    border: 1px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 200px;
+    height: 40px;
+    position: fixed; /* This makes it sticky */
+    top: 11%;       /* Adjust the position relative to the top of the viewport */
+    left: 50%;       /* Center it horizontally */
+    transform: translateX(-50%); /* Center adjustment for left positioning */
+    cursor: pointer;
+    border-radius: 15px;
+    margin: auto;
+    z-index: 999; /* Ensure it stays above other content */
+    background-color: rgba(0, 0, 0, 0.2); /* Add a semi-transparent background */
+    backdrop-filter: blur(10px); /* Optional blur effect for a modern look */
+  }
+  
+  .switchButton {
+    width: 100px;
+    height: 40px;
+    border-radius: 15px;
+    background-color: #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: 0.3s;
+    z-index: 1;
+  }
+  
+  .giftSelected {
+    transform: translateX(0);
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .productSelected {
+    transform: translateX(100%);
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .text {
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .labels {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    position: relative;
+    z-index: 0;
+  }
+  
+  .label {
+    width: 100px;
+    text-align: center;
+    color: #888;
+    font-size: 16px;
+    font-weight: bold;
+    user-select: none; /* Prevent text selection */
+  }
+  
+  .active {
+    color: white;
+  }
+  

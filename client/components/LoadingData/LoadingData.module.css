@@ -1,0 +1,28 @@
+.loadingContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full screen height */
+  }
+  
+  .loadingText {
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+    color: #ffffff;
+    display: flex;
+  }
+  
+  .loadingChar {
+    opacity: 0;
+    animation: blink 1.5s infinite; /* Infinite blink animation */
+  }
+  
+  @keyframes blink {
+    0%, 100% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+  
