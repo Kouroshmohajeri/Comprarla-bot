@@ -12,7 +12,11 @@ export const convertPrice = (price, fixedPrice) => {
   }
 
   let adjustedPrice = price;
-  adjustedPrice += price * 0.3;
+  if (price <= 100 && price <= 250) {
+    adjustedPrice += price * 0.3;
+  } else if (price >= 251) {
+    adjustedPrice += price * 0.25;
+  }
   // Apply the percentage adjustment based on the price range
   // if (price <= 110) {
   //   adjustedPrice += price * 0.5; // Add 50%
@@ -27,5 +31,11 @@ export const convertPrice = (price, fixedPrice) => {
   // }
 
   // Multiply the adjusted price by the fixed conversion rate
-  return adjustedPrice * fixedPrice + 15 * fixedPrice;
+  let totalPrice = adjustedPrice * fixedPrice;
+  if (price <= 250) {
+    totalPrice += 30 * fixedPrice;
+  } else {
+    totalPrice += 15 * fixedPrice;
+  }
+  return totalPrice;
 };
