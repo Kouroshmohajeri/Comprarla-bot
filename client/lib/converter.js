@@ -35,7 +35,7 @@ export const convertPrice = (price, fixedPrice) => {
   if (price <= 100) {
     totalPrice += 30 * fixedPrice;
   } else {
-    totalPrice += 22 * fixedPrice;
+    totalPrice += 15 * fixedPrice;
   }
   return totalPrice;
 };
