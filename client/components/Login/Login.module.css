@@ -14,6 +14,19 @@
   box-sizing: border-box;
 }
 
+/* Add this to your CSS file (e.g., Login.module.css) */
+
+/* Define the fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Apply the animation to the glassBox */
 .glassBox {
   margin: 2%;
   width: 350px;
@@ -29,7 +42,12 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 20px;
   text-align: center;
+
+  /* Add fade-in animation */
+  opacity: 0;
+  animation: fadeIn 0.8s ease-in-out  forwards;
 }
+
 
 .heading {
   color: #fff;

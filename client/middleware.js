@@ -50,8 +50,6 @@ export async function middleware(req) {
         );
         return NextResponse.redirect(new URL("/error2", req.url));
       }
-    } else {
-      const res = NextResponse.redirect(new URL("/dashboard", req.url));
     }
   }
 
