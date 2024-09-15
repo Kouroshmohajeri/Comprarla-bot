@@ -9,6 +9,8 @@ import taskRoutes from "./routes/taskRoutes.js";
 import taskDoneRoutes from "./routes/tasksDoneRoutes.js";
 import authorizedUserRoutes from "./routes/authorizedUsersRoutes.js";
 import managementRoutes from "./routes/managementRoutes.js";
+import giftRoutes from "./routes/giftRoutes.js";
+import collectedGiftRoutes from "./routes/collectedGiftsRoutes.js";
 
 dotenv.config();
 
@@ -30,6 +32,8 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/tasks-done", taskDoneRoutes);
 app.use("/api/aut", authorizedUserRoutes);
 app.use("/api/management", managementRoutes);
+app.use("/api/gifts", giftRoutes);
+app.use("/api/collected-gifts", collectedGiftRoutes);
 
 const PORT = process.env.PORT || 8443;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
