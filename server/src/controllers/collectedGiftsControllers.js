@@ -4,6 +4,7 @@ import {
   findCollectedGiftsByUserId,
   deleteCollectedGiftById,
 } from "../repositories/collectedGiftsRepository.js";
+import CollectedGifts from "../models/CollectedGifts.js";
 
 // Add a collected gift
 export const addCollectedGift = async (req, res) => {
@@ -40,7 +41,7 @@ export const deleteCollectedGift = async (req, res) => {
   }
 };
 
-// Get all collected gifts
+// Get all collected gifts by Id
 export const getAllCollectedGifts = async (req, res) => {
   try {
     const collectedGifts = await CollectedGifts.find().populate("giftId");
