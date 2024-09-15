@@ -9,15 +9,15 @@ import {
 const router = express.Router();
 
 // Add a new management entry
-router.post("/management", addManagementEntry);
+router.post("/add", addManagementEntry);
 
 // Get a management entry by userId
-router.get("/management/:userId", getManagementEntry);
+router.get("/:userId", getManagementEntry);
 
 // Get all management entries
-router.get("/management", getAllManagementEntries);
+router.get("/", getAllManagementEntries);
 
 // Delete a management entry by userId
-router.delete("/management/:userId", deleteManagementEntry);
+router.delete("/:userId", deleteManagementEntry);
 
 export default router;
