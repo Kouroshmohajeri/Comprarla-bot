@@ -1,4 +1,4 @@
-import Gift from "../models/Gift";
+import Gift from "../models/Gifts.js";
 
 export const createGift = async (giftData) => {
   const newGift = new Gift(giftData);
