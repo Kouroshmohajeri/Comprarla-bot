@@ -39,3 +39,13 @@ export const deleteCollectedGift = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Get all collected gifts
+export const getAllCollectedGifts = async (req, res) => {
+  try {
+    const collectedGifts = await CollectedGifts.find().populate("giftId");
+    res.status(200).json(collectedGifts);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
