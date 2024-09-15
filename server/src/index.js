@@ -8,6 +8,7 @@ import otpRoutes from "./routes/otpRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 import taskDoneRoutes from "./routes/tasksDoneRoutes.js";
 import authorizedUserRoutes from "./routes/authorizedUsersRoutes.js";
+import managementRoutes from "./routes/managementRoutes.js";
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.use("/api/otp", otpRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/tasks-done", taskDoneRoutes);
 app.use("/api/aut", authorizedUserRoutes);
+app.use("/api/management", managementRoutes);
 
 const PORT = process.env.PORT || 8443;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
