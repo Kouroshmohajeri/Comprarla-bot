@@ -31,7 +31,7 @@ export const convertPrice = (price, fixedPrice) => {
   // }
 
   // Multiply the adjusted price by the fixed conversion rate
-  let additionalToFixed = fixedPrice * 1.08;
+  let additionalToFixed = fixedPrice * 1;
   let totalPrice = adjustedPrice * additionalToFixed;
   if (price <= 100) {
     totalPrice += 20 * additionalToFixed;
@@ -40,23 +40,3 @@ export const convertPrice = (price, fixedPrice) => {
   }
   return totalPrice;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
