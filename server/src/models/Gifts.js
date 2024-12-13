@@ -9,6 +9,7 @@ const giftSchema = new mongoose.Schema({
   expirationDate: { type: Date },
   clicks: { type: Number, default: 0 },
   type: { type: String, required: true },
+  link: { type: String, default: null },
 });
 
 const Gift = mongoose.model("Gift", giftSchema);

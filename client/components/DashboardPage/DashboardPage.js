@@ -40,7 +40,33 @@ const DashboardPage = () => {
         });
     }
   }, []);
+  const handleGenerateInvitation = async () => {
+    try {
+      const invitationLink = `https://t.me/comprarlabot?start=${invitationCode}`;
+      const message = `Hi there! Let's join Comprarla✨️
 
+First ever online shop with a Telegram mini app!
+
+Join now with the link below and earn 100 points and 50 extra points as a bonus🤩
+
+Join here👇🏼
+${invitationLink}
+
+Also, join our channel for the latest news💡
+https://t.me/comprarla`;
+
+      // Send the message via Telegram
+      window.Telegram.WebApp.close();
+      window.Telegram.WebApp.openTelegramLink(
+        `https://t.me/share/url?url=${encodeURIComponent(
+          invitationLink
+        )}&text=${encodeURIComponent(message)}`
+      );
+      alert(invitationLink);
+    } catch (error) {
+      console.error("Failed to generate invitation code:", error);
+    }
+  };
   const handleBoxClick = (boxName) => {
     setActiveModal(boxName); // Set the modal to open
   };
@@ -98,12 +124,12 @@ const DashboardPage = () => {
             >
               <h2>Invite</h2>
               {invitationCode && (
-                <a
-                  href={`https://invite.com/${invitationCode}`}
+                <button
+                  onClick={handleGenerateInvitation}
                   className={styles.inviteButton}
                 >
-                  Use Code: {invitationCode}
-                </a>
+                  Invite friendss
+                </button>
               )}
             </div>
           </div>
@@ -147,12 +173,12 @@ const DashboardPage = () => {
             <div>
               <h2>Invite</h2>
               {invitationCode && (
-                <a
-                  href={`https://invite.com/${invitationCode}`}
+                <button
+                  onClick={handleGenerateInvitation}
                   className={styles.inviteButton}
                 >
-                  Use Code: {invitationCode}
-                </a>
+                  Invite friends
+                </button>
               )}
             </div>
           )}
