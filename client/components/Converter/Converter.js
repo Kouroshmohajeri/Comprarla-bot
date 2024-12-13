@@ -247,7 +247,7 @@ const Converter = () => {
               variant="outlined"
               className={styles.font}
               inputProps={{ step: "0.01" }}
-              disabled={!selectedSubcategory} // Disable until a category is selected
+              disabled={!selectedSubcategory}
               sx={{
                 "& .MuiInputBase-input": {
                   color: "white",
