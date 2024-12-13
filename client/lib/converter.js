@@ -1,42 +1,23 @@
-// lib/converter.js
-
 /**
- * Converts a given price based on specific percentage adjustments and a fixed conversion rate.
+ * Converts a given price based on specific percentage adjustments and a fixed conversion rate, including shipping.
  * @param {number} price - The price to convert.
  * @param {number} fixedPrice - The fixed price to use for conversion.
- * @returns {number} - The converted price.
+ * @param {number} shippingPrice - The shipping price to add to the total.
+ * @returns {number} - The converted price with shipping included.
  */
-export const convertPrice = (price, fixedPrice) => {
+export const convertPrice = (price, fixedPrice, shippingPrice) => {
   if (isNaN(price) || price <= 0) {
     return 0;
   }
 
   let adjustedPrice = price;
   if (price <= 250) {
-    adjustedPrice += price * 0.28;
+    adjustedPrice += price * 0.25;
   } else if (price > 250) {
     adjustedPrice += price * 0.2;
   }
-  // Apply the percentage adjustment based on the price range
-  // if (price <= 110) {
-  //   adjustedPrice += price * 0.5; // Add 50%
-  // } else if (price <= 310) {
-  //   adjustedPrice += price * 0.4; // Add 40%
-  // } else if (price <= 610) {
-  //   adjustedPrice += price * 0.3; // Add 30%
-  // } else if (price <= 1000) {
-  //   adjustedPrice += price * 0.25; // Add 25%
-  // } else {
-  //   adjustedPrice += price * 0.2; // Add 20%
-  // }
-
-  // Multiply the adjusted price by the fixed conversion rate
   let additionalToFixed = fixedPrice * 1;
-  let totalPrice = adjustedPrice * additionalToFixed;
-  if (price <= 100) {
-    totalPrice += 20 * additionalToFixed;
-  } else {
-    totalPrice += 15 * additionalToFixed;
-  }
+  let totalPrice = (adjustedPrice + shippingPrice) * additionalToFixed;
+
   return totalPrice;
 };

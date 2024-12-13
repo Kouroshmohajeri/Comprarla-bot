@@ -1,14 +1,78 @@
+@font-face {
+  font-family: "IranYekan";
+  src: url("/fonts/iranyekan-cdnfonts/Qs_Iranyekan.ttf");
+}
+
 .container {
   padding: 20px;
   text-align: center;
   color: white;
   margin: 40% 2% 40%;
   position: relative;
-  background: rgba( 255, 255, 255, 0.25 );
-  /* box-shadow: 0 8px 32px 0 rgba( 255, 255, 255, 0.18 ); */
-  backdrop-filter: blur( 4px );
-  -webkit-backdrop-filter: blur( 4px );
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(5px);
   border-radius: 10px;
-  border: 1px solid rgba( 255, 255, 255, 0.18 );
 }
-  
+.font{
+  font-family: "IranYekan" !important;
+  text-align: center !important;
+}
+.title {
+  font-size: 1.4rem !important;
+}
+
+.MuiTextField-root {
+  background-color: transparent;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.MuiSelect-root {
+  color: white;
+  text-align: center;
+  background-color: transparent;
+}
+
+.MuiMenuItem-root {
+  background-color: blue;
+}
+
+.MuiInputLabel-root {
+  color: white !important;
+}
+.text-container {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.text-container.fadeOut {
+  animation: fadeOutRight 0.5s forwards;
+}
+
+.text-container.fadeIn {
+  animation: fadeInRight 0.5s forwards;
+}
+
+@keyframes fadeOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
