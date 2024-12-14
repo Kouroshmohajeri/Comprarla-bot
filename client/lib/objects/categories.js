@@ -13,6 +13,7 @@ const categories = {
     { key: 10, name: "کلاه", value: 3 },
     { key: 11, name: "شلوار جین", value: 8 },
     { key: 12, name: "اکسسوری", value: 3 },
+    { key: 12, name: "ساعت", value: 5 },
   ],
   shoes: [
     { key: 13, name: "کفش", value: null },
