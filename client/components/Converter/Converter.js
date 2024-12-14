@@ -15,7 +15,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 // Create a theme with RTL direction
 const theme = createTheme({
-  direction: "rtl", // You can leave this to maintain RTL direction globally
+  direction: "rtl",
   components: {
     MuiTextField: {
       styleOverrides: {
