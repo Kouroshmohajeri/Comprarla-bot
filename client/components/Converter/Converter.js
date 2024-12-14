@@ -11,21 +11,11 @@ import { convertPrice } from "@/lib/converter";
 import { getEuroToTomanRate } from "@/api/conversion/actions.js";
 import styles from "./Converter.module.css";
 import categories from "@/lib/objects/categories";
-import createCache from "@emotion/cache";
-import rtlPlugin from "stylis-plugin-rtl";
-import { prefixer } from "stylis";
-import { CacheProvider } from "@emotion/react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-
-// Create a cache with RTL support
-const cacheRtl = createCache({
-  key: "muirtl",
-  stylisPlugins: [prefixer, rtlPlugin],
-});
 
 // Create a theme with RTL direction
 const theme = createTheme({
-  direction: "rtl",
+  direction: "rtl", // You can leave this to maintain RTL direction globally
   components: {
     MuiTextField: {
       styleOverrides: {
@@ -138,173 +128,171 @@ const Converter = () => {
   };
 
   return (
-    <CacheProvider value={cacheRtl}>
-      <ThemeProvider theme={theme}>
-        <Box
-          className={styles.container}
+    <ThemeProvider theme={theme}>
+      <Box
+        className={styles.container}
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "white",
+          padding: "20px",
+        }}
+      >
+        <Typography
+          variant="h4"
+          className={`${styles.title} ${styles.font}`}
+          sx={{ textAlign: "center", marginBottom: "2%" }}
+        >
+          تبدیل قیمت
+        </Typography>
+
+        {/* Grouped Dropdown */}
+        <Select
+          value={selectedSubcategory}
+          onChange={handleSubcategoryChange}
+          displayEmpty
+          fullWidth
+          className={styles.font}
           sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
+            textAlign: "center",
+            marginBottom: "16px",
             color: "white",
-            padding: "20px",
+            width: "100%",
+            ".MuiOutlinedInput-notchedOutline": { borderColor: "white" },
+            "&:hover .MuiOutlinedInput-notchedOutline": {
+              borderColor: "white",
+            },
+            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+              borderColor: "white",
+            },
           }}
         >
-          <Typography
-            variant="h4"
-            className={`${styles.title} ${styles.font}`}
-            sx={{ textAlign: "center", marginBottom: "2%" }}
-          >
-            تبدیل قیمت
-          </Typography>
+          <MenuItem value="" disabled sx={{ textAlign: "center" }}>
+            انتخاب دسته‌ بندی
+          </MenuItem>
+          {Object.entries(categories).map(([categoryName, subcategories]) => [
+            // If the category has a subcategory with value null, treat it as the category title
+            subcategories
+              .filter((subcategory) => subcategory.value === null)
+              .map((subcategory) => (
+                <ListSubheader
+                  key={subcategory.key}
+                  className={styles.font}
+                  sx={{
+                    textAlign: "center",
+                    backgroundColor: "#333",
+                    color: "#ccc",
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    lineHeight: "2",
+                  }}
+                >
+                  {subcategory.name} {/* This is the main category */}
+                </ListSubheader>
+              )),
+            ...subcategories
+              .filter((subcategory) => subcategory.value !== null) // Exclude the category itself (value: null)
+              .map((subcategory) => (
+                <MenuItem
+                  key={subcategory.key}
+                  value={subcategory.key}
+                  className={styles.font}
+                  sx={{ textAlign: "center" }}
+                >
+                  {subcategory.name} {/* These are the subcategories */}
+                </MenuItem>
+              )),
+          ])}
+        </Select>
 
-          {/* Grouped Dropdown */}
-          <Select
-            value={selectedSubcategory}
-            onChange={handleSubcategoryChange}
-            displayEmpty
+        {/* Category text fade out and price text fade in */}
+        <Typography
+          variant="h6"
+          className={styles.font}
+          sx={{
+            textAlign: "center",
+            display: isCategorySelected ? "none" : "block",
+            transition: "opacity 0.5s ease-out",
+            fontSize: "0.9rem",
+          }}
+        >
+          دسته بندی را انتخاب کنید
+        </Typography>
+
+        {/* Input for price */}
+        {isCategorySelected && (
+          <TextField
+            label={
+              fixedPrice
+                ? `قیمت را وارد کنید... (€ یورو)`
+                : "...در حال بارگذاری قیمت"
+            }
+            type="number"
+            value={price}
+            onChange={handlePriceChange}
             fullWidth
+            margin="normal"
+            variant="outlined"
             className={styles.font}
+            inputProps={{ step: "0.01" }}
+            disabled={!selectedSubcategory}
             sx={{
-              textAlign: "center",
-              marginBottom: "16px",
-              color: "white",
-              width: "100%",
-              ".MuiOutlinedInput-notchedOutline": { borderColor: "white" },
-              "&:hover .MuiOutlinedInput-notchedOutline": {
-                borderColor: "white",
-              },
-              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: "white",
-              },
-            }}
-          >
-            <MenuItem value="" disabled sx={{ textAlign: "center" }}>
-              انتخاب دسته‌ بندی
-            </MenuItem>
-            {Object.entries(categories).map(([categoryName, subcategories]) => [
-              // If the category has a subcategory with value null, treat it as the category title
-              subcategories
-                .filter((subcategory) => subcategory.value === null)
-                .map((subcategory) => (
-                  <ListSubheader
-                    key={subcategory.key}
-                    className={styles.font}
-                    sx={{
-                      textAlign: "center",
-                      backgroundColor: "#333",
-                      color: "#ccc",
-                      fontWeight: "bold",
-                      fontSize: "16px",
-                      lineHeight: "2",
-                    }}
-                  >
-                    {subcategory.name} {/* This is the main category */}
-                  </ListSubheader>
-                )),
-              ...subcategories
-                .filter((subcategory) => subcategory.value !== null) // Exclude the category itself (value: null)
-                .map((subcategory) => (
-                  <MenuItem
-                    key={subcategory.key}
-                    value={subcategory.key}
-                    className={styles.font}
-                    sx={{ textAlign: "center" }}
-                  >
-                    {subcategory.name} {/* These are the subcategories */}
-                  </MenuItem>
-                )),
-            ])}
-          </Select>
-
-          {/* Category text fade out and price text fade in */}
-          <Typography
-            variant="h6"
-            className={styles.font}
-            sx={{
-              textAlign: "center",
-              display: isCategorySelected ? "none" : "block",
-              transition: "opacity 0.5s ease-out",
-              fontSize: "0.9rem",
-            }}
-          >
-            دسته بندی را انتخاب کنید
-          </Typography>
-
-          {/* Input for price */}
-          {isCategorySelected && (
-            <TextField
-              label={
-                fixedPrice
-                  ? `قیمت را وارد کنید... (€ یورو)`
-                  : "...در حال بارگذاری قیمت"
-              }
-              type="number"
-              value={price}
-              onChange={handlePriceChange}
-              fullWidth
-              margin="normal"
-              variant="outlined"
-              className={styles.font}
-              inputProps={{ step: "0.01" }}
-              disabled={!selectedSubcategory}
-              sx={{
-                "& .MuiInputBase-input": {
-                  color: "white",
-                  textAlign: "center",
-                },
-                "& .MuiInputLabel-root": { color: "white" },
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": { borderColor: "white" },
-                  "&:hover fieldset": { borderColor: "white" },
-                  "&.Mui-focused fieldset": { borderColor: "white" },
-                },
-              }}
-            />
-          )}
-
-          {/* Converted Price Display */}
-          <Typography
-            variant="h6"
-            className={styles.font}
-            sx={{
-              textAlign: "center",
-              opacity: convertedPrice ? 1 : 0,
-              transition: "opacity 0.5s ease-in-out",
-              fontSize: "1.2rem",
-            }}
-          >
-            {convertedPrice ? `${convertedPrice} تومان` : null}
-          </Typography>
-
-          {/* Show "قیمت را وارد کنید" when no converted price */}
-          <Typography
-            variant="h6"
-            className={styles.font}
-            sx={{
-              textAlign: "center",
-              display: isCategorySelected && !convertedPrice ? "block" : "none",
-              transition: "opacity 0.5s ease-in",
-              fontSize: "0.9rem",
-            }}
-          >
-            قیمت را وارد کنید
-          </Typography>
-          {convertedPrice && (
-            <Typography
-              variant="body1"
-              sx={{
+              "& .MuiInputBase-input": {
+                color: "white",
                 textAlign: "center",
-                fontFamily: "Arial, sans-serif",
-              }}
-            >
-              با احتساب هزینه باربری
-            </Typography>
-          )}
-        </Box>
-      </ThemeProvider>
-    </CacheProvider>
+              },
+              "& .MuiInputLabel-root": { color: "white" },
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": { borderColor: "white" },
+                "&:hover fieldset": { borderColor: "white" },
+                "&.Mui-focused fieldset": { borderColor: "white" },
+              },
+            }}
+          />
+        )}
+
+        {/* Converted Price Display */}
+        <Typography
+          variant="h6"
+          className={styles.font}
+          sx={{
+            textAlign: "center",
+            opacity: convertedPrice ? 1 : 0,
+            transition: "opacity 0.5s ease-in-out",
+            fontSize: "1.2rem",
+          }}
+        >
+          {convertedPrice ? `${convertedPrice} تومان` : null}
+        </Typography>
+
+        {/* Show "قیمت را وارد کنید" when no converted price */}
+        <Typography
+          variant="h6"
+          className={styles.font}
+          sx={{
+            textAlign: "center",
+            display: isCategorySelected && !convertedPrice ? "block" : "none",
+            transition: "opacity 0.5s ease-in",
+            fontSize: "0.9rem",
+          }}
+        >
+          قیمت را وارد کنید
+        </Typography>
+        {convertedPrice && (
+          <Typography
+            variant="body1"
+            sx={{
+              textAlign: "center",
+              fontFamily: "Arial, sans-serif",
+            }}
+          >
+            با احتساب هزینه باربری
+          </Typography>
+        )}
+      </Box>
+    </ThemeProvider>
   );
 };
 
