@@ -91,6 +91,7 @@ const Converter = () => {
     const fetchFixedPrice = async () => {
       try {
         const rate = await getEuroToTomanRate();
+        console.log(rate);
         setFixedPrice(rate);
       } catch (error) {
         console.error("Error fetching fixed price:", error);
