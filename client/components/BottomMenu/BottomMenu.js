@@ -67,7 +67,7 @@ const BottomMenu = ({ onPageChange }) => {
         </div>
       </div>
       <hr className={styles.divider} />
-      <p className={styles.footer}>Designed by WebGallery</p>
+      <p className={styles.footer}>Designed by Web Gallery</p>
     </div>
   );
 };
