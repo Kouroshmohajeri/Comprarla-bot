@@ -10,7 +10,7 @@ const categories = {
     { key: 6, name: "تاپ و تی شرت", value: 3 },
     { key: 7, name: "شلوار", value: 5 },
     { key: 7, name: "شلوارک", value: 3 },
-    { key: 7, name: "دامن", value: 5 },
+    { key: 7, name: "دامن", value: 3 },
     { key: 8, name: "پیراهن زنانه", value: 4 },
     { key: 9, name: "پیراهن مردانه", value: 4 },
     { key: 10, name: "لباس زیر", value: 3 },
